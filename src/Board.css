@@ -1,3 +1,10 @@
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: #e0e0e0;
+}
+
+
 .board-container {
   position: relative;
   width: 100%;
@@ -6,6 +13,7 @@
   overflow: hidden;
 }
 
+/* Table styles */
 .table {
   position: absolute;
   top: 50%;
@@ -32,9 +40,7 @@
   justify-content: center;
 }
 
-.player-position {
-}
-
+/* Player areas */
 .player-area {
   background: #fff;
   padding: 1rem;
@@ -48,8 +54,9 @@
   border: 2px solid #2196f3;
 }
 
+/* Card layout */
 .player-cards-container {
-  transform-origin: center center;
+  transform-origin: center;
   width: 250px;
   height: 160px;
   position: absolute;
@@ -57,10 +64,7 @@
 
 .player-cards {
   position: absolute;
-  width: 100%;
-  height: 100%;
-  left: 0;
-  top: 0;
+  inset: 0;
   display: flex;
   justify-content: center;
   align-items: flex-end;
@@ -68,28 +72,33 @@
   z-index: 1;
 }
 
+.current-player .player-cards {
+  z-index: 2;
+}
+
+/* Card styles */
 .card {
   width: 60px;
   height: 84px;
+  position: absolute;
+  margin-left: -30px;
   background: white;
   border: 1px solid #000;
   border-radius: 6px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  color: #666;
+  font-size: 20px;
+  transform-origin: center 200%;
+  transition: all 0.15s ease-out;
+  will-change: transform;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 20px;
-  color: #666;
-  transition: all 0.15s ease-out;
-  position: absolute;
-  transform-origin: center 200%;
-  margin-left: -30px;
-  will-change: transform;
 }
 
 .card:hover {
   transform: translateY(-10px) scale(1.05);
-  z-index: 1000 !important;
+  z-index: 1000;
   box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
   border-color: #666;
 }
@@ -97,15 +106,8 @@
 .card::before {
   content: '';
   position: absolute;
-  top: 5px;
-  left: 5px;
-  right: 5px;
-  bottom: 5px;
+  inset: 5px;
   border: 1px solid #ddd;
   border-radius: 2px;
-}
-
-.current-player .player-cards {
-  z-index: 2;
 }
 
