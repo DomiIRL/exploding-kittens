@@ -94,10 +94,11 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
+  transform: var(--base-transform);
 }
 
-.card:hover {
-  transform: translateY(-10px) scale(1.05);
+.current-player .card:hover {
+  transform: var(--base-transform) translateY(-10px) scale(1.05);
   z-index: 1000;
   box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
   border-color: #666;

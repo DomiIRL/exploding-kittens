@@ -51,7 +51,7 @@ export class ExplodingKittensBoard extends React.Component {
           className="card"
           style={{
             position: 'absolute',
-            transform: `translate(${offsetX}px, ${offsetY}px) rotate(${angle}deg)`,
+            '--base-transform': `translate(${offsetX}px, ${offsetY}px) rotate(${angle}deg)`,
             transformOrigin: 'center 200%',
             zIndex: count - index // Higher index for leftmost cards
           }}
@@ -87,7 +87,7 @@ export class ExplodingKittensBoard extends React.Component {
             return (
               <React.Fragment key={player}>
                 <div
-                  className="player-cards-container"
+                  className={`player-cards-container ${isCurrentPlayer ? 'current-player' : ''}`}
                   style={{
                     position: 'absolute',
                     top: cardPosition.top,
