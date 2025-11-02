@@ -6,17 +6,21 @@ export class ExplodingKittensBoard extends React.Component {
     const numPlayers = Object.keys(this.props.ctx.playOrder).length;
     const angleStep = 360 / numPlayers;
 
+    // Calculate position relative to current player, ensuring positive value
     const relativePosition = (index - playerID + numPlayers) % numPlayers;
+    // Start from bottom (180°) and distribute players clockwise
     const angle = 180 + (relativePosition * angleStep);
     const radian = (angle * Math.PI) / 180;
 
+    // Position cards closer to table center
     const cardRadius = 30;
     const cardPosition = {
       top: `${50 - cardRadius * Math.cos(radian)}%`,
       left: `${50 + cardRadius * Math.sin(radian)}%`,
-      angle: angle - 90
+      angle: angle - 90 // Rotate cards to face outward
     };
 
+    // Position player info further from center
     const infoRadius = 45;
     const infoPosition = {
       top: `${50 - infoRadius * Math.cos(radian)}%`,
@@ -27,14 +31,19 @@ export class ExplodingKittensBoard extends React.Component {
   }
 
   renderCards(count) {
+    // Limit fan spread based on card count (4° per card, max 40°)
     const fanSpread = Math.min(count * 4, 40);
+    // Skip angle calculation if only one card
     const angleStep = count > 1 ? fanSpread / (count - 1) : 0;
+    // Center the fan around middle
     const baseOffset = -fanSpread / 2;
     const spreadDistance = 15;
 
     return Array(count).fill(null).map((_, index) => {
       const angle = baseOffset + (angleStep * index);
+      // Center cards horizontally
       const offsetX = (index - (count - 1) / 2) * spreadDistance;
+      // Add slight curve to the fan
       const offsetY = Math.abs(angle) * 0.3;
       return (
         <div
@@ -44,7 +53,7 @@ export class ExplodingKittensBoard extends React.Component {
             position: 'absolute',
             transform: `translate(${offsetX}px, ${offsetY}px) rotate(${angle}deg)`,
             transformOrigin: 'center 200%',
-            zIndex: count - index
+            zIndex: count - index // Higher index for leftmost cards
           }}
         >
           ?
