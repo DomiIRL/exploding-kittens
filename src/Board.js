@@ -12,7 +12,7 @@ export class ExplodingKittensBoard extends React.Component {
     const angle = 180 + (relativePosition * angleStep);
     const radian = (angle * Math.PI) / 180;
 
-    const cardRadius = 38;
+    const cardRadius = 30;
     const cardPosition = {
       top: `${50 - cardRadius * Math.cos(radian)}%`,
       left: `${50 + cardRadius * Math.sin(radian)}%`,
@@ -30,20 +30,22 @@ export class ExplodingKittensBoard extends React.Component {
   }
 
   renderCards(count) {
-    const fanSpread = Math.min(count * 5, 30); // Maximum spread angle of 30 degrees
+    const fanSpread = Math.min(count * 8, 60); // Wider spread, max 60 degrees
     const angleStep = count > 1 ? fanSpread / (count - 1) : 0;
     const baseOffset = -fanSpread / 2; // Start from negative angle to center the fan
+    const spreadDistance = 30; // Distance between cards in pixels
 
     return Array(count).fill(null).map((_, index) => {
       const angle = baseOffset + (angleStep * index);
+      const offsetX = (index - (count - 1) / 2) * spreadDistance; // Center the spread
       return (
         <div
           key={index}
           className="card"
           style={{
             position: 'absolute',
-            transform: `rotate(${angle}deg)`,
-            transformOrigin: 'center 120%' // Position below the card for natural fan
+            transform: `translateX(${offsetX}px) rotate(${angle}deg)`,
+            transformOrigin: 'center 150%' // Move pivot point further down for more natural fan
           }}
         >
           ?

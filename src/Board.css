@@ -50,15 +50,20 @@
 
 .player-cards-container {
   transform-origin: center center;
-  width: 200px; /* Fixed width container for consistent card positioning */
-  height: 120px; /* Space for the cards to fan out */
+  width: 300px; /* Wider container for better card spread */
+  height: 150px; /* More height for the fan effect */
+  position: absolute;
 }
 
 .player-cards {
-  position: relative;
-  width: 60px; /* Width of a single card */
-  height: 84px; /* Height of a single card */
-  margin: 0 auto; /* Center in container */
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  left: 0;
+  top: 0;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
   transform-origin: center bottom;
   z-index: 1;
 }
@@ -77,8 +82,8 @@
   color: #666;
   transition: all 0.2s;
   position: absolute;
-  left: 50%;
-  transform-origin: center 120%;
+  transform-origin: center 150%;
+  margin-left: -30px; /* Half card width for centering */
 }
 
 .card:first-child {
@@ -86,8 +91,9 @@
 }
 
 .card:hover {
-  transform: translateY(-10px);
-  z-index: 2;
+  transform: translateY(-15px) scale(1.1);
+  z-index: 10;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
 
 .card::before {
