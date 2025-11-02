@@ -6,9 +6,7 @@ export class ExplodingKittensBoard extends React.Component {
     const numPlayers = Object.keys(this.props.ctx.playOrder).length;
     const angleStep = 360 / numPlayers;
 
-    // Calculate relative position - how far this player is from the current player
     const relativePosition = (index - playerID + numPlayers) % numPlayers;
-    // Start at bottom (180 degrees) and work counterclockwise
     const angle = 180 + (relativePosition * angleStep);
     const radian = (angle * Math.PI) / 180;
 
@@ -19,7 +17,6 @@ export class ExplodingKittensBoard extends React.Component {
       angle: angle - 90
     };
 
-    // Player info is in an outer circle (45% from center)
     const infoRadius = 45;
     const infoPosition = {
       top: `${50 - infoRadius * Math.cos(radian)}%`,
@@ -30,16 +27,15 @@ export class ExplodingKittensBoard extends React.Component {
   }
 
   renderCards(count) {
-    const fanSpread = Math.min(count * 4, 40); // Tighter spread, max 40 degrees
+    const fanSpread = Math.min(count * 4, 40);
     const angleStep = count > 1 ? fanSpread / (count - 1) : 0;
     const baseOffset = -fanSpread / 2;
-    const spreadDistance = 15; // Reduced distance between cards
+    const spreadDistance = 15;
 
     return Array(count).fill(null).map((_, index) => {
       const angle = baseOffset + (angleStep * index);
       const offsetX = (index - (count - 1) / 2) * spreadDistance;
-      // Add a slight vertical offset based on the angle to create a smoother curve
-      const offsetY = Math.abs(angle) * 0.3; // Slight vertical adjustment for curve
+      const offsetY = Math.abs(angle) * 0.3;
       return (
         <div
           key={index}
@@ -47,8 +43,8 @@ export class ExplodingKittensBoard extends React.Component {
           style={{
             position: 'absolute',
             transform: `translate(${offsetX}px, ${offsetY}px) rotate(${angle}deg)`,
-            transformOrigin: 'center 200%', // Move pivot point even further down for smoother curve
-            zIndex: index // Progressive z-index for proper overlapping
+            transformOrigin: 'center 200%',
+            zIndex: count - index
           }}
         >
           ?
@@ -77,7 +73,7 @@ export class ExplodingKittensBoard extends React.Component {
             const { cardPosition, infoPosition } = this.getPositions(index, currentPlayerNumber);
             const isCurrentPlayer = parseInt(player) === currentPlayerNumber;
             const hand_count = all_players[player].hand_count;
-            const cardRotation = cardPosition.angle - 90; // Rotate cards to face the player
+            const cardRotation = cardPosition.angle - 90;
 
             return (
               <React.Fragment key={player}>

@@ -50,8 +50,8 @@
 
 .player-cards-container {
   transform-origin: center center;
-  width: 250px; /* Slightly narrower for tighter formation */
-  height: 160px; /* Taller to accommodate the curved formation */
+  width: 250px;
+  height: 160px;
   position: absolute;
 }
 
@@ -72,9 +72,9 @@
   width: 60px;
   height: 84px;
   background: white;
-  border: 1px solid #000; /* Thinner border for smoother appearance */
-  border-radius: 6px; /* Slightly rounder corners */
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); /* Subtler shadow */
+  border: 1px solid #000;
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -84,12 +84,12 @@
   position: absolute;
   transform-origin: center 200%;
   margin-left: -30px;
-  will-change: transform; /* Optimize transform animations */
+  will-change: transform;
 }
 
 .card:hover {
   transform: translateY(-10px) scale(1.05);
-  z-index: 100 !important;
+  z-index: 1000 !important;
   box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
   border-color: #666;
 }
