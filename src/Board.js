@@ -30,22 +30,25 @@ export class ExplodingKittensBoard extends React.Component {
   }
 
   renderCards(count) {
-    const fanSpread = Math.min(count * 8, 60); // Wider spread, max 60 degrees
+    const fanSpread = Math.min(count * 4, 40); // Tighter spread, max 40 degrees
     const angleStep = count > 1 ? fanSpread / (count - 1) : 0;
-    const baseOffset = -fanSpread / 2; // Start from negative angle to center the fan
-    const spreadDistance = 30; // Distance between cards in pixels
+    const baseOffset = -fanSpread / 2;
+    const spreadDistance = 15; // Reduced distance between cards
 
     return Array(count).fill(null).map((_, index) => {
       const angle = baseOffset + (angleStep * index);
-      const offsetX = (index - (count - 1) / 2) * spreadDistance; // Center the spread
+      const offsetX = (index - (count - 1) / 2) * spreadDistance;
+      // Add a slight vertical offset based on the angle to create a smoother curve
+      const offsetY = Math.abs(angle) * 0.3; // Slight vertical adjustment for curve
       return (
         <div
           key={index}
           className="card"
           style={{
             position: 'absolute',
-            transform: `translateX(${offsetX}px) rotate(${angle}deg)`,
-            transformOrigin: 'center 150%' // Move pivot point further down for more natural fan
+            transform: `translate(${offsetX}px, ${offsetY}px) rotate(${angle}deg)`,
+            transformOrigin: 'center 200%', // Move pivot point even further down for smoother curve
+            zIndex: index // Progressive z-index for proper overlapping
           }}
         >
           ?

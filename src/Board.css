@@ -50,8 +50,8 @@
 
 .player-cards-container {
   transform-origin: center center;
-  width: 300px; /* Wider container for better card spread */
-  height: 150px; /* More height for the fan effect */
+  width: 250px; /* Slightly narrower for tighter formation */
+  height: 160px; /* Taller to accommodate the curved formation */
   position: absolute;
 }
 
@@ -72,28 +72,26 @@
   width: 60px;
   height: 84px;
   background: white;
-  border: 2px solid #000;
-  border-radius: 4px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  border: 1px solid #000; /* Thinner border for smoother appearance */
+  border-radius: 6px; /* Slightly rounder corners */
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); /* Subtler shadow */
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 20px;
   color: #666;
-  transition: all 0.2s;
+  transition: all 0.15s ease-out;
   position: absolute;
-  transform-origin: center 150%;
-  margin-left: -30px; /* Half card width for centering */
-}
-
-.card:first-child {
-  margin-left: 0;
+  transform-origin: center 200%;
+  margin-left: -30px;
+  will-change: transform; /* Optimize transform animations */
 }
 
 .card:hover {
-  transform: translateY(-15px) scale(1.1);
-  z-index: 10;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  transform: translateY(-10px) scale(1.05);
+  z-index: 100 !important;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+  border-color: #666;
 }
 
 .card::before {
