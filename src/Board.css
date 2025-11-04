@@ -4,13 +4,15 @@ body {
   background: #e0e0e0;
 }
 
-
 .board-container {
   position: relative;
-  width: 100%;
+  width: 100vw;
   height: 100vh;
   background: #f0f0f0;
   overflow: hidden;
+
+  --scale: min(1vw, 1vh);
+  --table-size: min(90vw, 90vh);
 }
 
 /* Table styles */
@@ -19,8 +21,10 @@ body {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 60%;
-  height: 60%;
+
+  width: var(--table-size);
+  aspect-ratio: 1;
+
   background: #35654d;
   border-radius: 50%;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
@@ -31,10 +35,13 @@ body {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 40%;
-  height: 40%;
+
+  width: 60%;
+  aspect-ratio: 1;
+
   background: #2a503d;
   border-radius: 50%;
+
   display: flex;
   align-items: center;
   justify-content: center;
@@ -43,10 +50,12 @@ body {
 /* Player areas */
 .player-area {
   background: #fff;
-  padding: 1rem;
-  border-radius: 8px;
+  padding: calc(var(--scale) * 1);
+  border-radius: calc(var(--scale) * 0.8);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   text-align: center;
+  font-size: calc(var(--scale) * 1.4);
+  min-width: calc(var(--scale) * 10);
 }
 
 .current-player .player-area {
@@ -56,15 +65,11 @@ body {
 
 /* Card layout */
 .player-cards-container {
-  transform-origin: center;
-  width: 250px;
-  height: 160px;
   position: absolute;
 }
 
 .player-cards {
   position: absolute;
-  inset: 0;
   display: flex;
   justify-content: center;
   align-items: flex-end;
@@ -76,39 +81,61 @@ body {
   z-index: 2;
 }
 
-/* Card styles */
-.card {
-  width: 60px;
-  height: 84px;
-  position: absolute;
-  margin-left: -30px;
+.card, .pile {
+  position: relative;
+  width: calc(var(--scale) * 6);
+  height: calc(var(--scale) * 8.4);
   background: white;
-  border: 1px solid #000;
-  border-radius: 6px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   color: #666;
-  font-size: 20px;
-  transform-origin: center 200%;
-  transition: all 0.15s ease-out;
-  will-change: transform;
   display: flex;
   align-items: center;
   justify-content: center;
+  font-size: calc(var(--scale) * 2);
+  border-radius: calc(var(--scale) * 0.6);
+  border: 1px solid #000;
+}
+
+.card::before, .pile::before {
+  content: '';
+  position: absolute;
+  inset: calc(var(--scale) * 0.5);
+  border: 1px solid #ddd;
+  border-radius: calc(var(--scale) * 0.2);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.card {
+  position: absolute !important;
+  margin-left: calc(var(--scale) * -3);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  transform-origin: center 200%;
+  transition: all 0.15s ease-out;
+  will-change: transform;
   transform: var(--base-transform);
 }
 
 .current-player .card:hover {
-  transform: var(--base-transform) translateY(-10px) scale(1.05);
+  transform: var(--base-transform) translateY(calc(var(--scale) * -1)) scale(1.05);
   z-index: 1000;
   box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
   border-color: #666;
 }
 
-.card::before {
-  content: '';
-  position: absolute;
-  inset: 5px;
-  border: 1px solid #ddd;
-  border-radius: 2px;
+.card-piles {
+  display: flex;
+  flex-direction: row;
+  gap: calc(var(--scale) * 1);
 }
 
+.draw-pile::before {
+  content: 'draw' !important;
+  font-size: calc(var(--scale) * 1.2);
+}
+
+.discard-pile::before {
+  content: 'x' !important;
+  font-size: calc(var(--scale) * 2);
+}

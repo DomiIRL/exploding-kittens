@@ -3,7 +3,7 @@ import './Board.css';
 
 export class ExplodingKittensBoard extends React.Component {
   getPositions(index, playerID) {
-    const numPlayers = Object.keys(this.props.ctx.playOrder).length;
+    const numPlayers = this.props.ctx.numPlayers;
     const angleStep = 360 / numPlayers;
 
     // Calculate position relative to current player, ensuring positive value
@@ -12,19 +12,17 @@ export class ExplodingKittensBoard extends React.Component {
     const angle = 180 + (relativePosition * angleStep);
     const radian = (angle * Math.PI) / 180;
 
-    // Position cards closer to table center
-    const cardRadius = 30;
+    const cardRadius = 'min(30vw, 30vh)';
     const cardPosition = {
-      top: `${50 - cardRadius * Math.cos(radian)}%`,
-      left: `${50 + cardRadius * Math.sin(radian)}%`,
-      angle: angle - 90 // Rotate cards to face outward
+      top: `calc(50% - ${cardRadius} * ${Math.cos(radian)})`,
+      left: `calc(50% + ${cardRadius} * ${Math.sin(radian)})`,
+      angle: angle - 90
     };
 
-    // Position player info further from center
-    const infoRadius = 45;
+    const tableRadius = 'min(43vw, 43vh)';
     const infoPosition = {
-      top: `${50 - infoRadius * Math.cos(radian)}%`,
-      left: `${50 + infoRadius * Math.sin(radian)}%`
+      top: `calc(50% - ${tableRadius} * ${Math.cos(radian)})`,
+      left: `calc(50% + ${tableRadius} * ${Math.sin(radian)})`
     };
 
     return { cardPosition, infoPosition };
@@ -74,7 +72,10 @@ export class ExplodingKittensBoard extends React.Component {
           {/* Center table */}
           <div className="table">
             <div className="table-center">
-              {/* Central play area */}
+              <div className={"card-piles"}>
+                <div className={"pile discard-pile"}></div>
+                <div className={"pile draw-pile"}></div>
+              </div>
             </div>
           </div>
 
