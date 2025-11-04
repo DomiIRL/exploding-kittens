@@ -32,6 +32,9 @@ class App extends React.Component {
           <button onClick={() => this.setState({ playerID: "3" })}>
             Spieler 4
           </button>
+            <button onClick={() => this.setState({ playerID: "4" })}>
+                Spieler 5
+            </button>
         </div>
       );
     }
