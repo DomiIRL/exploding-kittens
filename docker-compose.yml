@@ -3,30 +3,46 @@ services:
   client:
     build: .
     container_name: exploding-kittens-client
-    ports:
-      - "1234:1234"
+    expose:
+      - "${CLIENT_PORT:-1234}"
     volumes:
       - .:/app
       - /app/node_modules
       - /app/.cache
     command: npm start
     environment:
-      - NODE_ENV=development
+      - NODE_ENV=${NODE_ENV:-development}
+      - CLIENT_PORT=${CLIENT_PORT:-1234}
+      - API_URL=${API_URL:-https://explodingkittins.svrt.dev}
     stdin_open: true
     tty: true
     depends_on:
       - server
+    networks:
+      - proxy
+      - internal
 
   # Server - boardgame.io server
   server:
     build: .
     container_name: exploding-kittens-server
-    ports:
-      - "8000:8000"
+    expose:
+      - "${SERVER_PORT:-8000}"
     volumes:
       - .:/app
       - /app/node_modules
     command: npm run serve
     environment:
-      - NODE_ENV=production
+      - NODE_ENV=${NODE_ENV:-production}
+      - SERVER_PORT=${SERVER_PORT:-8000}
+      - SERVER_ORIGINS=${SERVER_ORIGINS:-https://explodingkittins.svrt.dev}
     restart: unless-stopped
+    networks:
+      - proxy
+      - internal
+
+networks:
+  proxy:
+    external: true
+  internal:
+    driver: bridge

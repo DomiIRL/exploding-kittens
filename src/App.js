@@ -9,7 +9,7 @@ const ExplodingKittensClient = Client({
   game: ExplodingKittens,
   board: ExplodingKittensBoard,
   numPlayers: 5,
-  multiplayer: SocketIO({ server: 'localhost:8000' }),
+  multiplayer: SocketIO({ server: process.env.API_URL || 'http://localhost:8000' }),
 });
 
 class App extends React.Component {
