@@ -69,7 +69,6 @@ export class ExplodingKittensBoard extends React.Component {
     return (
       <div className={"w-full h-full flex flex-col items-center justify-center bg-blue-200"}>
         <div className="board-container">
-          {/* Center table */}
           <div className="table">
             <div className="table-center">
               <div className={"card-piles"}>
@@ -126,7 +125,7 @@ export class ExplodingKittensBoard extends React.Component {
             );
           })}
         </div>
-        <div>
+        <div className={"debug-section"}>
           <h2 className="text-xl font-bold mb-4">Game Debug</h2>
           <div>
             <pre className="bg-gray-100 p-4 rounded">

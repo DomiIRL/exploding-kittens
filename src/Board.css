@@ -1,8 +1,6 @@
 body {
   margin: 0;
   font-family: 'Comic Sans MS', 'Chalkboard SE', 'Comic Neue', cursive, sans-serif;
-  background: linear-gradient(135deg, #8B1538 0%, #C41E3A 50%, #8B1538 100%);
-  background-attachment: fixed;
 }
 
 .board-container {
@@ -193,4 +191,10 @@ body {
 .discard-pile::before {
   content: '💥' !important;
   font-size: calc(var(--scale) * 3);
+}
+
+.debug-section {
+  padding: 20px;
+  background: #333;
+  color: #fff;
 }

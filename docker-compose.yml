@@ -1,0 +1,32 @@
+services:
+  # Client - Parcel dev server
+  client:
+    build: .
+    container_name: exploding-kittens-client
+    ports:
+      - "1234:1234"
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - /app/.cache
+    command: npm start
+    environment:
+      - NODE_ENV=development
+    stdin_open: true
+    tty: true
+    depends_on:
+      - server
+
+  # Server - boardgame.io server
+  server:
+    build: .
+    container_name: exploding-kittens-server
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+      - /app/node_modules
+    command: npm run serve
+    environment:
+      - NODE_ENV=production
+    restart: unless-stopped
