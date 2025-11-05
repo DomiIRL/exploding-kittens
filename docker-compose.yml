@@ -1,57 +1,23 @@
 services:
-  # Client - Parcel dev server
   client:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    build: .
     container_name: exploding-kittens-client
-    expose:
-      - "${CLIENT_PORT:-1234}"
-    volumes:
-      - ./:/app:ro
-      - client_node_modules:/app/node_modules
-      - client_cache:/app/.cache
+    ports:
+      - "1234:1234"
     command: npm start
-    environment:
-      - NODE_ENV=${NODE_ENV:-development}
-      - CLIENT_PORT=${CLIENT_PORT:-1234}
-      - API_URL=${API_URL:-https://api.explodingkittens.svrt.dev}
-    stdin_open: true
-    tty: true
-    depends_on:
-      - server
     networks:
       - proxy
-      - internal
 
-  # Server - boardgame.io server
   server:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    build: .
     container_name: exploding-kittens-server
-    expose:
-      - "${SERVER_PORT:-8000}"
-    volumes:
-      - ./:/app:ro
-      - server_node_modules:/app/node_modules
+    ports:
+      - "8000:8000"
     command: npm run serve
-    environment:
-      - NODE_ENV=${NODE_ENV:-production}
-      - SERVER_PORT=${SERVER_PORT:-8000}
-      - SERVER_ORIGINS=${SERVER_ORIGINS:-https://explodingkittins.svrt.dev}
-    restart: unless-stopped
     networks:
       - proxy
-      - internal
-
-volumes:
-  client_node_modules:
-  client_cache:
-  server_node_modules:
+    restart: unless-stopped
 
 networks:
   proxy:
     external: true
-  internal:
-    driver: bridge

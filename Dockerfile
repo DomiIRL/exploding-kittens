@@ -1,20 +1,10 @@
-FROM node:20-alpine AS builder
+FROM node:18-alpine
 
 WORKDIR /app
 
 COPY package*.json ./
-
-RUN npm ci --only=production && npm cache clean --force
+RUN npm install
 
 COPY . .
 
-FROM node:20-alpine AS production
-
-WORKDIR /app
-
-RUN addgroup -g 1001 -S nodejs && \
-    adduser -S nextjs -u 1001
-
-COPY --from=builder --chown=nextjs:nodejs /app /app
-
-USER nextjs
+CMD ["npm", "start"]
