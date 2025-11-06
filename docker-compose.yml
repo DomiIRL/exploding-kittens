@@ -3,7 +3,7 @@ services:
     build: .
     container_name: exploding-kittens-client
     ports:
-      - "1234:1234"
+      - "5173:5173"
     command: npm run dev
     networks:
       - proxy
