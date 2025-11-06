@@ -143,8 +143,6 @@ body {
 .card {
   position: absolute !important;
   margin-left: calc(var(--scale) * -3);
-  box-shadow:
-      0 3px 8px rgba(0, 0, 0, 0.4);
   transform-origin: center 200%;
   transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
   will-change: transform;

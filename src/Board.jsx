@@ -1,6 +1,7 @@
 import React from 'react';
 import './Board.css';
 import back from '/assets/cards/back/1.png'
+import front from '/assets/cards/exploding-kitten/1.png'
 
 export class ExplodingKittensBoard extends React.Component {
   getPositions(index, playerID) {
@@ -29,7 +30,7 @@ export class ExplodingKittensBoard extends React.Component {
     return { cardPosition, infoPosition };
   }
 
-  renderCards(count) {
+  renderCards(count, isCurrentPlayer) {
     // Limit fan spread based on card count (4° per card, max 40°)
     const fanSpread = Math.min(count * 4, 40);
     // Skip angle calculation if only one card
@@ -49,7 +50,7 @@ export class ExplodingKittensBoard extends React.Component {
           key={index}
           className="card"
           style={{
-            backgroundImage: `url(${back})`,
+            backgroundImage: `url(${isCurrentPlayer ? front : back})`,
             position: 'absolute',
             '--base-transform': `translate(${offsetX}px, ${offsetY}px) rotate(${angle}deg)`,
             '--card-index': index,
@@ -78,7 +79,7 @@ export class ExplodingKittensBoard extends React.Component {
                 <div
                     className={"pile discard-pile"}
                     style={{
-                      backgroundImage: `url(${back})`,
+                      backgroundImage: `url(${front})`,
                     }}
                 >
 
@@ -113,7 +114,7 @@ export class ExplodingKittensBoard extends React.Component {
                   }}
                 >
                   <div className="player-cards">
-                    {this.renderCards(hand_count)}
+                    {this.renderCards(hand_count, isCurrentPlayer)}
                   </div>
                 </div>
 
