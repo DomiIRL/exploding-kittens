@@ -1,11 +1,16 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
 
-// https://vite.dev/config/
+const getAllowedHosts = (env) => {
+  if (!env) return [];
+  return env.split(',').map(h => h.trim());
+};
+
 export default defineConfig({
   plugins: [react()],
   server: {
     host: process.env.VITE_HOST || 'localhost',
     port: parseInt(process.env.VITE_PORT) || 5173,
+    allowedHosts: getAllowedHosts(process.env.VITE_ALLOWED_HOSTS),
   },
-})
+});
