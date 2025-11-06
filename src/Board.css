@@ -136,7 +136,7 @@ body {
   background-position: center;
 }
 
-.card:hover, .pile:hover {
+.current-player .card:hover, .pile:hover {
   cursor: pointer;
   box-shadow:
       0 8px 24px rgba(253, 185, 39, 0.6),
