@@ -149,6 +149,17 @@ body {
   transform: var(--base-transform);
 }
 
+.current-player .card:hover::after {
+  content: '';
+  position: absolute;
+  z-index: 1000;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: calc(var(--scale) * -3);
+  pointer-events: auto;
+}
+
 .current-player .card:hover {
   transform: var(--base-transform) translateY(calc(var(--scale) * -2)) scale(1.2) rotate(0deg);
   z-index: 1000;
