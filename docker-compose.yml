@@ -7,6 +7,9 @@ services:
     command: npm start
     networks:
       - proxy
+    restart: unless-stopped
+    env_file:
+      - stack.env
 
   server:
     build: .
@@ -17,6 +20,8 @@ services:
     networks:
       - proxy
     restart: unless-stopped
+    env_file:
+      - stack.env
 
 networks:
   proxy:
