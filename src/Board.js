@@ -50,6 +50,8 @@ export class ExplodingKittensBoard extends React.Component {
           style={{
             position: 'absolute',
             '--base-transform': `translate(${offsetX}px, ${offsetY}px) rotate(${angle}deg)`,
+            '--card-index': index,
+            '--total-cards': count,
             transformOrigin: 'center 200%',
             zIndex: count - index // Higher index for leftmost cards
           }}
