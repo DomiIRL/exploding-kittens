@@ -1,5 +1,6 @@
 import React from 'react';
 import './Board.css';
+import back from '/assets/cards/back/1.png'
 
 export class ExplodingKittensBoard extends React.Component {
   getPositions(index, playerID) {
@@ -48,6 +49,7 @@ export class ExplodingKittensBoard extends React.Component {
           key={index}
           className="card"
           style={{
+            backgroundImage: `url(${back})`,
             position: 'absolute',
             '--base-transform': `translate(${offsetX}px, ${offsetY}px) rotate(${angle}deg)`,
             '--card-index': index,
@@ -56,7 +58,6 @@ export class ExplodingKittensBoard extends React.Component {
             zIndex: count - index // Higher index for leftmost cards
           }}
         >
-          ?
         </div>
       );
     });
@@ -74,8 +75,21 @@ export class ExplodingKittensBoard extends React.Component {
           <div className="table">
             <div className="table-center">
               <div className={"card-piles"}>
-                <div className={"pile discard-pile"}></div>
-                <div className={"pile draw-pile"}></div>
+                <div
+                    className={"pile discard-pile"}
+                    style={{
+                      backgroundImage: `url(${back})`,
+                    }}
+                >
+
+                </div>
+                <div
+                    className={"pile draw-pile"}
+                    style={{
+                      backgroundImage: `url(${back})`,
+                    }}
+                >
+                </div>
               </div>
             </div>
           </div>

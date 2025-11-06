@@ -1,4 +1,4 @@
-import { PluginPlayer } from 'boardgame.io/plugins';
+import { PluginPlayer } from 'boardgame.io/dist/cjs/plugins.js';
 
 const playerSetup = (playerID) => ({
   hand: [],

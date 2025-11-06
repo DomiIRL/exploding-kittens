@@ -1,12 +1,16 @@
-const { Server, Origins } = require('boardgame.io/server');
-const { ExplodingKittens } = require('./Game');
+import { Server, Origins } from 'boardgame.io/dist/cjs/server.js';
+import { ExplodingKittens } from './Game.js';
 
 const port = parseInt(process.env.SERVER_PORT || '8000');
-const origins = (process.env.SERVER_ORIGINS || 'http://localhost:1234').split(',');
+
+let origins = Origins.LOCALHOST_IN_DEVELOPMENT;
+if (process.env.SERVER_ORIGINS) {
+  origins = process.env.SERVER_ORIGINS.split(',');
+}
 
 const server = Server({
   games: [ExplodingKittens],
-  origins: origins,
+  origins,
 });
 
 server.run(port);

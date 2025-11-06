@@ -4,7 +4,7 @@ services:
     container_name: exploding-kittens-client
     ports:
       - "1234:1234"
-    command: npm start
+    command: npm run dev
     networks:
       - proxy
     restart: unless-stopped

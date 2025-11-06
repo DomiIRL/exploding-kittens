@@ -130,25 +130,20 @@ body {
   box-shadow:
       0 2px 6px rgba(0, 0, 0, 0.4),
       inset 0 1px 0 rgba(255, 255, 255, 0.8);
+
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
 }
 
-.card::before, .pile::before {
-  content: '';
-  position: absolute;
-  inset: calc(var(--scale) * 0.5);
-  border: calc(var(--scale) * 0.2) solid #e74c3c;
-  border-radius: calc(var(--scale) * 0.4);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  background: repeating-linear-gradient(
-      45deg,
-      transparent,
-      transparent 10px,
-      rgba(231, 76, 60, 0.03) 10px,
-      rgba(231, 76, 60, 0.03) 20px
-  );
+.card:hover, .pile:hover {
+  cursor: pointer;
+  box-shadow:
+      0 8px 24px rgba(253, 185, 39, 0.6),
+      0 0 20px rgba(253, 185, 39, 0.4),
+      inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  border-color: #FDB927;
+  filter: brightness(1.1);
 }
 
 .card {
@@ -166,12 +161,6 @@ body {
 .current-player .card:hover {
   transform: var(--base-transform) translateY(calc(var(--scale) * -2)) scale(1.2) rotate(0deg);
   z-index: 1000;
-  box-shadow:
-      0 8px 24px rgba(253, 185, 39, 0.6),
-      0 0 20px rgba(253, 185, 39, 0.4),
-      inset 0 1px 0 rgba(255, 255, 255, 0.8);
-  border-color: #FDB927;
-  filter: brightness(1.1);
 }
 
 .current-player .player-cards:has(.card:hover) .card {
@@ -194,19 +183,6 @@ body {
   display: flex;
   flex-direction: row;
   gap: calc(var(--scale) * 1);
-}
-
-.draw-pile::before {
-  content: 'DRAW' !important;
-  font-size: calc(var(--scale) * 1.2);
-  font-weight: 900;
-  color: #e74c3c;
-  text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.2);
-}
-
-.discard-pile::before {
-  content: '💥' !important;
-  font-size: calc(var(--scale) * 3);
 }
 
 .debug-section {
