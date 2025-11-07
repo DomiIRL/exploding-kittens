@@ -7,7 +7,7 @@
     "build": "vite build",
     "preview": "vite preview",
     "lint": "eslint .",
-    "serve": "node src/server.js"
+    "serve": "node src/server/server.js"
   },
   "dependencies": {
     "boardgame.io": "^0.50.2",

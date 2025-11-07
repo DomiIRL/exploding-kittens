@@ -2,8 +2,8 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { Client } from 'boardgame.io/react';
 import { SocketIO } from 'boardgame.io/multiplayer'
-import { ExplodingKittens } from './Game';
-import {ExplodingKittensBoard} from "./Board.jsx";
+import { ExplodingKittens } from '../../../common/Game';
+import {ExplodingKittensBoard} from "../board/Board.jsx";
 
 const SERVER_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
