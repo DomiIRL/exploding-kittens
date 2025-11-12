@@ -1,4 +1,4 @@
-import { SPECIAL_CARDS, GAME_CONSTANTS } from '../data/cards.js';
+import { SPECIAL_CARDS, GAME_CONSTANTS } from '../data/Deck.js';
 
 /**
  * Initial player state setup

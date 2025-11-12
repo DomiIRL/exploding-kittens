@@ -1,24 +1,18 @@
-export const NORMAL_CARDS = [
-  { name: 'Angriff', count: 4 },
-  { name: 'Hops', count: 4 },
-  { name: 'Mischen', count: 4 },
-  { name: 'Wunsch', count: 4 },
-  { name: 'Nö', count: 5 },
-  { name: 'Blick in die Zukunft', count: 5 },
-  { name: 'Baratze', count: 4 },
-  { name: 'Regenbogen-Rülpsende Katze', count: 4 },
-  { name: 'Tacocat', count: 4 },
-  { name: 'Katzelone', count: 4 },
-  { name: 'Behaarte Katze', count: 4 },
-];
+import {ExplodingKittenCard} from "./card/ExplodingKittenCard";
+import {CardType} from "./CardType";
+import {DefuseCard} from "./card/DefuseCard";
+import {CatCard} from "./card/CatCard";
 
-export const SPECIAL_CARDS = {
-  DEFUSE: 'Entschärfung',
-  EXPLODING_KITTEN: 'Exploding Kitten',
-};
-
-export const GAME_CONSTANTS = {
-  STARTING_HAND_SIZE: 7,
-  TOTAL_DEFUSE_CARDS: 6,
-  MAX_DECK_DEFUSE_CARDS: 2,
-};
+export const ATTACK = new CardType('attack');
+export const SKIP = new CardType('skip');
+export const SHUFFLE = new CardType('shuffle');
+export const FAVOR = new CardType('favor');
+export const NOPE = new CardType('nope');
+export const SEE_THE_FUTURE = new CardType('see_the_future');
+export const CAT_BEARD = new CatCard('cat_beard');
+export const CAT_RAINBOW = new CatCard('cat_rainbow');
+export const CAT_TACO = new CatCard('cat_taco');
+export const CAT_MELON = new CatCard('cat_melon');
+export const CAT_HAIRY = new CatCard('cat_hairy');
+export const DEFUSE = new DefuseCard();
+export const EXPLODING_KITTEN = new ExplodingKittenCard();

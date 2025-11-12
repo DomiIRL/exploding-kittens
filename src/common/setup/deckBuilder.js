@@ -1,4 +1,4 @@
-import { NORMAL_CARDS, SPECIAL_CARDS, GAME_CONSTANTS } from '../data/cards.js';
+import { ORIGINAL_DECK, SPECIAL_CARDS, GAME_CONSTANTS } from '../data/Deck.js';
 
 /**
  * Shuffles an array using Fisher-Yates algorithm
@@ -15,7 +15,7 @@ export const shuffleArray = (array) => {
 export const createNormalDeck = () => {
   const deck = [];
 
-  NORMAL_CARDS.forEach((card) => {
+  ORIGINAL_DECK.forEach((card) => {
     for (let i = 0; i < card.count; i++) {
       deck.push(card.name);
     }
