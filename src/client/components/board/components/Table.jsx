@@ -1,6 +1,6 @@
 import React from 'react';
 import back from '/assets/cards/back/1.png';
-import front from '/assets/cards/exploding-kitten/1.png';
+import front from '/assets/cards/exploding_kitten/1.png';
 
 export default function Table() {
   return (
