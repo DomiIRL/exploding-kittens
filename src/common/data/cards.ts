@@ -1,7 +1,7 @@
-import {ExplodingKittenCard} from "./card/ExplodingKittenCard";
-import {CardType} from "./CardType";
-import {DefuseCard} from "./card/DefuseCard";
-import {CatCard} from "./card/CatCard";
+import { ExplodingKittenCard } from "./card/ExplodingKittenCard";
+import { CardType } from "./CardType";
+import { DefuseCard } from "./card/DefuseCard";
+import { CatCard } from "./card/CatCard";
 
 export const ATTACK = new CardType('attack');
 export const SKIP = new CardType('skip');
@@ -16,3 +16,4 @@ export const CAT_MELON = new CatCard('cat_melon');
 export const CAT_HAIRY = new CatCard('cat_hairy');
 export const DEFUSE = new DefuseCard();
 export const EXPLODING_KITTEN = new ExplodingKittenCard();
+
