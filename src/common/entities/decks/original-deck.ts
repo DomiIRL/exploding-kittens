@@ -1,10 +1,20 @@
-import { Deck } from "../Deck";
-import type { Card } from "../Card";
+import { Deck } from '../deck';
+import type { Card } from '../../models';
 
 import {
-  ATTACK, SKIP, SHUFFLE, SEE_THE_FUTURE, NOPE, EXPLODING_KITTEN,
-  CAT_BEARD, CAT_TACO, CAT_RAINBOW, CAT_MELON, FAVOR, DEFUSE
-} from "../cards";
+  ATTACK,
+  SKIP,
+  SHUFFLE,
+  SEE_THE_FUTURE,
+  NOPE,
+  EXPLODING_KITTEN,
+  CAT_BEARD,
+  CAT_TACO,
+  CAT_RAINBOW,
+  CAT_MELON,
+  FAVOR,
+  DEFUSE,
+} from '../../constants/card-types';
 
 const STARTING_HAND_SIZE = 7;
 const TOTAL_DEFUSE_CARDS = 6;
@@ -13,7 +23,7 @@ const EXPLODING_KITTENS = 4;
 
 export class OriginalDeck extends Deck {
   constructor() {
-    super("original");
+    super('original');
   }
 
   startingHandSize(): number {

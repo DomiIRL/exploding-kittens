@@ -1,16 +1,13 @@
 import { Game } from 'boardgame.io';
-import { createPlayerPlugin } from './plugins/playerPlugin';
-import { setupGame } from './setup/gameSetup';
-import { GAME_CONFIG, turnConfig, moves } from './config/gameConfig';
-import {GameState} from "./data/GameState";
-import {PluginAPIs} from "./data/PluginAPIs";
+import { createPlayerPlugin } from './plugins/player-plugin';
+import { setupGame } from './setup/game-setup';
+import { GAME_CONFIG, turnConfig, moves } from './constants/game-config';
+import type { GameState, PluginAPIs } from './models';
 
 export const ExplodingKittens: Game<GameState, PluginAPIs> = {
   name: GAME_CONFIG.name,
 
-  plugins: [
-    createPlayerPlugin(),
-  ],
+  plugins: [createPlayerPlugin()],
 
   setup: setupGame,
 

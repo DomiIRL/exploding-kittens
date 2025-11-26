@@ -1,4 +1,4 @@
-import {Card} from "./Card";
+import type { Card } from '../models';
 
 export class CardType {
   name: string;
@@ -7,12 +7,7 @@ export class CardType {
     this.name = name;
   }
 
-  inDeckByDefault(): boolean {
-    return false;
-  }
-
   createCard(index: number): Card {
     return { name: this.name, index };
   }
 }
-

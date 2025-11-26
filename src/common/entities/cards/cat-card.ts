@@ -1,8 +1,8 @@
-import { CardType } from "../CardType";
+import { CardType } from '../card-type';
 
 export class CatCard extends CardType {
+
   constructor(name: string) {
     super(name);
   }
 }
-

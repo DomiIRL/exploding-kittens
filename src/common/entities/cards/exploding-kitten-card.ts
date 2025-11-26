@@ -1,12 +1,8 @@
-import { CardType } from "../CardType";
+import { CardType } from '../card-type';
 
 export class ExplodingKittenCard extends CardType {
+
   constructor() {
     super('exploding_kitten');
   }
-
-  inDeckByDefault(): boolean {
-    return true;
-  }
 }
-

@@ -14,4 +14,3 @@ export const turnConfig = {
  * Game moves
  */
 export const moves = {};
-

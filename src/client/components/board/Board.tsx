@@ -3,7 +3,7 @@ import Table from './components/Table';
 import PlayerArea from './components/PlayerArea';
 import DebugPanel from './components/DebugPanel';
 import { BoardProps } from 'boardgame.io/react';
-import { GameState } from '../../../common/setup/gameSetup';
+import { GameState } from '../../../common';
 
 interface PlayerPlugin {
   data: {

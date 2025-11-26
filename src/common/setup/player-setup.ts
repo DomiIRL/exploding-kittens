@@ -1,7 +1,5 @@
-import type {Card} from "../data/Card";
-import type {Deck} from "../data/Deck";
-import {Players} from "../data/Players";
-import {Player} from "../data/Player";
+import type { Card, Player, Players } from '../models';
+import type { Deck } from '../entities/deck';
 
 export const createPlayerState = (): Player => ({
   hand: [],
@@ -9,27 +7,20 @@ export const createPlayerState = (): Player => ({
   isAlive: true,
 });
 
-export const filterPlayerView = (
-    players: Players,
-    playerID?: string | null
-): Players => {
+export const filterPlayerView = (players: Players, playerID?: string | null): Players => {
   if (!playerID) return players;
 
   const view: Players = {};
   Object.entries(players).forEach(([id, pdata]) => {
     view[id] =
-        id === playerID
-            ? { ...pdata } // full view for self
-            : { hand: [], hand_count: pdata.hand_count, isAlive: pdata.isAlive }; // limited view
+      id === playerID
+        ? { ...pdata } // full view for self
+        : { hand: [], hand_count: pdata.hand_count, isAlive: pdata.isAlive }; // limited view
   });
   return view;
 };
 
-export function dealHands(
-    pile: Card[],
-    players: Players,
-    deck: Deck
-) {
+export function dealHands(pile: Card[], players: Players, deck: Deck) {
   const handSize = deck.startingHandSize();
 
   const playerList = Object.values(players);
@@ -41,3 +32,4 @@ export function dealHands(
     player.hand_count = player.hand.length;
   }
 }
+
