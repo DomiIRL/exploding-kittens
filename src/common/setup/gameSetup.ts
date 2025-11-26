@@ -1,33 +1,25 @@
-import { createNormalDeck, addSpecialCards } from './deckBuilder';
-import { distributeInitialHands, PlayerStates } from './playerSetup';
-import { Ctx } from 'boardgame.io';
+import {Ctx} from "boardgame.io";
+import type { GameState } from "../data/GameState";
 
-export interface GameState {
-  deck: string[];
-  discardPile: string[];
-}
+import { OriginalDeck } from "../data/decks/OriginalDeck";
+import { dealHands } from "./playerSetup";
+import {Card} from "../data/Card";
+import {PlayerAPI} from "../data/PlayerAPI";
 
-/**
- * Main game setup function
- */
-export const setupGame = (context: any): GameState => {
-  const ctx = context.ctx as Ctx;
-  const playerState = context.player?.state as PlayerStates;
+export const setupGame = ({ ctx, player }: { ctx: Ctx, player: PlayerAPI}): GameState => {
+  const deck = new OriginalDeck();
 
-  // Create and shuffle the initial deck
-  let deck = createNormalDeck();
+  const pile: Card[] = shuffle(deck.buildBaseDeck());
 
-  // Distribute cards to players
-  if (playerState) {
-    deck = distributeInitialHands(deck, ctx.playOrder, playerState);
-  }
+  dealHands(pile, player.state, deck);
 
-  // Add special cards (defuse and exploding kittens) and shuffle
-  deck = addSpecialCards(deck, ctx.playOrder.length);
+  deck.addPostDealCards(pile, Object.keys(ctx.playOrder).length);
 
   return {
-    deck,
-    discardPile: [],
+    drawPile: shuffle(pile),
+    discardPile: []
   };
 };
 
+const shuffle = <T>(arr: T[]): T[] =>
+    [...arr].sort(() => Math.random() - 0.5);

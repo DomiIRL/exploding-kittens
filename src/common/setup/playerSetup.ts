@@ -1,77 +1,43 @@
-import { SPECIAL_CARDS, GAME_CONSTANTS } from '../data/Deck';
+import type {Card} from "../data/Card";
+import type {Deck} from "../data/Deck";
+import {Players} from "../data/Players";
+import {Player} from "../data/Player";
 
-export interface PlayerState {
-  hand: string[];
-  hand_count: number;
-  isAlive: boolean;
-}
-
-export interface PlayerStates {
-  [playerID: string]: PlayerState;
-}
-
-/**
- * Initial player state setup
- */
-export const createPlayerState = (): PlayerState => ({
+export const createPlayerState = (): Player => ({
   hand: [],
   hand_count: 0,
   isAlive: true,
 });
 
-/**
- * Player view filter - hides other players' hands
- */
-export const filterPlayerView = (players: PlayerStates, playerID?: string | null): PlayerStates => {
-  if (!playerID) {
-    return players;
-  }
+export const filterPlayerView = (
+    players: Players,
+    playerID?: string | null
+): Players => {
+  if (!playerID) return players;
 
-  const view: PlayerStates = {};
-
+  const view: Players = {};
   Object.entries(players).forEach(([id, pdata]) => {
-    if (id === playerID) {
-      // Current player sees their full state
-      view[id] = { ...pdata };
-    } else {
-      // Other players only see hand count and alive status
-      view[id] = {
-        hand: [],
-        hand_count: pdata.hand_count,
-        isAlive: pdata.isAlive,
-      };
-    }
+    view[id] =
+        id === playerID
+            ? { ...pdata } // full view for self
+            : { hand: [], hand_count: pdata.hand_count, isAlive: pdata.isAlive }; // limited view
   });
-
   return view;
 };
 
-/**
- * Distributes initial cards to all players
- */
-export const distributeInitialHands = (
-  deck: string[],
-  playOrder: string[],
-  playerState: PlayerStates
-): string[] => {
-  const modifiedDeck = [...deck];
+export function dealHands(
+    pile: Card[],
+    players: Players,
+    deck: Deck
+) {
+  const handSize = deck.startingHandSize();
 
-  // Give each player their starting hand
-  playOrder.forEach((playerID) => {
-    const hand = modifiedDeck.splice(0, GAME_CONSTANTS.STARTING_HAND_SIZE);
-    playerState[playerID] = {
-      hand,
-      hand_count: hand.length,
-      isAlive: true,
-    };
-  });
-
-  // Give each player one defuse card
-  playOrder.forEach((playerID) => {
-    playerState[playerID].hand.push(SPECIAL_CARDS.DEFUSE);
-    playerState[playerID].hand_count += 1;
-  });
-
-  return modifiedDeck;
-};
-
+  const playerList = Object.values(players);
+  for (let player_index = 0; player_index < playerList.length; player_index++) {
+    const player = playerList[player_index];
+    player.hand = pile.splice(0, handSize);
+    const forced = deck.startingHandForcedCards(player_index);
+    player.hand.push(...forced);
+    player.hand_count = player.hand.length;
+  }
+}

@@ -1,7 +1,4 @@
-export interface Card {
-  name: string;
-  index: number;
-}
+import {Card} from "./Card";
 
 export class CardType {
   name: string;

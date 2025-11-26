@@ -9,9 +9,8 @@ if (process.env.SERVER_ORIGINS) {
 }
 
 const server = Server({
-  games: [ExplodingKittens],
+  games: [ExplodingKittens as any],
   origins,
 });
 
 server.run(port);
-

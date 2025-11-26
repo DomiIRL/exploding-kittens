@@ -4,13 +4,6 @@ A personal version of the Exploding Kittens boardgame as a web app built with **
 
 This project is for educational purposes only. If requested I will gladly take it offline.
 
-## 🚀 Tech Stack
-
-- **Frontend**: React 19 + Vite + TypeScript
-- **Backend**: Node.js + TypeScript + boardgame.io
-- **Game Engine**: boardgame.io
-- **Styling**: CSS
-
 ## 📦 Installation
 
 ```bash
@@ -57,10 +50,6 @@ npm run build:server
 # Run production server
 node dist/server/server/server.js
 ```
-
-## 📝 TypeScript Migration
-
-This project has been fully migrated to TypeScript! See [TYPESCRIPT_MIGRATION.md](./TYPESCRIPT_MIGRATION.md) for details.
 
 ## 🎮 Current State
 
