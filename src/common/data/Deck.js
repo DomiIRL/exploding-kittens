@@ -4,14 +4,17 @@ export class Deck {
     this.name = name;
   }
 
-  create_pre_deck(deck) {
-    throw new Error("create_pre_deck() must be implemented by subclass");
+  create_initial_deck(deck) {
+    throw new Error("create_initial_deck() must be implemented by subclass");
+  }
+
+  get_initial_hand_size() {
+    throw new Error("get_initial_hand_size() must be implemented by subclass");
   }
 
   add_post_cards(deck, playerCount) {
     throw new Error("add_post_cards() must be implemented by subclass");
   }
-
 }
 
 export const ORIGINAL_DECK = [

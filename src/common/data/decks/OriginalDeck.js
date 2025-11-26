@@ -1,6 +1,5 @@
 import {Deck} from "../Deck";
 import {ATTACK, SKIP, NOPE, CAT_HAIRY, CAT_MELON, CAT_TACO, CAT_BEARD, CAT_RAINBOW, FAVOR, DEFUSE, SHUFFLE, EXPLODING_KITTEN, SEE_THE_FUTURE} from "../cards";
-import {Card} from "../Card";
 
 const STARTING_HAND_SIZE = 7;
 const TOTAL_DEFUSE_CARDS = 6;
@@ -12,23 +11,25 @@ export class OriginalDeck extends Deck {
     super(name);
   }
 
-  create_pre_deck(deck) {
-
+  create_initial_deck(deck) {
     for (let i = 0; i < 4; i++) {
-      deck.push(new Card(ATTACK, i));
-      deck.push(new Card(SKIP, i));
-      deck.push(new Card(SHUFFLE, i));
-      deck.push(new Card(FAVOR, 3));
-      deck.push(new Card(CAT_BEARD, 3));
-      deck.push(new Card(CAT_RAINBOW, 3));
-      deck.push(new Card(CAT_TACO, 3));
-      deck.push(new Card(CAT_MELON, 3));
+      deck.push(ATTACK.createCard(i));
+      deck.push(SKIP.createCard(i));
+      deck.push(SHUFFLE.createCard(i));
+      deck.push(FAVOR.createCard(3));
+      deck.push(CAT_BEARD.createCard(3));
+      deck.push(CAT_RAINBOW.createCard(3));
+      deck.push(CAT_TACO.createCard(3));
+      deck.push(CAT_MELON.createCard(3));
     }
     for (let i = 0; i < 5; i++) {
-      deck.push(new Card(SEE_THE_FUTURE, 3));
-      deck.push(new Card(NOPE, 3));
+      deck.push(SEE_THE_FUTURE.createCard(3));
+      deck.push(NOPE.createCard(3));
     }
+  }
 
+  get_initial_hand_size() {
+    return STARTING_HAND_SIZE;
   }
 
   add_post_cards(deck, playerCount) {
@@ -37,7 +38,7 @@ export class OriginalDeck extends Deck {
         MAX_DECK_DEFUSE_CARDS
     );
     for (let i = 0; i < remainingDefuse; i++) {
-      deck.push(new Card());
+      deck.push(DEFUSE.createCard(i));
     }
 
   }

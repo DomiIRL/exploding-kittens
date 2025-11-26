@@ -8,4 +8,8 @@ export class CardType {
     return false;
   }
 
+  createCard(index) {
+    return { name, index };
+  }
+
 }
