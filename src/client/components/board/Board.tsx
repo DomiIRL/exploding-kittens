@@ -1,4 +1,4 @@
-import './Board.css';
+import './index.css';
 import Table from './components/Table';
 import PlayerArea from './components/PlayerArea';
 import DebugPanel from './components/DebugPanel';
