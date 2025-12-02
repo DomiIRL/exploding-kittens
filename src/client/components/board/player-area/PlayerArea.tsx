@@ -37,7 +37,7 @@ export default function PlayerArea({ playerID, playerState, cardPosition, infoPo
       </div>
 
       <div
-        className={`player-position ${playerState.isSelf ? 'hand-interactable' : ''}`}
+        className={`player-position ${playerState.isSelf ? 'hand-interactable self' : ''}`}
         style={{
           position: 'absolute',
           top: infoPosition.top,
