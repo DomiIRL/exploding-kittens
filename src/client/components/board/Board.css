@@ -110,7 +110,6 @@
   width: calc(var(--scale) * 8);
   aspect-ratio: 6 / 8.4;
   height: auto;
-  background: linear-gradient(135deg, #fff 0%, #f8f8f8 100%);
   color: #2d2d2d;
   display: flex;
   align-items: center;
@@ -122,9 +121,8 @@
   box-shadow:
       0 2px 6px rgba(0, 0, 0, 0.4);
 
-  background-repeat: no-repeat;
   background-size: cover;
-  background-position: center;
+  background: linear-gradient(135deg, #fff 0%, #f8f8f8 100%) no-repeat center;
 }
 
 .pile {
