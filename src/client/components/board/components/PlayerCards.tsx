@@ -6,10 +6,10 @@ interface PlayerCardsProps {
 }
 
 export default function PlayerCards({ count, isCurrentPlayer }: PlayerCardsProps) {
-  const fanSpread = Math.min(count * 4, 40);
+  const fanSpread = isCurrentPlayer ? Math.min(count * 6, 60) : Math.min(count * 4, 40);
   const angleStep = count > 1 ? fanSpread / (count - 1) : 0;
   const baseOffset = -fanSpread / 2;
-  const spreadDistance = 15;
+  const spreadDistance = isCurrentPlayer ? 15 : 5;
 
   return (
     <div className="player-cards">

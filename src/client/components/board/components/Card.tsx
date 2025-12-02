@@ -18,7 +18,7 @@ export default function Card({ index, count, angle, offsetX, offsetY, isCurrentP
       style={{
         backgroundImage: `url(${isCurrentPlayer ? front : back})`,
         position: 'absolute',
-        '--base-transform': `translate(${offsetX}px, ${offsetY}px) rotate(${angle}deg)`,
+        '--base-transform': `translate(${offsetX}%, ${offsetY}%) rotate(${angle}deg)`,
         '--card-index': index,
         '--total-cards': count,
         transformOrigin: 'center 200%',
