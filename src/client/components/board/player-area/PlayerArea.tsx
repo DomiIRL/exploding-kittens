@@ -1,4 +1,6 @@
-import PlayerCards from './PlayerCards';
+import './PlayerArea.css';
+import PlayerCards from '../player-cards/PlayerCards';
+import PlayerState from "../../../model/PlayerState";
 
 interface Position {
   top: string;
@@ -11,32 +13,31 @@ interface CardPosition extends Position {
 
 interface PlayerAreaProps {
   playerID: string;
-  handCount: number;
-  isCurrent: boolean;
+  playerState: PlayerState;
   cardPosition: CardPosition;
   infoPosition: Position;
 }
 
-export default function PlayerArea({ playerID, handCount, isCurrent, cardPosition, infoPosition }: PlayerAreaProps) {
+export default function PlayerArea({ playerID, playerState, cardPosition, infoPosition }: PlayerAreaProps) {
   const cardRotation = cardPosition.angle - 90;
 
   return (
     <>
       <div
-        className={`player-cards-container ${isCurrent ? 'current-player' : ''}`}
+        className={`player-cards-container ${playerState.isSelf ? 'current-player' : ''}`}
         style={{
           position: 'absolute',
           top: cardPosition.top,
           left: cardPosition.left,
           transform: `translate(-50%, -50%) rotate(${cardRotation}deg)`,
-          zIndex: isCurrent ? 2 : 1,
+          zIndex: playerState.isSelf ? 2 : 1,
         }}
       >
-        <PlayerCards count={handCount} isCurrentPlayer={isCurrent} />
+        <PlayerCards playerState={playerState} />
       </div>
 
       <div
-        className={`player-position ${isCurrent ? 'current-player' : ''}`}
+        className={`player-position ${playerState.isSelf ? 'current-player' : ''}`}
         style={{
           position: 'absolute',
           top: infoPosition.top,
@@ -47,11 +48,11 @@ export default function PlayerArea({ playerID, handCount, isCurrent, cardPositio
       >
         <div className="player-area flex flex-col items-center">
           <div className="player-hand border-2 border-black bg-white p-2 rounded">
-            Hand Cards: {handCount}
+            Hand Cards: {playerState.handCount}
           </div>
           <div className="player-id mt-2 font-bold">
             Player {parseInt(playerID) + 1}
-            {isCurrent && ' (You)'}
+            {playerState.isSelf && ' (You)'}
           </div>
         </div>
       </div>

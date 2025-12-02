@@ -8,10 +8,7 @@ import {
   SEE_THE_FUTURE,
   NOPE,
   EXPLODING_KITTEN,
-  CAT_BEARD,
-  CAT_TACO,
-  CAT_RAINBOW,
-  CAT_MELON,
+  CAT_CARD,
   FAVOR,
   DEFUSE,
 } from '../../constants/card-types';
@@ -42,10 +39,9 @@ export class OriginalDeck extends Deck {
       pile.push(SKIP.createCard(i));
       pile.push(SHUFFLE.createCard(i));
       pile.push(FAVOR.createCard(i));
-      pile.push(CAT_BEARD.createCard(i));
-      pile.push(CAT_RAINBOW.createCard(i));
-      pile.push(CAT_TACO.createCard(i));
-      pile.push(CAT_MELON.createCard(i));
+      for (let j = 0; j < 5; j++) {
+        pile.push(CAT_CARD.createCard(j));
+      }
     }
 
     for (let i = 0; i < 5; i++) {

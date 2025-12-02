@@ -20,11 +20,7 @@ export {
   FAVOR,
   NOPE,
   SEE_THE_FUTURE,
-  CAT_BEARD,
-  CAT_RAINBOW,
-  CAT_TACO,
-  CAT_MELON,
-  CAT_HAIRY,
+  CAT_CARD,
   DEFUSE,
   EXPLODING_KITTEN,
 } from './constants/card-types';

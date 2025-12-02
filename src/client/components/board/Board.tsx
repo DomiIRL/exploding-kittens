@@ -1,14 +1,16 @@
-import './index.css';
-import Table from './components/Table';
-import PlayerArea from './components/PlayerArea';
-import DebugPanel from './components/DebugPanel';
+import './Board.css';
+import Table from './table/Table';
+import PlayerArea from './player-area/PlayerArea';
+import DebugPanel from './debug-panel/DebugPanel';
 import { BoardProps } from 'boardgame.io/react';
-import { GameState } from '../../../common';
+import { Card, GameState } from '../../../common';
+import PlayerState from '../../model/PlayerState';
 
 interface PlayerPlugin {
   data: {
     players: {
       [key: string]: {
+        hand: Card[];
         hand_count: number;
         isAlive: boolean;
       };
@@ -76,15 +78,19 @@ export default function ExplodingKittensBoard({
         <Table />
         {players.map((player, index) => {
           const { cardPosition, infoPosition } = getPositions(index, currentPlayerNumber);
-          const isCurrent = parseInt(player) === currentPlayerNumber;
-          const handCount = allPlayers[player].hand_count;
+          const isSelf = parseInt(player) === currentPlayerNumber;
+          const playerInfo = allPlayers[player];
+          const isAlive = playerInfo.isAlive;
+          const handCount = playerInfo.hand_count;
+          const hand = playerInfo.hand
+
+          const playerState = new PlayerState(isSelf, isAlive, handCount, hand)
 
           return (
             <PlayerArea
               key={player}
               playerID={player}
-              handCount={handCount}
-              isCurrent={isCurrent}
+              playerState={playerState}
               cardPosition={cardPosition}
               infoPosition={infoPosition}
             />

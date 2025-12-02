@@ -1,3 +1,4 @@
+import './DebugPanel.css';
 
 interface DebugPanelProps {
   data: unknown;
