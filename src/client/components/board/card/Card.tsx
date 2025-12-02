@@ -1,5 +1,5 @@
 import './Card.css';
-import back from '/assets/cards/back/0.png';
+import back from '/assets/cards/back/0.jpg';
 import { CSSProperties } from 'react';
 import { Card as CardType } from "../../../../common";
 

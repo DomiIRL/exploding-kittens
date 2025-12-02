@@ -1,4 +1,4 @@
-import back from '/assets/cards/back/0.png';
+import back from '/assets/cards/back/0.jpg';
 import './Table.css';
 
 export default function Table() {
