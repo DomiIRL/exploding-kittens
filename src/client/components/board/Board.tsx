@@ -47,7 +47,8 @@ export default function ExplodingKittensBoard({
 }: BoardPropsWithPlugins) {
   const players = Object.keys(ctx.playOrder);
   const allPlayers = plugins.player.data.players;
-  const currentPlayerNumber = parseInt(playerID || '0');
+  console.log(playerID)
+  const currentPlayerNumber = playerID == null ? null : parseInt(playerID || '0');
 
   const getPositions = (index: number, playerID: number): Positions => {
     const numPlayers = ctx.numPlayers;
@@ -77,8 +78,8 @@ export default function ExplodingKittensBoard({
       <div className="board-container">
         <Table />
         {players.map((player, index) => {
-          const { cardPosition, infoPosition } = getPositions(index, currentPlayerNumber);
-          const isSelf = parseInt(player) === currentPlayerNumber;
+          const { cardPosition, infoPosition } = getPositions(index, currentPlayerNumber == null ? 0 : currentPlayerNumber);
+          const isSelf = currentPlayerNumber != null && parseInt(player) === currentPlayerNumber;
           const playerInfo = allPlayers[player];
           const isAlive = playerInfo.isAlive;
           const handCount = playerInfo.hand_count;
