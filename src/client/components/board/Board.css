@@ -1,7 +1,3 @@
-.board-container {
-  --scale: min(1vw, 1vh);
-  --table-size: min(90vw, 90vh);
-}
 
 .board-container {
   position: relative;

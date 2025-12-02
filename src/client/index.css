@@ -1,4 +1,7 @@
 body {
+  --scale: min(1vw, 1vh);
+  --table-size: min(90vw, 90vh);
+
   margin: 0;
   font-family: "bebas-neue-pro-semiexpanded", "Comic Sans MS", "Comic Neue", cursive, sans-serif;
 }
