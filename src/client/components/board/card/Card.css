@@ -1,7 +1,7 @@
 .card-base, .card, .pile, .card-preview {
   aspect-ratio: 6 / 8.4;
-  background: linear-gradient(135deg, #fff 0%, #f8f8f8 100%) no-repeat center;
-  background-size: cover;
+  background: linear-gradient(135deg, #222 0%, #111 100%) no-repeat center;
+  background-size: 102%;
 }
 
 .card, .pile {
@@ -105,10 +105,6 @@
 
   transform: translateX(calc(var(--scale) * 30));
   animation: cardPreviewAppear 0.15s cubic-bezier(0.34, 1.56, 0.64, 1);
-
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
 }
 
 @keyframes cardPreviewAppear {

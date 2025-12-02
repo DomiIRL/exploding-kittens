@@ -8,7 +8,6 @@ export default function Table() {
         <div className="card-piles">
           <div
             className="pile discard-pile empty"
-            style={{ background: `#222` }}
           />
           <div
             className="pile draw-pile"
