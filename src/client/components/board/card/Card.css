@@ -63,7 +63,7 @@
   top: 0;
   left: 0;
   right: 0;
-  bottom: calc(var(--scale) * -3);
+  bottom: calc(var(--scale) * -4);
   pointer-events: auto;
 }
 
