@@ -37,11 +37,11 @@
   will-change: transform;
 }
 
-.current-player .card {
+.hand-interactable .card {
   width: calc(var(--scale) * 9);
 }
 
-.current-player .card:hover,
+.hand-interactable .card:hover,
 .pile:not(.empty):hover {
   cursor: pointer;
   filter: brightness(1.1);
@@ -51,12 +51,12 @@
     0 0 20px rgba(253, 185, 39, 0.4);
 }
 
-.current-player .card:hover {
+.hand-interactable .card:hover {
   z-index: 1000;
   transform: var(--base-transform) translateY(calc(var(--scale) * -2)) scale(1.2) rotate(0deg);
 }
 
-.current-player .card:hover::after {
+.hand-interactable .card:hover::after {
   content: '';
   position: absolute;
   z-index: 1000;
@@ -67,15 +67,15 @@
   pointer-events: auto;
 }
 
-.current-player .player-cards:has(.card:hover) .card {
+.hand-interactable .player-cards:has(.card:hover) .card {
   transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-.current-player .card:hover ~ .card {
+.hand-interactable .card:hover ~ .card {
   transform: var(--base-transform) translateX(calc(var(--scale) * 2));
 }
 
-.current-player .card:has(~ .card:hover) {
+.hand-interactable .card:has(~ .card:hover) {
   transform: var(--base-transform) translateX(calc(var(--scale) * -2));
 }
 

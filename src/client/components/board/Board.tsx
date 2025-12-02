@@ -47,8 +47,8 @@ export default function ExplodingKittensBoard({
 }: BoardPropsWithPlugins) {
   const players = Object.keys(ctx.playOrder);
   const allPlayers = plugins.player.data.players;
-  console.log(playerID)
-  const currentPlayerNumber = playerID == null ? null : parseInt(playerID || '0');
+  const isSpectator = playerID == null;
+  const selfPlayerId = isSpectator ? null : parseInt(playerID || '0');
 
   const getPositions = (index: number, playerID: number): Positions => {
     const numPlayers = ctx.numPlayers;
@@ -57,14 +57,14 @@ export default function ExplodingKittensBoard({
     const angle = 180 + (relativePosition * angleStep);
     const radian = (angle * Math.PI) / 180;
 
-    const cardRadius = 'min(30vw, 30vh)';
+    const cardRadius = 'min(35vw, 35vh)';
     const cardPosition: CardPosition = {
       top: `calc(50% - ${cardRadius} * ${Math.cos(radian)})`,
       left: `calc(50% + ${cardRadius} * ${Math.sin(radian)})`,
       angle: angle - 90,
     };
 
-    const tableRadius = 'min(43vw, 43vh)';
+    const tableRadius = 'min(45vw, 45vh)';
     const infoPosition: Position = {
       top: `calc(50% - ${tableRadius} * ${Math.cos(radian)})`,
       left: `calc(50% + ${tableRadius} * ${Math.sin(radian)})`,
@@ -75,17 +75,17 @@ export default function ExplodingKittensBoard({
 
   return (
     <div className="w-full h-full flex flex-col items-center justify-center bg-blue-200">
-      <div className="board-container">
+      <div className={`board-container ${isSpectator ? 'hand-interactable' : ''}`}>
         <Table />
         {players.map((player, index) => {
-          const { cardPosition, infoPosition } = getPositions(index, currentPlayerNumber == null ? 0 : currentPlayerNumber);
-          const isSelf = currentPlayerNumber != null && parseInt(player) === currentPlayerNumber;
+          const { cardPosition, infoPosition } = getPositions(index, selfPlayerId == null ? 0 : selfPlayerId);
+          const isSelf = selfPlayerId != null && parseInt(player) === selfPlayerId;
           const playerInfo = allPlayers[player];
           const isAlive = playerInfo.isAlive;
           const handCount = playerInfo.hand_count;
           const hand = playerInfo.hand
 
-          const playerState = new PlayerState(isSelf, isAlive, handCount, hand)
+          const playerState = new PlayerState(isSpectator, isSelf, isAlive, handCount, hand)
 
           return (
             <PlayerArea

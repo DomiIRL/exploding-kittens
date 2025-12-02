@@ -1,16 +1,16 @@
 import Card from '../card/Card';
-import PlayerState from "../../../model/PlayerState.ts";
+import PlayerRenderState from "../../../model/PlayerState.ts";
 
 interface PlayerCardsProps {
-  playerState: PlayerState;
+  playerState: PlayerRenderState;
 }
 
 export default function PlayerCards({ playerState }: PlayerCardsProps) {
-  const { handCount, isSelf, hand } = playerState;
-  const fanSpread = isSelf ? Math.min(handCount * 6, 60) : Math.min(handCount * 4, 40);
+  const { isSelfSpectator, isSelf, handCount, hand } = playerState;
+  const fanSpread = isSelfSpectator || isSelf ? Math.min(handCount * 6, 60) : Math.min(handCount * 4, 40);
   const angleStep = handCount > 1 ? fanSpread / (handCount - 1) : 0;
   const baseOffset = -fanSpread / 2;
-  const spreadDistance = isSelf ? 15 : 5;
+  const spreadDistance = isSelf ? 15 : isSelfSpectator ? 10 : 5;
 
   return (
       <div className="player-cards">
