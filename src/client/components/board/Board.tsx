@@ -1,6 +1,6 @@
 import './Board.css';
 import Table from './table/Table';
-import PlayerArea from './player-area/PlayerArea';
+import Player from './player-area/Player.tsx';
 import DebugPanel from './debug-panel/DebugPanel';
 import { BoardProps } from 'boardgame.io/react';
 import { Card, GameState } from '../../../common';
@@ -46,6 +46,7 @@ export default function ExplodingKittensBoard({
   playerID 
 }: BoardPropsWithPlugins) {
   const players = Object.keys(ctx.playOrder);
+  const currentPlayer = parseInt(ctx.currentPlayer);
   const allPlayers = plugins.player.data.players;
   const isSpectator = playerID == null;
   const selfPlayerId = isSpectator ? null : parseInt(playerID || '0');
@@ -79,16 +80,19 @@ export default function ExplodingKittensBoard({
         <Table />
         {players.map((player, index) => {
           const { cardPosition, infoPosition } = getPositions(index, selfPlayerId == null ? 0 : selfPlayerId);
-          const isSelf = selfPlayerId != null && parseInt(player) === selfPlayerId;
+          const playerNumber = parseInt(player);
+          const isSelf = selfPlayerId != null && playerNumber === selfPlayerId;
           const playerInfo = allPlayers[player];
           const isAlive = playerInfo.isAlive;
+          const isTurn = playerNumber == currentPlayer;
+          console.log(isTurn)
           const handCount = playerInfo.hand_count;
           const hand = playerInfo.hand
 
-          const playerState = new PlayerState(isSpectator, isSelf, isAlive, handCount, hand)
+          const playerState = new PlayerState(isSpectator, isSelf, isAlive, isTurn, handCount, hand)
 
           return (
-            <PlayerArea
+            <Player
               key={player}
               playerID={player}
               playerState={playerState}

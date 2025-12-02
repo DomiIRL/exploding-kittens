@@ -1,4 +1,4 @@
-import './PlayerArea.css';
+import './Player.css';
 import PlayerCards from '../player-cards/PlayerCards';
 import PlayerState from "../../../model/PlayerState";
 
@@ -18,13 +18,15 @@ interface PlayerAreaProps {
   infoPosition: Position;
 }
 
-export default function PlayerArea({ playerID, playerState, cardPosition, infoPosition }: PlayerAreaProps) {
+export default function Player({ playerID, playerState, cardPosition, infoPosition }: PlayerAreaProps) {
   const cardRotation = cardPosition.angle - 90;
+
+  const extraClasses = `${playerState.isSelf ? 'hand-interactable self' : ''} ${playerState.isTurn ? 'turn' : ''}`
 
   return (
     <>
       <div
-        className={`player-cards-container ${playerState.isSelf ? 'hand-interactable self' : ''}`}
+        className={`player-cards-container ${extraClasses}`}
         style={{
           position: 'absolute',
           top: cardPosition.top,
@@ -37,7 +39,7 @@ export default function PlayerArea({ playerID, playerState, cardPosition, infoPo
       </div>
 
       <div
-        className={`player-position ${playerState.isSelf ? 'hand-interactable self' : ''}`}
+        className={`player-position ${extraClasses}`}
         style={{
           position: 'absolute',
           top: infoPosition.top,
@@ -46,13 +48,13 @@ export default function PlayerArea({ playerID, playerState, cardPosition, infoPo
           zIndex: 3,
         }}
       >
-        <div className="player-area flex flex-col items-center">
-          <div className="player-hand border-2 border-black bg-white p-2 rounded">
-            Hand Cards: {playerState.handCount}
-          </div>
+        <div className="player-info flex flex-col items-center">
           <div className="player-id mt-2 font-bold">
-            Player {parseInt(playerID) + 1}
+            Player Nr. {parseInt(playerID) + 1}
             {playerState.isSelf && ' (You)'}
+          </div>
+          <div className="player-hand border-2 border-black bg-white p-2 rounded">
+            Cards: {playerState.handCount}
           </div>
         </div>
       </div>
