@@ -1,8 +1,9 @@
 import { Component } from 'react';
 import { Client } from 'boardgame.io/react';
 import { SocketIO } from 'boardgame.io/multiplayer'
-import { ExplodingKittens } from '../../../common/game';
+import { ExplodingKittens } from '../../../common';
 import ExplodingKittensBoard from "../board/Board";
+import { preloadCardImages } from '../../utils/preloadImages';
 
 const SERVER_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
@@ -19,6 +20,14 @@ interface AppState {
 
 export default class App extends Component<{}, AppState> {
   state: AppState = { playerID: null };
+
+  componentDidMount() {
+    preloadCardImages().then(() => {
+      console.log('All card images preloaded successfully');
+    }).catch((err) => {
+      console.error('Error preloading card images:', err);
+    });
+  }
 
   render() {
     if (this.state.playerID === null) {
