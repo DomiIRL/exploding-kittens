@@ -11,17 +11,25 @@ interface CardProps {
   angle: number;
   offsetX: number;
   offsetY: number;
+  moves?: any;
+  isClickable?: boolean;
 }
 
-export default function Card({ card, index, count, angle, offsetX, offsetY,  }: CardProps) {
+export default function Card({ card, index, count, angle, offsetX, offsetY, moves, isClickable }: CardProps) {
   const [isHovered, setIsHovered] = useState(false);
 
   const cardImage = card ? `/assets/cards/${card.name}/${card.index}.png` : back;
 
+  const handleClick = () => {
+    if (isClickable && moves) {
+      moves.playCard(index);
+    }
+  };
+
   return (
     <>
       <div
-        className="card"
+        className={`card ${isClickable ? 'clickable' : ''}`}
         style={{
           backgroundImage: `url(${cardImage})`,
           position: 'absolute',
@@ -31,6 +39,7 @@ export default function Card({ card, index, count, angle, offsetX, offsetY,  }: 
         } as CSSProperties}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
+        onClick={handleClick}
       />
       {isHovered && card && createPortal(
         <div className="card-preview-overlay">

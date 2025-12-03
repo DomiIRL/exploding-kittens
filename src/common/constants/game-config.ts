@@ -1,4 +1,5 @@
 import { drawCard } from "../moves/draw-move";
+import {playCard} from "../moves/play-card-move";
 
 export const GAME_CONFIG = {
   name: 'ExplodingKittens',
@@ -16,5 +17,6 @@ export const turnConfig = {
  * Game moves
  */
 export const moves = {
-  drawCard: drawCard
+  drawCard: drawCard,
+  playCard: playCard,
 };

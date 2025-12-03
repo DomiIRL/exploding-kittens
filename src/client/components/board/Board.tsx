@@ -77,7 +77,7 @@ export default function ExplodingKittensBoard({
   return (
     <div className="w-full h-full flex flex-col items-center justify-center bg-blue-200">
       <div className={`board-container ${isSpectator ? 'hand-interactable' : ''}`}>
-        <Table moves={moves} />
+        <Table G={G} moves={moves} />
         {players.map((player, index) => {
           const { cardPosition, infoPosition } = getPositions(index, selfPlayerId == null ? 0 : selfPlayerId);
           const playerNumber = parseInt(player);
@@ -97,6 +97,7 @@ export default function ExplodingKittensBoard({
               playerState={playerState}
               cardPosition={cardPosition}
               infoPosition={infoPosition}
+              moves={moves}
             />
           );
         })}

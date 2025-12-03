@@ -3,14 +3,17 @@ import PlayerRenderState from "../../../model/PlayerState.ts";
 
 interface PlayerCardsProps {
   playerState: PlayerRenderState;
+  moves?: any;
+  isCurrentTurn?: boolean;
 }
 
-export default function PlayerCards({ playerState }: PlayerCardsProps) {
+export default function PlayerCards({ playerState, moves, isCurrentTurn }: PlayerCardsProps) {
   const { isSelfSpectator, isSelf, handCount, hand } = playerState;
   const fanSpread = isSelfSpectator || isSelf ? Math.min(handCount * 6, 60) : Math.min(handCount * 4, 40);
   const angleStep = handCount > 1 ? fanSpread / (handCount - 1) : 0;
-  const baseOffset = -fanSpread / 2;
+  const baseOffset = handCount > 1 ? -fanSpread / 2 : 0;
   const spreadDistance = isSelf ? 15 : isSelfSpectator ? 10 : 5;
+  const isClickable = isSelf && isCurrentTurn;
 
   return (
       <div className="player-cards">
@@ -30,6 +33,8 @@ export default function PlayerCards({ playerState }: PlayerCardsProps) {
                   angle={angle}
                   offsetX={offsetX}
                   offsetY={offsetY}
+                  moves={moves}
+                  isClickable={isClickable}
               />
           );
         })}
