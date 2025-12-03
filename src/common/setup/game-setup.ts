@@ -13,6 +13,7 @@ export const setupGame = ({ ctx, player }: { ctx: Ctx; player: PlayerAPI }): Gam
   deck.addPostDealCards(pile, Object.keys(ctx.playOrder).length);
 
   return {
+    winner: null,
     drawPile: shuffle(pile),
     discardPile: [],
   };

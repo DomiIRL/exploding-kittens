@@ -2,6 +2,7 @@ import './Board.css';
 import Table from './table/Table';
 import Player from './player-area/Player.tsx';
 import DebugPanel from './debug-panel/DebugPanel';
+import WinnerOverlay from './winner-overlay/WinnerOverlay';
 import { BoardProps } from 'boardgame.io/react';
 import { Card, GameState } from '../../../common';
 import PlayerState from '../../model/PlayerState';
@@ -50,6 +51,8 @@ export default function ExplodingKittensBoard({
   const allPlayers = plugins.player.data.players;
   const isSpectator = playerID == null;
   const selfPlayerId = isSpectator ? null : parseInt(playerID || '0');
+  const isGameOver = ctx.phase === 'gameover';
+  const winner = G.winner;
 
   const getPositions = (index: number, playerID: number): Positions => {
     const numPlayers = ctx.numPlayers;
@@ -102,6 +105,9 @@ export default function ExplodingKittensBoard({
           );
         })}
       </div>
+      {isGameOver && winner && (
+        <WinnerOverlay winnerID={winner} playerID={playerID} />
+      )}
       <DebugPanel data={{ ctx, G, moves, plugins, playerID }} />
     </div>
   );
