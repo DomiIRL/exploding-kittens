@@ -1,5 +1,6 @@
 import { drawCard } from "../moves/draw-move";
-import {playCard} from "../moves/play-card-move";
+import { playCard } from "../moves/play-card-move";
+import { skipDeadPlayers } from "../utils/turn-order";
 
 export const GAME_CONFIG = {
   name: 'ExplodingKittens',
@@ -8,9 +9,11 @@ export const GAME_CONFIG = {
 
 /**
  * Turn configuration
+ * Uses custom turn order to skip dead players
  */
 export const turnConfig = {
   minMoves: GAME_CONFIG.minMoves,
+  order: skipDeadPlayers,
 };
 
 /**

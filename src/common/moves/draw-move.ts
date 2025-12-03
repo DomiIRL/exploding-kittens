@@ -1,4 +1,5 @@
-import type {GameState} from "../models";
+import type {Card, GameState, Player} from "../models";
+import {EXPLODING_KITTEN} from "../constants/card-types";
 
 export const drawCard = ({ G, player, events }: { G: GameState; player: any; events: any }) => {
     const cardToDraw = G.drawPile.pop();
@@ -6,15 +7,31 @@ export const drawCard = ({ G, player, events }: { G: GameState; player: any; eve
         throw new Error('No card to draw');
     }
 
-    const playerData = player.get();
+    const playerData: Player = player.get();
+    let alive: boolean = playerData.isAlive;
 
-    const newHand = playerData.hand.map((card: any) => ({ ...card }));
-    newHand.push({ ...cardToDraw });
+    if (!alive) {
+        throw new Error('Dead player cannot draw cards');
+    }
+    let newHand: Card[]
+    const discardPile = G.discardPile;
+
+    // Handle drawing an exploding kitten
+    if (cardToDraw.name === EXPLODING_KITTEN.name) {
+        alive = false;
+        newHand = []
+        // push all hand cards to discard pile
+        discardPile.push(...newHand, cardToDraw);
+    } else {
+        newHand = playerData.hand.map((card: any) => ({ ...card }));
+        newHand.push({ ...cardToDraw });
+    }
 
     player.set({
         ...playerData,
         hand: newHand,
-        hand_count: newHand.length
+        hand_count: newHand.length,
+        isAlive: alive,
     });
 
     events.endTurn();
