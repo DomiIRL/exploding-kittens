@@ -1,6 +1,6 @@
 import './Card.css';
 import back from '/assets/cards/back/0.jpg';
-import { CSSProperties, useState } from 'react';
+import { CSSProperties, useState, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { Card as CardType } from "../../../../common";
 
@@ -13,12 +13,37 @@ interface CardProps {
   offsetY: number;
   moves?: any;
   isClickable?: boolean;
+  isOpponent?: boolean;
 }
 
-export default function Card({ card, index, count, angle, offsetX, offsetY, moves, isClickable }: CardProps) {
+export default function Card({ card, index, count, angle, offsetX, offsetY, moves, isClickable, isOpponent = false }: CardProps) {
   const [isHovered, setIsHovered] = useState(false);
+  const [showOnLeft, setShowOnLeft] = useState(false);
+  const cardRef = useRef<HTMLDivElement>(null);
 
   const cardImage = card ? `/assets/cards/${card.name}/${card.index}.png` : back;
+
+  useEffect(() => {
+    if (isHovered && cardRef.current) {
+      const rect = cardRef.current.getBoundingClientRect();
+      const cardCenterX = rect.left + rect.width / 2;
+      const viewportCenterX = window.innerWidth / 2;
+      const viewportWidth = window.innerWidth;
+
+      // Calculate if there's enough space to show preview on the right
+      // Preview width is approximately 40 scale units = 40vw (in worst case)
+      const previewWidth = Math.min(40 * (viewportWidth / 100), 40 * (window.innerHeight / 100));
+      const tableRadius = Math.min(45 * (viewportWidth / 100), 45 * (window.innerHeight / 100));
+      const rightEdgeOfTable = viewportCenterX + tableRadius;
+      const spaceOnRight = viewportWidth - rightEdgeOfTable;
+
+      // Show on left only if: opponent card and not enough space on right
+      const notEnoughSpaceOnRight = spaceOnRight < (previewWidth + 20); // 20px padding
+      const isOnRightSide = cardCenterX > viewportCenterX;
+
+      setShowOnLeft(isOpponent && isOnRightSide && notEnoughSpaceOnRight);
+    }
+  }, [isHovered, isOpponent]);
 
   const handleClick = () => {
     if (isClickable && moves) {
@@ -29,6 +54,7 @@ export default function Card({ card, index, count, angle, offsetX, offsetY, move
   return (
     <>
       <div
+        ref={cardRef}
         className={`card ${isClickable ? 'clickable' : ''}`}
         style={{
           backgroundImage: `url(${cardImage})`,
@@ -42,7 +68,7 @@ export default function Card({ card, index, count, angle, offsetX, offsetY, move
         onClick={handleClick}
       />
       {isHovered && card && createPortal(
-        <div className="card-preview-overlay">
+        <div className={`card-preview-overlay ${showOnLeft ? 'show-left' : 'show-right'}`}>
           <div
             className="card-preview"
             style={{

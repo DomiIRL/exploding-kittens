@@ -102,12 +102,23 @@
     0 calc(var(--scale) * 2) calc(var(--scale) * 6) rgba(0, 0, 0, 0.8),
     0 0 calc(var(--scale) * 4) rgba(253, 185, 39, 0.6);
 
-  margin-left: min(
-      calc(50vw + min(45vw, 45vh) + var(--scale) * 3),
-      calc(100vw - calc(var(--scale) * 40) - var(--scale) * 1)
-  );
-
   animation: cardPreviewAppear 0.15s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Default: show on the right side of the table */
+.card-preview-overlay.show-right .card-preview {
+  margin-left: min(
+    calc(50vw + min(45vw, 45vh) + var(--scale) * 3),
+    calc(100vw - calc(var(--scale) * 40) - var(--scale) * 1)
+  );
+}
+
+/* When card is on right side: show preview on the left */
+.card-preview-overlay.show-left .card-preview {
+  margin-left: max(
+    calc(50vw - min(45vw, 45vh) - calc(var(--scale) * 40) - var(--scale) * 3),
+    calc(var(--scale) * 1)
+  );
 }
 
 @keyframes cardPreviewAppear {
