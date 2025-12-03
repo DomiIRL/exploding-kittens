@@ -5,4 +5,5 @@ export interface GameState {
   winner: PlayerID | null;
   drawPile: Card[];
   discardPile: Card[];
+  deadPlayersCanSeeAllCards: boolean;
 }

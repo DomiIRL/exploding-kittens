@@ -58,6 +58,9 @@ export default function ExplodingKittensBoard({
   // Check if the current player is dead
   const isSelfDead = !isSpectator && selfPlayerId !== null && !allPlayers[selfPlayerId.toString()].isAlive;
 
+  // Dead players become spectators if the feature is enabled
+  const isSelfSpectator = isSpectator || (isSelfDead && G.deadPlayersCanSeeAllCards);
+
   // Filter alive players
   const alivePlayers = players.filter(player => allPlayers[player].isAlive);
 
@@ -91,7 +94,7 @@ export default function ExplodingKittensBoard({
 
   return (
     <div className="w-full h-full flex flex-col items-center justify-center bg-blue-200">
-      <div className={`board-container ${isSpectator ? 'hand-interactable' : ''} ${isSelfDead ? 'dimmed' : ''}`}>
+      <div className={`board-container ${isSelfSpectator ? 'hand-interactable' : ''} ${isSelfDead ? 'dimmed' : ''}`}>
         <Table G={G} moves={moves} />
         {alivePlayersSorted.map((player, index) => {
           const { cardPosition, infoPosition } = getPositions(index, alivePlayers.length);
@@ -103,7 +106,7 @@ export default function ExplodingKittensBoard({
           const handCount = playerInfo.hand_count;
           const hand = playerInfo.hand
 
-          const playerState = new PlayerState(isSpectator, isSelf, isAlive, isTurn, handCount, hand)
+          const playerState = new PlayerState(isSelfSpectator, isSelf, isAlive, isTurn, handCount, hand)
 
           return (
             <Player
