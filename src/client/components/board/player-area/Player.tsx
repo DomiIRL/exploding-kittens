@@ -36,7 +36,7 @@ export default function Player({ playerID, playerState, cardPosition, infoPositi
           zIndex: playerState.isSelf ? 2 : 1,
         }}
       >
-        <PlayerCards playerState={playerState} moves={moves} isCurrentTurn={playerState.isTurn} />
+        <PlayerCards playerState={playerState} moves={moves} />
       </div>
 
       <div
