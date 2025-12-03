@@ -10,3 +10,10 @@
     radial-gradient(ellipse at center, rgba(196, 30, 58, 0.3) 0%, transparent 70%),
     linear-gradient(135deg, #8B1538 0%, #C41E3A 50%, #8B1538 100%);
 }
+
+.board-container.dimmed {
+  background:
+      radial-gradient(ellipse at center, rgba(196, 30, 58, 0.3) 0%, transparent 70%),
+      linear-gradient(135deg, #73102c 0%, #9d182f 50%, #6f102c 100%);
+}
+

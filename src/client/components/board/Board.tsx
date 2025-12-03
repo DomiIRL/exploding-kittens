@@ -3,6 +3,7 @@ import Table from './table/Table';
 import Player from './player-area/Player.tsx';
 import DebugPanel from './debug-panel/DebugPanel';
 import WinnerOverlay from './winner-overlay/WinnerOverlay';
+import DeadOverlay from './dead-overlay/DeadOverlay';
 import { BoardProps } from 'boardgame.io/react';
 import { Card, GameState } from '../../../common';
 import PlayerState from '../../model/PlayerState';
@@ -54,10 +55,21 @@ export default function ExplodingKittensBoard({
   const isGameOver = ctx.phase === 'gameover';
   const winner = G.winner;
 
-  const getPositions = (index: number, playerID: number): Positions => {
-    const numPlayers = ctx.numPlayers;
-    const angleStep = 360 / numPlayers;
-    const relativePosition = (index - playerID + numPlayers) % numPlayers;
+  // Check if the current player is dead
+  const isSelfDead = !isSpectator && selfPlayerId !== null && !allPlayers[selfPlayerId.toString()].isAlive;
+
+  // Filter alive players
+  const alivePlayers = players.filter(player => allPlayers[player].isAlive);
+
+  // Find index of self player among alive players
+  const alivePlayersSorted = [...alivePlayers].sort((a, b) => parseInt(a) - parseInt(b));
+  const selfIndexInAlivePlayers = selfPlayerId !== null
+    ? alivePlayersSorted.findIndex(p => parseInt(p) === selfPlayerId)
+    : 0;
+
+  const getPositions = (aliveIndex: number, numAlivePlayers: number): Positions => {
+    const angleStep = 360 / numAlivePlayers;
+    const relativePosition = (aliveIndex - selfIndexInAlivePlayers + numAlivePlayers) % numAlivePlayers;
     const angle = 180 + (relativePosition * angleStep);
     const radian = (angle * Math.PI) / 180;
 
@@ -79,10 +91,10 @@ export default function ExplodingKittensBoard({
 
   return (
     <div className="w-full h-full flex flex-col items-center justify-center bg-blue-200">
-      <div className={`board-container ${isSpectator ? 'hand-interactable' : ''}`}>
+      <div className={`board-container ${isSpectator ? 'hand-interactable' : ''} ${isSelfDead ? 'dimmed' : ''}`}>
         <Table G={G} moves={moves} />
-        {players.map((player, index) => {
-          const { cardPosition, infoPosition } = getPositions(index, selfPlayerId == null ? 0 : selfPlayerId);
+        {alivePlayersSorted.map((player, index) => {
+          const { cardPosition, infoPosition } = getPositions(index, alivePlayers.length);
           const playerNumber = parseInt(player);
           const isSelf = selfPlayerId != null && playerNumber === selfPlayerId;
           const playerInfo = allPlayers[player];
@@ -105,6 +117,9 @@ export default function ExplodingKittensBoard({
           );
         })}
       </div>
+      {isSelfDead && !isGameOver && (
+        <DeadOverlay />
+      )}
       {isGameOver && winner && (
         <WinnerOverlay winnerID={winner} playerID={playerID} />
       )}
