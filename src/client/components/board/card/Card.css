@@ -87,10 +87,9 @@
   bottom: 0;
   z-index: 10000;
   display: flex;
-  align-items: flex-start;
-  justify-content: center;
+  align-items: center;
+  justify-content: flex-start;
   pointer-events: none;
-  padding-top: calc(var(--scale) * 7);
 }
 
 .card-preview {
@@ -103,18 +102,22 @@
     0 calc(var(--scale) * 2) calc(var(--scale) * 6) rgba(0, 0, 0, 0.8),
     0 0 calc(var(--scale) * 4) rgba(253, 185, 39, 0.6);
 
-  transform: translateX(min(calc(var(--scale) * 55), calc(50vw - calc(var(--scale) * 25))));
+  margin-left: min(
+      calc(50vw + min(45vw, 45vh) + var(--scale) * 3),
+      calc(100vw - calc(var(--scale) * 40) - var(--scale) * 1)
+  );
+
   animation: cardPreviewAppear 0.15s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 @keyframes cardPreviewAppear {
   from {
-    transform: translateX(min(calc(var(--scale) * 55), calc(50vw - calc(var(--scale) * 25)))) scale(0.8);
     opacity: 0;
+    transform: scale(0.8);
   }
   to {
-    transform: translateX(min(calc(var(--scale) * 55), calc(50vw - calc(var(--scale) * 25)))) scale(1);
     opacity: 1;
+    transform: scale(1);
   }
 }
 
