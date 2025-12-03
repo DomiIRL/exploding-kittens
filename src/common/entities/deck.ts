@@ -1,4 +1,4 @@
-import type { Card } from '../models';
+import type {Card} from '../models';
 
 export abstract class Deck {
   name: string;
@@ -19,6 +19,7 @@ export abstract class Deck {
   }
 
   /** Extra cards added after the players are dealt */
-  addPostDealCards(_pile: Card[], _playerCount: number): void {}
+  addPostDealCards(_pile: Card[], _playerCount: number): void {
+  }
 }
 

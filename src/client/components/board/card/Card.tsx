@@ -1,8 +1,8 @@
 import './Card.css';
 import back from '/assets/cards/back/0.jpg';
-import { CSSProperties, useState, useRef, useEffect } from 'react';
-import { createPortal } from 'react-dom';
-import { Card as CardType } from "../../../../common";
+import {CSSProperties, useEffect, useRef, useState} from 'react';
+import {createPortal} from 'react-dom';
+import {Card as CardType} from "../../../../common";
 
 interface CardProps {
   card: CardType | null;
@@ -16,7 +16,17 @@ interface CardProps {
   isOpponent?: boolean;
 }
 
-export default function Card({ card, index, count, angle, offsetX, offsetY, moves, isClickable, isOpponent = false }: CardProps) {
+export default function Card({
+                               card,
+                               index,
+                               count,
+                               angle,
+                               offsetX,
+                               offsetY,
+                               moves,
+                               isClickable,
+                               isOpponent = false
+                             }: CardProps) {
   const [isHovered, setIsHovered] = useState(false);
   const [showOnLeft, setShowOnLeft] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);

@@ -1,4 +1,4 @@
-import type { Card } from './card.model';
+import type {Card} from './card.model';
 
 export interface Player {
   hand: Card[];

@@ -5,7 +5,7 @@ interface WinnerOverlayProps {
   playerID: string | null;
 }
 
-export default function WinnerOverlay({ winnerID, playerID }: WinnerOverlayProps) {
+export default function WinnerOverlay({winnerID, playerID}: WinnerOverlayProps) {
   const winnerNumber = parseInt(winnerID) + 1;
   const isWinner = playerID === winnerID;
 

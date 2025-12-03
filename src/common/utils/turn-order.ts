@@ -1,10 +1,10 @@
-import type { FnContext } from 'boardgame.io';
-import type { GameState, PluginAPIs } from '../models';
+import type {FnContext} from 'boardgame.io';
+import type {GameState, PluginAPIs} from '../models';
 
 const findNextAlivePlayer = (
-    ctx: FnContext<GameState, PluginAPIs>['ctx'],
-    players: Record<string, any>,
-    startPos: number
+  ctx: FnContext<GameState, PluginAPIs>['ctx'],
+  players: Record<string, any>,
+  startPos: number
 ): number | undefined => {
   const numPlayers = ctx.numPlayers;
   let currentPos = startPos % numPlayers;
@@ -25,7 +25,7 @@ const findNextAlivePlayer = (
 };
 
 export const skipDeadPlayers = {
-  first: ({ ctx, player }: FnContext<GameState, PluginAPIs>): number => {
+  first: ({ctx, player}: FnContext<GameState, PluginAPIs>): number => {
     const nextAlive = findNextAlivePlayer(ctx, player.state, 0);
     // Fallback to first player if no one is alive (shouldn't happen)
     return nextAlive ?? 0;
@@ -34,7 +34,7 @@ export const skipDeadPlayers = {
   /**
    * Get the next alive player
    */
-  next: ({ ctx, player }: FnContext<GameState, PluginAPIs>): number | undefined => {
+  next: ({ctx, player}: FnContext<GameState, PluginAPIs>): number | undefined => {
     return findNextAlivePlayer(ctx, player.state, ctx.playOrderPos + 1);
   },
 };

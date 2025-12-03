@@ -1,8 +1,8 @@
-import { Game } from 'boardgame.io';
-import { createPlayerPlugin } from './plugins/player-plugin';
-import { setupGame } from './setup/game-setup';
-import { GAME_CONFIG, turnConfig, moves } from './constants/game-config';
-import type { GameState, PluginAPIs } from './models';
+import {Game} from 'boardgame.io';
+import {createPlayerPlugin} from './plugins/player-plugin';
+import {setupGame} from './setup/game-setup';
+import {GAME_CONFIG, moves, turnConfig} from './constants/game-config';
+import type {GameState, PluginAPIs} from './models';
 
 export const ExplodingKittens: Game<GameState, PluginAPIs> = {
   name: GAME_CONFIG.name,
@@ -16,17 +16,17 @@ export const ExplodingKittens: Game<GameState, PluginAPIs> = {
       start: true,
       turn: turnConfig,
       moves: moves,
-      endIf: ({ player }) => {
+      endIf: ({player}) => {
         const alivePlayers = Object.entries(player.state).filter(
           ([_, p]) => p.isAlive
         );
 
         // End phase when only one player is alive
         if (alivePlayers.length === 1) {
-          return { next: 'gameover' };
+          return {next: 'gameover'};
         }
       },
-      onEnd: ({ G, player }) => {
+      onEnd: ({G, player}) => {
         // Find the last alive player
         const alivePlayers = Object.entries(player.state).filter(
           ([_, p]) => p.isAlive
@@ -37,8 +37,7 @@ export const ExplodingKittens: Game<GameState, PluginAPIs> = {
         }
       },
     },
-    gameover: {
-    },
+    gameover: {},
   },
 };
 

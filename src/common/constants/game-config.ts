@@ -1,6 +1,6 @@
-import { drawCard } from "../moves/draw-move";
-import { playCard } from "../moves/play-card-move";
-import { skipDeadPlayers } from "../utils/turn-order";
+import {drawCard} from "../moves/draw-move";
+import {playCard} from "../moves/play-card-move";
+import {skipDeadPlayers} from "../utils/turn-order";
 
 export const GAME_CONFIG = {
   name: 'ExplodingKittens',

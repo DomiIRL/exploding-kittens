@@ -1,5 +1,5 @@
-import type { Card, Player, Players } from '../models';
-import type { Deck } from '../entities/deck';
+import type {Card, Player, Players} from '../models';
+import type {Deck} from '../entities/deck';
 
 export const createPlayerState = (): Player => ({
   hand: [],
@@ -10,7 +10,7 @@ export const createPlayerState = (): Player => ({
 /**
  * Create a full view of a player (used for self-view and spectators)
  */
-const createFullPlayerView = (player: Player): Player => ({ ...player });
+const createFullPlayerView = (player: Player): Player => ({...player});
 
 /**
  * Create a limited view of a player (used for opponent views)
@@ -25,9 +25,9 @@ const createLimitedPlayerView = (player: Player): Player => ({
  * Check if the viewing player should see all cards (spectator or dead player)
  */
 const shouldSeeAllCards = (
-    players: Players,
-    playerID?: string | null,
-    G?: any
+  players: Players,
+  playerID?: string | null,
+  G?: any
 ): boolean => {
   // Spectators see all cards
   if (!playerID) return true;

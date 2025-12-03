@@ -1,4 +1,4 @@
-const cardImages = import.meta.glob('/public/assets/cards/**/*.{png,jpg}', { eager: true });
+const cardImages = import.meta.glob('/public/assets/cards/**/*.{png,jpg}', {eager: true});
 
 export const preloadCardImages = (): Promise<void[]> => {
   const imagesToPreload = Object.keys(cardImages).map(path =>

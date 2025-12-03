@@ -1,16 +1,16 @@
-import { Deck } from '../deck';
-import type { Card } from '../../models';
+import {Deck} from '../deck';
+import type {Card} from '../../models';
 
 import {
   ATTACK,
-  SKIP,
-  SHUFFLE,
-  SEE_THE_FUTURE,
-  NOPE,
-  EXPLODING_KITTEN,
   CAT_CARD,
-  FAVOR,
   DEFUSE,
+  EXPLODING_KITTEN,
+  FAVOR,
+  NOPE,
+  SEE_THE_FUTURE,
+  SHUFFLE,
+  SKIP,
 } from '../../constants/card-types';
 
 const STARTING_HAND_SIZE = 7;

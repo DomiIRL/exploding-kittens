@@ -1,4 +1,4 @@
-import { CardType } from '../card-type';
+import {CardType} from '../card-type';
 
 export class ExplodingKittenCard extends CardType {
 

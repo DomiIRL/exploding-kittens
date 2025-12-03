@@ -8,5 +8,9 @@
     "skipLibCheck": true,
     "allowImportingTsExtensions": false
   },
-  "include": ["./**/*", "../common/**/*", "../boardgame.d.ts"]
+  "include": [
+    "./**/*",
+    "../common/**/*",
+    "../boardgame.d.ts"
+  ]
 }

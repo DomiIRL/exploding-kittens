@@ -1,7 +1,7 @@
-import { CardType } from '../entities/card-type';
-import { DefuseCard } from '../entities/cards/defuse-card';
-import { CatCard } from '../entities/cards/cat-card';
-import { ExplodingKittenCard } from '../entities/cards/exploding-kitten-card';
+import {CardType} from '../entities/card-type';
+import {DefuseCard} from '../entities/cards/defuse-card';
+import {CatCard} from '../entities/cards/cat-card';
+import {ExplodingKittenCard} from '../entities/cards/exploding-kitten-card';
 
 export const ATTACK = new CardType('attack');
 export const CAT_CARD = new CatCard('cat_card');

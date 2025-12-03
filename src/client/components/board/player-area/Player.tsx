@@ -19,7 +19,7 @@ interface PlayerAreaProps {
   moves?: any;
 }
 
-export default function Player({ playerID, playerState, cardPosition, infoPosition, moves }: PlayerAreaProps) {
+export default function Player({playerID, playerState, cardPosition, infoPosition, moves}: PlayerAreaProps) {
   const cardRotation = cardPosition.angle - 90;
 
   const extraClasses = `${playerState.isSelf ? 'hand-interactable self' : ''} ${playerState.isTurn ? 'turn' : ''}`
@@ -36,7 +36,7 @@ export default function Player({ playerID, playerState, cardPosition, infoPositi
           zIndex: playerState.isSelf ? 2 : 1,
         }}
       >
-        <PlayerCards playerState={playerState} moves={moves} />
+        <PlayerCards playerState={playerState} moves={moves}/>
       </div>
 
       <div

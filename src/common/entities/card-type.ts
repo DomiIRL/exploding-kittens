@@ -1,4 +1,4 @@
-import type { Card } from '../models';
+import type {Card} from '../models';
 
 export class CardType {
   name: string;
@@ -8,6 +8,6 @@ export class CardType {
   }
 
   createCard(index: number): Card {
-    return { name: this.name, index };
+    return {name: this.name, index};
   }
 }
