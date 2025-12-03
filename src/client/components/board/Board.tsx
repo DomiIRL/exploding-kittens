@@ -40,94 +40,127 @@ interface Positions {
   infoPosition: Position;
 }
 
+/**
+ * Calculate position on a circle
+ */
+const calculateCircularPosition = (
+    angle: number,
+    radius: string
+): Position => {
+  const radian = (angle * Math.PI) / 180;
+  return {
+    top: `calc(50% - ${radius} * ${Math.cos(radian)})`,
+    left: `calc(50% + ${radius} * ${Math.sin(radian)})`,
+  };
+};
+
+/**
+ * Calculate the angle for a player position
+ */
+const calculatePlayerAngle = (
+    playerIdStr: string,
+    alivePlayers: string[],
+    selfPlayerId: number | null,
+    isSelfDead: boolean
+): number => {
+  const alivePlayersSorted = [...alivePlayers].sort((a, b) => parseInt(a) - parseInt(b));
+  const aliveIndex = alivePlayersSorted.indexOf(playerIdStr);
+
+  // Self is alive or spectator: normal circular distribution
+  if (!isSelfDead) {
+    const numAlive = alivePlayers.length;
+    const selfIndex = selfPlayerId !== null
+        ? alivePlayersSorted.findIndex(p => parseInt(p) === selfPlayerId)
+        : 0;
+
+    const angleStep = 360 / numAlive;
+    const relativePosition = (aliveIndex - selfIndex + numAlive) % numAlive;
+    return 180 + (relativePosition * angleStep);
+  }
+
+  // Self is dead: leave empty slot at position 0 (bottom)
+  const totalSlotsToUse = alivePlayers.length + 1;
+  const angleStep = 360 / totalSlotsToUse;
+  const positionIndex = aliveIndex + 1;
+  return 180 + (positionIndex * angleStep);
+};
+
 export default function ExplodingKittensBoard({
-  ctx, 
-  G, 
-  moves,
-  plugins, 
-  playerID
-}: BoardPropsWithPlugins) {
-  const players = Object.keys(ctx.playOrder);
-  const currentPlayer = parseInt(ctx.currentPlayer);
+                                                ctx,
+                                                G,
+                                                moves,
+                                                plugins,
+                                                playerID
+                                              }: BoardPropsWithPlugins) {
   const allPlayers = plugins.player.data.players;
-  const isSpectator = playerID == null;
-  const selfPlayerId = isSpectator ? null : parseInt(playerID || '0');
-  const isGameOver = ctx.phase === 'gameover';
-  const winner = G.winner;
-
-  // Check if the current player is dead
-  const isSelfDead = !isSpectator && selfPlayerId !== null && !allPlayers[selfPlayerId.toString()].isAlive;
-
-  // Dead players become spectators if the feature is enabled
-  const isSelfSpectator = isSpectator || (isSelfDead && G.deadPlayersCanSeeAllCards);
-
-  // Filter alive players
+  const players = Object.keys(ctx.playOrder);
   const alivePlayers = players.filter(player => allPlayers[player].isAlive);
 
-  // Find index of self player among alive players
-  const alivePlayersSorted = [...alivePlayers].sort((a, b) => parseInt(a) - parseInt(b));
-  const selfIndexInAlivePlayers = selfPlayerId !== null
-    ? alivePlayersSorted.findIndex(p => parseInt(p) === selfPlayerId)
-    : 0;
+  const isSpectator = playerID == null;
+  const selfPlayerId = isSpectator ? null : parseInt(playerID || '0');
+  const isSelfDead = !isSpectator &&
+      selfPlayerId !== null &&
+      !allPlayers[selfPlayerId.toString()].isAlive;
+  const isSelfSpectator = isSpectator || (isSelfDead && G.deadPlayersCanSeeAllCards);
 
-  const getPositions = (aliveIndex: number, numAlivePlayers: number): Positions => {
-    const angleStep = 360 / numAlivePlayers;
-    const relativePosition = (aliveIndex - selfIndexInAlivePlayers + numAlivePlayers) % numAlivePlayers;
-    const angle = 180 + (relativePosition * angleStep);
-    const radian = (angle * Math.PI) / 180;
+  const isGameOver = ctx.phase === 'gameover';
+  const currentPlayer = parseInt(ctx.currentPlayer);
+
+  /**
+   * Calculate positions for a player around the table
+   */
+  const getPositions = (playerIdStr: string): Positions => {
+    const angle = calculatePlayerAngle(playerIdStr, alivePlayers, selfPlayerId, isSelfDead);
 
     const cardRadius = 'min(35vw, 35vh)';
     const cardPosition: CardPosition = {
-      top: `calc(50% - ${cardRadius} * ${Math.cos(radian)})`,
-      left: `calc(50% + ${cardRadius} * ${Math.sin(radian)})`,
+      ...calculateCircularPosition(angle, cardRadius),
       angle: angle - 90,
     };
 
     const tableRadius = 'min(45vw, 45vh)';
-    const infoPosition: Position = {
-      top: `calc(50% - ${tableRadius} * ${Math.cos(radian)})`,
-      left: `calc(50% + ${tableRadius} * ${Math.sin(radian)})`,
-    };
+    const infoPosition = calculateCircularPosition(angle, tableRadius);
 
     return { cardPosition, infoPosition };
   };
 
+  const alivePlayersSorted = [...alivePlayers].sort((a, b) => parseInt(a) - parseInt(b));
+
   return (
-    <div className="w-full h-full flex flex-col items-center justify-center bg-blue-200">
-      <div className={`board-container ${isSelfSpectator ? 'hand-interactable' : ''} ${isSelfDead ? 'dimmed' : ''}`}>
-        <Table G={G} moves={moves} />
-        {alivePlayersSorted.map((player, index) => {
-          const { cardPosition, infoPosition } = getPositions(index, alivePlayers.length);
-          const playerNumber = parseInt(player);
-          const isSelf = selfPlayerId != null && playerNumber === selfPlayerId;
-          const playerInfo = allPlayers[player];
-          const isAlive = playerInfo.isAlive;
-          const isTurn = playerNumber == currentPlayer;
-          const handCount = playerInfo.hand_count;
-          const hand = playerInfo.hand
+      <div className="w-full h-full flex flex-col items-center justify-center bg-blue-200">
+        <div className={`board-container ${isSelfSpectator ? 'hand-interactable' : ''} ${isSelfDead ? 'dimmed' : ''}`}>
+          <Table G={G} moves={moves} />
+          {alivePlayersSorted.map((player) => {
+            const { cardPosition, infoPosition } = getPositions(player);
+            const playerNumber = parseInt(player);
+            const playerInfo = allPlayers[player];
 
-          const playerState = new PlayerState(isSelfSpectator, isSelf, isAlive, isTurn, handCount, hand)
+            const playerState = new PlayerState(
+                isSelfSpectator,
+                selfPlayerId !== null && playerNumber === selfPlayerId,
+                playerInfo.isAlive,
+                playerNumber === currentPlayer,
+                playerInfo.hand_count,
+                playerInfo.hand
+            );
 
-          return (
-            <Player
-              key={player}
-              playerID={player}
-              playerState={playerState}
-              cardPosition={cardPosition}
-              infoPosition={infoPosition}
-              moves={moves}
-            />
-          );
-        })}
+            return (
+                <Player
+                    key={player}
+                    playerID={player}
+                    playerState={playerState}
+                    cardPosition={cardPosition}
+                    infoPosition={infoPosition}
+                    moves={moves}
+                />
+            );
+          })}
+        </div>
+        {isSelfDead && !isGameOver && <DeadOverlay />}
+        {isGameOver && G.winner && (
+            <WinnerOverlay winnerID={G.winner} playerID={playerID} />
+        )}
+        <DebugPanel data={{ ctx, G, moves, plugins, playerID }} />
       </div>
-      {isSelfDead && !isGameOver && (
-        <DeadOverlay />
-      )}
-      {isGameOver && winner && (
-        <WinnerOverlay winnerID={winner} playerID={playerID} />
-      )}
-      <DebugPanel data={{ ctx, G, moves, plugins, playerID }} />
-    </div>
   );
 }
-
