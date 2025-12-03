@@ -38,12 +38,12 @@ interface Positions {
   infoPosition: Position;
 }
 
-export default function ExplodingKittensBoard({ 
+export default function ExplodingKittensBoard({
   ctx, 
   G, 
-  moves, 
+  moves,
   plugins, 
-  playerID 
+  playerID
 }: BoardPropsWithPlugins) {
   const players = Object.keys(ctx.playOrder);
   const currentPlayer = parseInt(ctx.currentPlayer);
@@ -77,7 +77,7 @@ export default function ExplodingKittensBoard({
   return (
     <div className="w-full h-full flex flex-col items-center justify-center bg-blue-200">
       <div className={`board-container ${isSpectator ? 'hand-interactable' : ''}`}>
-        <Table />
+        <Table moves={moves} />
         {players.map((player, index) => {
           const { cardPosition, infoPosition } = getPositions(index, selfPlayerId == null ? 0 : selfPlayerId);
           const playerNumber = parseInt(player);
@@ -85,7 +85,6 @@ export default function ExplodingKittensBoard({
           const playerInfo = allPlayers[player];
           const isAlive = playerInfo.isAlive;
           const isTurn = playerNumber == currentPlayer;
-          console.log(isTurn)
           const handCount = playerInfo.hand_count;
           const hand = playerInfo.hand
 
