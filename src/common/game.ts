@@ -17,7 +17,6 @@ export const ExplodingKittens: Game<GameState, PluginAPIs> = {
       turn: turnConfig,
       moves: moves,
       endIf: ({ player }) => {
-        // Count alive players
         const alivePlayers = Object.entries(player.state).filter(
           ([_, p]) => p.isAlive
         );
@@ -28,7 +27,7 @@ export const ExplodingKittens: Game<GameState, PluginAPIs> = {
         }
       },
       onEnd: ({ G, player }) => {
-        // Find the winner (last player alive)
+        // Find the last alive player
         const alivePlayers = Object.entries(player.state).filter(
           ([_, p]) => p.isAlive
         );
@@ -39,11 +38,6 @@ export const ExplodingKittens: Game<GameState, PluginAPIs> = {
       },
     },
     gameover: {
-      moves: {}, // No moves allowed in gameover phase
-      turn: {
-        minMoves: 0,
-        maxMoves: 0,
-      },
     },
   },
 };

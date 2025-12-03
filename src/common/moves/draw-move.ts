@@ -21,7 +21,7 @@ export const drawCard = ({ G, player, events }: { G: GameState; player: any; eve
         alive = false;
         newHand = []
         // push all hand cards to discard pile
-        discardPile.push(...newHand, cardToDraw);
+        discardPile.push(...playerData.hand, cardToDraw);
     } else {
         newHand = playerData.hand.map((card: any) => ({ ...card }));
         newHand.push({ ...cardToDraw });

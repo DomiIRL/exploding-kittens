@@ -1,5 +1,5 @@
 import { Server, Origins } from 'boardgame.io/dist/cjs/server.js';
-import { ExplodingKittens } from '../common/game';
+import { ExplodingKittens } from '../common';
 
 const port = parseInt(process.env.SERVER_PORT || '8000');
 

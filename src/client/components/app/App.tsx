@@ -10,7 +10,7 @@ const SERVER_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 const ExplodingKittensClient = Client({
     game: ExplodingKittens,
     board: ExplodingKittensBoard,
-    numPlayers: 2,
+    numPlayers: 5,
     debug: false,
     multiplayer: SocketIO({ server: SERVER_URL }),
 });

@@ -9,7 +9,6 @@ export const GAME_CONFIG = {
 
 /**
  * Turn configuration
- * Uses custom turn order to skip dead players
  */
 export const turnConfig = {
   minMoves: GAME_CONFIG.minMoves,
