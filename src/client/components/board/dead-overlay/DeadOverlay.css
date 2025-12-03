@@ -3,11 +3,11 @@
   left: 0;
   right: 0;
   bottom: 0;
-  padding: calc(var(--scale) * 2);
+  padding: calc(var(--scale) * 4);
   z-index: 9000;
   pointer-events: none;
   display: flex;
-  justify-content: flex-end;
+  justify-content: center;
 }
 
 .dead-overlay-content {
