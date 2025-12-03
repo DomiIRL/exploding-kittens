@@ -1,4 +1,4 @@
-import type {GameState} from "../models";
+import { drawCard } from "../moves/draw-move";
 
 export const GAME_CONFIG = {
   name: 'ExplodingKittens',
@@ -16,21 +16,5 @@ export const turnConfig = {
  * Game moves
  */
 export const moves = {
-  drawCard: ({ G, player }: { G: GameState; player: any }) => {
-    const cardToDraw = G.drawPile.pop();
-    if (!cardToDraw) {
-      throw new Error('No card to draw');
-    }
-
-    const playerData = player.get();
-
-    const newHand = playerData.hand.map((card: any) => ({ ...card }));
-    newHand.push({ ...cardToDraw });
-
-    player.set({
-      ...playerData,
-      hand: newHand,
-      hand_count: newHand.length
-    });
-  }
+  drawCard: drawCard
 };
