@@ -13,7 +13,6 @@ interface CardProps {
   offsetY: number;
   moves?: any;
   isClickable?: boolean;
-  isOpponent?: boolean;
 }
 
 export default function Card({
@@ -25,7 +24,6 @@ export default function Card({
                                offsetY,
                                moves,
                                isClickable,
-                               isOpponent = false
                              }: CardProps) {
   const [isHovered, setIsHovered] = useState(false);
   const [showOnLeft, setShowOnLeft] = useState(false);
@@ -51,9 +49,9 @@ export default function Card({
       const notEnoughSpaceOnRight = spaceOnRight < (previewWidth + 20); // 20px padding
       const isOnRightSide = cardCenterX > viewportCenterX;
 
-      setShowOnLeft(isOpponent && isOnRightSide && notEnoughSpaceOnRight);
+      setShowOnLeft(isOnRightSide && notEnoughSpaceOnRight);
     }
-  }, [isHovered, isOpponent]);
+  }, [isHovered]);
 
   const handleClick = () => {
     if (isClickable && moves) {

@@ -13,7 +13,6 @@ export default function PlayerCards({playerState, moves}: PlayerCardsProps) {
   const baseOffset = handCount > 1 ? -fanSpread / 2 : 0;
   const spreadDistance = isSelf ? 15 : isSelfSpectator ? 10 : 5;
   const isClickable = isSelf && isTurn;
-  const isOpponent = !isSelf;
 
   return (
     <div className="player-cards">
@@ -35,7 +34,6 @@ export default function PlayerCards({playerState, moves}: PlayerCardsProps) {
             offsetY={offsetY}
             moves={moves}
             isClickable={isClickable}
-            isOpponent={isOpponent}
           />
         );
       })}
