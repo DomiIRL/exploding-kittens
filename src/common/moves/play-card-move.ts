@@ -33,7 +33,6 @@ export const playCard = (context: FnContext, cardIndex: number) => {
   player.set({
     ...playerData,
     hand: newHand,
-    hand_count: newHand.length
   });
 
   G.discardPile.push(cardToPlay);

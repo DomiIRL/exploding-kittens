@@ -10,14 +10,14 @@ export const createPlayerState = (): Player => ({
 /**
  * Create a full view of a player (used for self-view and spectators)
  */
-const createFullPlayerView = (player: Player): Player => ({...player});
+const createFullPlayerView = (player: Player): Player => ({...player, hand_count: player.hand.length});
 
 /**
  * Create a limited view of a player (used for opponent views)
  */
 const createLimitedPlayerView = (player: Player): Player => ({
   hand: [],
-  hand_count: player.hand_count,
+  hand_count: player.hand.length,
   isAlive: player.isAlive,
 });
 
@@ -62,6 +62,5 @@ export function dealHands(pile: Card[], players: Players, deck: Deck) {
     player.hand = pile.splice(0, handSize);
     const forcedCards = deck.startingHandForcedCards(index);
     player.hand.push(...forcedCards);
-    player.hand_count = player.hand.length;
   });
 }

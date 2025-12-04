@@ -13,6 +13,15 @@ export const GAME_CONFIG = {
 export const turnConfig = {
   minMoves: GAME_CONFIG.minMoves,
   order: skipDeadPlayers,
+  onEnd: ({G}: any) => {
+    // Decrement the turns remaining counter
+    G.turnsRemaining = G.turnsRemaining - 1;
+
+    // If we're moving to the next player, reset the counter
+    if (G.turnsRemaining <= 0) {
+      G.turnsRemaining = 1;
+    }
+  },
 };
 
 /**

@@ -6,4 +6,5 @@ export interface GameState {
   drawPile: Card[];
   discardPile: Card[];
   deadPlayersCanSeeAllCards: boolean;
+  turnsRemaining: number;
 }

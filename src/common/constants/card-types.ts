@@ -5,12 +5,13 @@ import {ExplodingKittenCard} from '../entities/cards/exploding-kitten-card';
 import {SkipCard} from "../entities/cards/skip-card";
 import {ShuffleCard} from "../entities/cards/shuffle-card";
 import {Registry} from "../registry/registry";
+import {AttackCard} from "../entities/cards/attack-card";
 
 // Registry for card types
 export const cardTypeRegistry = new Registry<CardType>();
 
 // Card instances
-export const ATTACK = register(new CardType('attack'));
+export const ATTACK = register(new AttackCard('attack'));
 export const CAT_CARD = register(new CatCard('cat_card'));
 export const SKIP = register(new SkipCard('skip'));
 export const SHUFFLE = register(new ShuffleCard('shuffle'));

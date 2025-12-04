@@ -1,7 +1,8 @@
-import type {Card, GameState, Player} from "../models";
+import type {Card, FnContext, Player} from "../models";
 import {EXPLODING_KITTEN, DEFUSE} from "../constants/card-types";
 
-export const drawCard = ({G, player, events}: { G: GameState; player: any; events: any }) => {
+export const drawCard = (context: FnContext) => {
+  const { G, player, events, random } = context;
   const cardToDraw = G.drawPile.pop();
   if (!cardToDraw) {
     throw new Error('No card to draw');
@@ -22,7 +23,9 @@ export const drawCard = ({G, player, events}: { G: GameState; player: any; event
     const defuseIndex = playerData.hand.findIndex((card: Card) => card.name === DEFUSE.name);
     if (defuseIndex !== -1) {
       const defuseCard = playerData.hand[defuseIndex];
-      discardPile.push(cardToDraw);
+      // put the exploding kitten randomly back in the draw pile
+      const randomPosition = Math.floor(random.Number() * (G.drawPile.length + 1));
+      G.drawPile.splice(randomPosition, 0, cardToDraw);
       discardPile.push(defuseCard);
       newHand.splice(defuseIndex, 1);
       dead = false;

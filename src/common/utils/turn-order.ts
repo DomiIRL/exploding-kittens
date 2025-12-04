@@ -32,9 +32,17 @@ export const skipDeadPlayers = {
   },
 
   /**
-   * Get the next alive player
+   * Get the next alive player, considering turnsRemaining counter
+   * Note: We only read G.turnsRemaining here, the decrement happens in turn.onEnd
    */
-  next: ({ctx, player}: FnContext<GameState, PluginAPIs>): number | undefined => {
+  next: ({G, ctx, player}: FnContext<GameState, PluginAPIs>): number | undefined => {
+    // If there are still turns remaining (> 1 because we check before decrement), stay with the current player
+    if (G.turnsRemaining > 1) {
+      return ctx.playOrderPos;
+    }
+
+
+    // Move to the next alive player
     return findNextAlivePlayer(ctx, player.state, ctx.playOrderPos + 1);
   },
 };
