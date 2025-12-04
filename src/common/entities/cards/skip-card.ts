@@ -1,13 +1,14 @@
 import {CardType} from '../card-type';
 import {Card, FnContext} from "../../models";
 
-export class DefuseCard extends CardType {
+export class SkipCard extends CardType {
 
   constructor(name: string) {
     super(name);
   }
 
-  canBePlayed(_context: FnContext, _card: Card): boolean {
-    return false;
+  onPlayed(context: FnContext, _card: Card) {
+    const { events } = context;
+    events.endTurn();
   }
 }

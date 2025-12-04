@@ -1,14 +1,32 @@
-import type {Card, GameState} from "../models";
+import type {Card, FnContext, Player} from "../models";
+import {cardTypeRegistry} from "../constants/card-types";
+import {NotPlayable} from "../exceptions/not-playable";
 
-export const playCard = ({G, player}: { G: GameState; player: any }, cardIndex: number) => {
-  const playerData = player.get();
+export const playCard = (context: FnContext, cardIndex: number) => {
+  const {G, player} = context;
+
+  const playerData: Player = player.get();
 
   if (cardIndex < 0 || cardIndex >= playerData.hand.length) {
     console.error('Invalid card index:', cardIndex);
     return;
   }
 
-  const cardToPlay = playerData.hand[cardIndex];
+  const cardToPlay: Card = playerData.hand[cardIndex];
+
+  if (!cardToPlay) {
+    throw new Error('No card to play');
+  }
+
+  const cardType = cardTypeRegistry.get(cardToPlay.name);
+  if (!cardType) {
+    throw new Error('Unknown card type');
+  }
+
+  const playable = cardType.canBePlayed(context, cardToPlay)
+  if (!playable) {
+    throw new NotPlayable();
+  }
 
   const newHand = playerData.hand.filter((_: Card, index: number) => index !== cardIndex);
 
@@ -20,5 +38,5 @@ export const playCard = ({G, player}: { G: GameState; player: any }, cardIndex: 
 
   G.discardPile.push(cardToPlay);
 
-  // TODO: Implement card-specific logic
+  cardType.onPlayed(context, cardToPlay);
 }

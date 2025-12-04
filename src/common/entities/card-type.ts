@@ -1,4 +1,4 @@
-import type {Card} from '../models';
+import type {Card, FnContext} from '../models';
 
 export class CardType {
   name: string;
@@ -10,4 +10,11 @@ export class CardType {
   createCard(index: number): Card {
     return {name: this.name, index};
   }
+
+  canBePlayed(_context: FnContext, _card: Card): boolean {
+    return true;
+  }
+
+  onPlayed(_context: FnContext, _card: Card): void {}
+
 }

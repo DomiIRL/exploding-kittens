@@ -1,5 +1,5 @@
 import Card from '../card/Card';
-import PlayerRenderState from "../../../model/PlayerState.ts";
+import PlayerRenderState from "../../../model/PlayerState";
 
 interface PlayerCardsProps {
   playerState: PlayerRenderState;

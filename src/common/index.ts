@@ -23,6 +23,7 @@ export {
   CAT_CARD,
   DEFUSE,
   EXPLODING_KITTEN,
+  cardTypeRegistry
 } from './constants/card-types';
 
 // Constants - Decks
@@ -37,3 +38,6 @@ export {createPlayerState, filterPlayerView, dealHands} from './setup/player-set
 
 // Plugins
 export {createPlayerPlugin} from './plugins/player-plugin';
+
+// Exceptions
+export {NotPlayable} from './exceptions/not-playable';
