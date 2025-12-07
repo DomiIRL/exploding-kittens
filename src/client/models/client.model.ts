@@ -1,7 +1,7 @@
 import {Player} from '../../common';
 
 /**
- * Type definitions for the Board component
+ * Type definitions for the client
  */
 
 export interface PlayerPlugin {

@@ -17,10 +17,12 @@ interface PlayerListProps {
   isSelfSpectator: boolean;
   currentPlayer: number;
   isSelectingPlayer: boolean;
+  isChoosingCardToGive: boolean;
   playerID: string | null;
   moves: any;
   triggerCardMovement: (card: Card | null, fromId: string, toId: string) => void;
   onPlayerSelect: (playerId: string) => void;
+  onCardGive: (cardIndex: number) => void;
 }
 
 /**
@@ -34,10 +36,12 @@ export default function PlayerList({
   isSelfSpectator,
   currentPlayer,
   isSelectingPlayer,
+  isChoosingCardToGive,
   playerID,
   moves,
   triggerCardMovement,
   onPlayerSelect,
+  onCardGive,
 }: PlayerListProps) {
   return (
     <>
@@ -66,6 +70,9 @@ export default function PlayerList({
           && playerState.isAlive
           && playerState.handCount > 0;
 
+        const isSelfChoosingCard = isChoosingCardToGive
+          && player === playerID;
+
         return (
           <Player
             key={player}
@@ -75,7 +82,9 @@ export default function PlayerList({
             infoPosition={infoPosition}
             moves={moves}
             isSelectable={isSelectable}
+            isChoosingCardToGive={isSelfChoosingCard}
             onPlayerSelect={onPlayerSelect}
+            onCardGive={onCardGive}
             triggerCardMovement={triggerCardMovement}
           />
         );

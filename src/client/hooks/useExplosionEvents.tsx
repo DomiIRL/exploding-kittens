@@ -61,7 +61,6 @@ export const useExplosionEvents = (
           const isSelf = defusePlayerID === playerID;
           const playerName = isSelf ? 'You' : `Player ${parseInt(defusePlayerID) + 1}`;
 
-          console.log('💥 Defuse event detected for player:', defusePlayerID);
           lastDefuseEventId.current = eventId;
           setExplosionEvent('defused');
           setExplosionPlayerName(playerName);

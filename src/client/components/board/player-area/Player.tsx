@@ -19,7 +19,9 @@ interface PlayerAreaProps {
   infoPosition: Position;
   moves: any;
   isSelectable: boolean;
+  isChoosingCardToGive: boolean;
   onPlayerSelect: (playerId: string) => void;
+  onCardGive: (cardIndex: number) => void;
   triggerCardMovement: (card: Card | null, fromId: string, toId: string) => void;
 }
 
@@ -30,7 +32,9 @@ export default function Player({
   infoPosition, 
   moves,
   isSelectable = false,
+  isChoosingCardToGive = false,
   onPlayerSelect,
+  onCardGive,
   triggerCardMovement
 }: PlayerAreaProps) {
   const cardRotation = cardPosition.angle - 90;
@@ -60,6 +64,8 @@ export default function Player({
           moves={moves}
           triggerCardMovement={triggerCardMovement}
           playerID={playerID}
+          isChoosingCardToGive={isChoosingCardToGive}
+          onCardGive={onCardGive}
         />
       </div>
 

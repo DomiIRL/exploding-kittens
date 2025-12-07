@@ -7,15 +7,24 @@ interface PlayerCardsProps {
   moves?: any;
   triggerCardMovement: (card: CardType | null, fromId: string, toId: string) => void;
   playerID: string;
+  isChoosingCardToGive: boolean;
+  onCardGive: (cardIndex: number) => void;
 }
 
-export default function PlayerCards({playerState, moves, triggerCardMovement, playerID}: PlayerCardsProps) {
+export default function PlayerCards({
+  playerState,
+  moves,
+  triggerCardMovement,
+  playerID,
+  isChoosingCardToGive,
+  onCardGive
+}: PlayerCardsProps) {
   const {isSelfSpectator, isSelf, isTurn, handCount, hand} = playerState;
   const fanSpread = isSelfSpectator || isSelf ? Math.min(handCount * 6, 60) : Math.min(handCount * 4, 40);
   const angleStep = handCount > 1 ? fanSpread / (handCount - 1) : 0;
   const baseOffset = handCount > 1 ? -fanSpread / 2 : 0;
   const spreadDistance = isSelf ? 15 : isSelfSpectator ? 10 : 5;
-  const isClickable = isSelf && isTurn;
+  const isClickable = (isSelf && isTurn) || isChoosingCardToGive;
 
   return (
     <div className="player-cards">
@@ -39,6 +48,8 @@ export default function PlayerCards({playerState, moves, triggerCardMovement, pl
             isClickable={isClickable}
             triggerCardMovement={triggerCardMovement}
             playerID={playerID}
+            isChoosingCardToGive={isChoosingCardToGive}
+            onCardGive={onCardGive}
           />
         );
       })}

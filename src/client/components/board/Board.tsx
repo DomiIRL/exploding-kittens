@@ -37,11 +37,26 @@ export default function ExplodingKittensBoard({
   const explosion = useExplosionEvents(G, allPlayers, playerID);
 
   /**
-   * Handle player selection for stealing a card
+   * Handle player selection for stealing/requesting a card
    */
   const handlePlayerSelect = (targetPlayerId: string) => {
-    if (gameState.isSelectingPlayer && moves.stealCard) {
+    if (!gameState.isSelectingPlayer) return;
+
+    // Check which stage we're in and call the appropriate move
+    const stage = ctx.activePlayers?.[playerID || ''];
+    if (stage === 'choosePlayerToStealFrom' && moves.stealCard) {
       moves.stealCard(targetPlayerId);
+    } else if (stage === 'choosePlayerToRequestFrom' && moves.requestCard) {
+      moves.requestCard(targetPlayerId);
+    }
+  };
+
+  /**
+   * Handle card selection when giving a card (favor card)
+   */
+  const handleCardGive = (cardIndex: number) => {
+    if (gameState.isChoosingCardToGive && moves.giveCard) {
+      moves.giveCard(cardIndex);
     }
   };
 
@@ -58,10 +73,12 @@ export default function ExplodingKittensBoard({
           isSelfSpectator={gameState.isSelfSpectator}
           currentPlayer={gameState.currentPlayer}
           isSelectingPlayer={gameState.isSelectingPlayer}
+          isChoosingCardToGive={gameState.isChoosingCardToGive}
           playerID={playerID}
           moves={moves}
           triggerCardMovement={triggerCardMovement}
           onPlayerSelect={handlePlayerSelect}
+          onCardGive={handleCardGive}
         />
       </div>
 
@@ -73,10 +90,12 @@ export default function ExplodingKittensBoard({
         explosionIsSelf={explosion.isSelf}
         onExplosionComplete={explosion.clearEvent}
         isSelectingPlayer={gameState.isSelectingPlayer}
+        isChoosingCardToGive={gameState.isChoosingCardToGive}
         isSelfDead={gameState.isSelfDead}
         isGameOver={gameState.isGameOver}
         winnerID={G.winner}
         playerID={playerID}
+        ctx={ctx}
       />
 
       <DebugPanel data={{ctx, G, moves, plugins, playerID}} />

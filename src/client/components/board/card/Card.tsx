@@ -15,6 +15,8 @@ interface CardProps {
   isClickable?: boolean;
   triggerCardMovement: (card: CardType | null, fromId: string, toId: string) => void;
   playerID: string;
+  isChoosingCardToGive?: boolean;
+  onCardGive?: (cardIndex: number) => void;
 }
 
 export default function Card({
@@ -28,6 +30,8 @@ export default function Card({
                                isClickable,
                                triggerCardMovement,
                                playerID,
+                               isChoosingCardToGive = false,
+                               onCardGive,
                              }: CardProps) {
   const [isHovered, setIsHovered] = useState(false);
   const [showOnLeft, setShowOnLeft] = useState(false);
@@ -58,6 +62,13 @@ export default function Card({
   }, [isHovered]);
 
   const handleClick = () => {
+    // If choosing a card to give (favor card flow)
+    if (isChoosingCardToGive && onCardGive) {
+      onCardGive(index);
+      return;
+    }
+
+    // Otherwise, play the card normally
     if (isClickable && moves && card) {
       try {
         // Try to execute move first

@@ -18,6 +18,7 @@ interface GameStateData {
   isGameOver: boolean;
   currentPlayer: number;
   isSelectingPlayer: boolean;
+  isChoosingCardToGive: boolean;
   alivePlayers: string[];
   alivePlayersSorted: string[];
 }
@@ -50,11 +51,18 @@ export const useGameState = (
   const currentPlayer = parseInt(ctx.currentPlayer);
 
   const isSelectingPlayer = useMemo(() => {
+    const stage = ctx.activePlayers?.[playerID || ''];
     return !isSpectator &&
       selfPlayerId !== null &&
       selfPlayerId === currentPlayer &&
-      ctx.activePlayers?.[playerID || ''] === 'choosePlayerToStealFrom';
+      (stage === 'choosePlayerToStealFrom' || stage === 'choosePlayerToRequestFrom');
   }, [isSpectator, selfPlayerId, currentPlayer, ctx.activePlayers, playerID]);
+
+  const isChoosingCardToGive = useMemo(() => {
+    return !isSpectator &&
+      selfPlayerId !== null &&
+      ctx.activePlayers?.[playerID || ''] === 'chooseCardToGive';
+  }, [isSpectator, selfPlayerId, ctx.activePlayers, playerID]);
 
   const alivePlayers = useMemo(() => {
     return Object.keys(ctx.playOrder).filter(player => allPlayers[player]?.isAlive);
@@ -72,6 +80,7 @@ export const useGameState = (
     isGameOver,
     currentPlayer,
     isSelectingPlayer,
+    isChoosingCardToGive,
     alivePlayers,
     alivePlayersSorted,
   };

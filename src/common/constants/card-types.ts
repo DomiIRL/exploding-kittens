@@ -6,6 +6,9 @@ import {SkipCard} from "../entities/cards/skip-card";
 import {ShuffleCard} from "../entities/cards/shuffle-card";
 import {Registry} from "../registry/registry";
 import {AttackCard} from "../entities/cards/attack-card";
+import {NopeCard} from "../entities/cards/nope-card";
+import {SeeTheFutureCard} from "../entities/cards/see-the-future-card";
+import {FavorCard} from "../entities/cards/favor-card";
 
 // Registry for card models
 export const cardTypeRegistry = new Registry<CardType>();
@@ -15,9 +18,9 @@ export const ATTACK = register(new AttackCard('attack'));
 export const CAT_CARD = register(new CatCard('cat_card'));
 export const SKIP = register(new SkipCard('skip'));
 export const SHUFFLE = register(new ShuffleCard('shuffle'));
-export const FAVOR = register(new CardType('favor'));
-export const NOPE = register(new CardType('nope'));
-export const SEE_THE_FUTURE = register(new CardType('see_the_future'));
+export const FAVOR = register(new FavorCard('favor'));
+export const NOPE = register(new NopeCard('nope'));
+export const SEE_THE_FUTURE = register(new SeeTheFutureCard('see_the_future'));
 export const DEFUSE = register(new DefuseCard('defuse'));
 export const EXPLODING_KITTEN = register(new ExplodingKittenCard('exploding_kitten'));
 

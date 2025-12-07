@@ -5,6 +5,7 @@ import type {GameState, PluginAPIs} from './models';
 import {drawCard} from "./moves/draw-move";
 import {playCard} from "./moves/play-card-move";
 import {stealCard} from "./moves/steal-card-move";
+import {requestCard, giveCard} from "./moves/favor-card-move";
 import {skipDeadPlayers} from "./utils/turn-order";
 
 export const ExplodingKittens: Game<GameState, PluginAPIs> = {
@@ -39,6 +40,16 @@ export const ExplodingKittens: Game<GameState, PluginAPIs> = {
           choosePlayerToStealFrom: {
             moves: {
               stealCard: stealCard,
+            },
+          },
+          choosePlayerToRequestFrom: {
+            moves: {
+              requestCard: requestCard,
+            },
+          },
+          chooseCardToGive: {
+            moves: {
+              giveCard: giveCard,
             },
           },
         },
