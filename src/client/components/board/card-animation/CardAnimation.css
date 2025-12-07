@@ -1,0 +1,67 @@
+body {
+  --duration: 1s;
+  --from-x: 0;
+  --from-y: 0;
+  --to-x: 0;
+  --to-y: 0;
+}
+
+.flying-card {
+  position: fixed;
+  width: calc(var(--scale) * 9);
+  aspect-ratio: 6 / 8.4;
+  background-size: cover;
+  background-position: center;
+  border: calc(var(--scale) * 0.4) solid var(--color-accent);
+  border-radius: calc(var(--scale) * 0.8);
+  box-shadow: 0 calc(var(--scale) * 1) calc(var(--scale) * 3) var(--color-shadow-dark),
+              0 0 calc(var(--scale) * 2) var(--color-accent-glow-medium);
+  pointer-events: none;
+  z-index: 9999;
+  /* Start at origin, will be positioned via left/top in component */
+  transform: translate(-50%, -50%) scale(0.8);
+  opacity: 0;
+}
+
+.flying-card.flying {
+  animation: flyCard var(--duration) cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+@keyframes flyCard {
+  0% {
+    transform: translate(
+      calc(-50% + var(--from-x)),
+      calc(-50% + var(--from-y))
+    ) scale(0.8) rotate(0deg);
+    opacity: 1;
+  }
+  20% {
+    transform: translate(
+      calc(-50% + var(--from-x) * 0.8 + var(--to-x) * 0.2),
+      calc(-50% + var(--from-y) * 0.8 + var(--to-y) * 0.2 - 50px)
+    ) scale(1.1) rotate(5deg);
+    opacity: 1;
+  }
+  50% {
+    transform: translate(
+      calc(-50% + var(--from-x) * 0.5 + var(--to-x) * 0.5),
+      calc(-50% + var(--from-y) * 0.5 + var(--to-y) * 0.5 - 80px)
+    ) scale(1.2) rotate(-3deg);
+    opacity: 1;
+  }
+  80% {
+    transform: translate(
+      calc(-50% + var(--from-x) * 0.2 + var(--to-x) * 0.8),
+      calc(-50% + var(--from-y) * 0.2 + var(--to-y) * 0.8 - 30px)
+    ) scale(1) rotate(2deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(
+      calc(-50% + var(--to-x)),
+      calc(-50% + var(--to-y))
+    ) scale(0.8) rotate(0deg);
+    opacity: 0;
+  }
+}
+

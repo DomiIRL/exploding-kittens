@@ -1,12 +1,15 @@
 import Card from '../card/Card';
 import PlayerRenderState from "../../../model/PlayerState";
+import {Card as CardType} from "../../../../common";
 
 interface PlayerCardsProps {
   playerState: PlayerRenderState;
   moves?: any;
+  triggerCardMovement: (card: CardType | null, fromId: string, toId: string) => void;
+  playerID: string;
 }
 
-export default function PlayerCards({playerState, moves}: PlayerCardsProps) {
+export default function PlayerCards({playerState, moves, triggerCardMovement, playerID}: PlayerCardsProps) {
   const {isSelfSpectator, isSelf, isTurn, handCount, hand} = playerState;
   const fanSpread = isSelfSpectator || isSelf ? Math.min(handCount * 6, 60) : Math.min(handCount * 4, 40);
   const angleStep = handCount > 1 ? fanSpread / (handCount - 1) : 0;
@@ -34,6 +37,8 @@ export default function PlayerCards({playerState, moves}: PlayerCardsProps) {
             offsetY={offsetY}
             moves={moves}
             isClickable={isClickable}
+            triggerCardMovement={triggerCardMovement}
+            playerID={playerID}
           />
         );
       })}

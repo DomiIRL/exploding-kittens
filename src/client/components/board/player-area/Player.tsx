@@ -1,6 +1,7 @@
 import './Player.css';
 import PlayerCards from '../player-cards/PlayerCards';
 import PlayerState from "../../../model/PlayerState";
+import {Card} from "../../../../common";
 
 interface Position {
   top: string;
@@ -19,6 +20,7 @@ interface PlayerAreaProps {
   moves: any;
   isSelectable: boolean;
   onPlayerSelect: (playerId: string) => void;
+  triggerCardMovement: (card: Card | null, fromId: string, toId: string) => void;
 }
 
 export default function Player({
@@ -28,7 +30,8 @@ export default function Player({
   infoPosition, 
   moves,
   isSelectable = false,
-  onPlayerSelect
+  onPlayerSelect,
+  triggerCardMovement
 }: PlayerAreaProps) {
   const cardRotation = cardPosition.angle - 90;
 
@@ -52,7 +55,12 @@ export default function Player({
           zIndex: playerState.isSelf ? 2 : 1,
         }}
       >
-        <PlayerCards playerState={playerState} moves={moves}/>
+        <PlayerCards
+          playerState={playerState}
+          moves={moves}
+          triggerCardMovement={triggerCardMovement}
+          playerID={playerID}
+        />
       </div>
 
       <div
@@ -65,6 +73,9 @@ export default function Player({
           zIndex: 3,
         }}
         onClick={handleClick}
+        data-player-id={playerID}
+        data-hand-count={playerState.handCount}
+        data-animation-id={`player-${playerID}`}
       >
         <div className="player-info flex flex-col items-center">
           <div className="player-id mt-2 font-bold">

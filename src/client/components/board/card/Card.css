@@ -24,7 +24,102 @@
 
 .pile {
   width: calc(var(--scale) * 9);
+  transition: transform 0.2s ease;
 }
+
+/* Draw pile hover and ready state */
+.pile.draw-pile:not(.empty):hover {
+  cursor: pointer;
+  filter: brightness(1.15);
+  transform: scale(1.05);
+  box-shadow: 0 4px 16px var(--color-accent-glow-medium),
+              0 0 20px var(--color-accent-glow-light);
+}
+
+/* Empty discard pile styling */
+.pile.empty {
+  border: calc(var(--scale) * 0.4) dashed var(--color-border-medium);
+  background: linear-gradient(
+    135deg,
+    var(--color-bg-dark) 0%,
+    var(--color-bg-medium) 50%,
+    var(--color-bg-dark) 100%
+  ) !important;
+  box-shadow: inset 0 2px 8px var(--color-shadow-medium),
+              0 2px 6px var(--color-shadow-light);
+  position: relative;
+  overflow: hidden;
+}
+
+.pile.empty::before {
+  content: '♠';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: calc(var(--scale) * 6);
+  color: var(--color-bg-light);
+  opacity: 0.3;
+}
+
+/* Draw pile animations */
+.pile.draw-pile.drawing {
+  animation: cardDraw 0.4s ease;
+}
+
+@keyframes cardDraw {
+  0% {
+    transform: scale(1);
+  }
+  30% {
+    transform: scale(0.95) translateY(calc(var(--scale) * -1));
+  }
+  70% {
+    transform: scale(1.05) translateY(calc(var(--scale) * 0.5));
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Shuffle animation */
+.pile.draw-pile.shuffling {
+  animation: cardShuffle 0.8s ease;
+}
+
+@keyframes cardShuffle {
+  0%, 100% {
+    transform: scale(1) rotate(0deg);
+  }
+  10% {
+    transform: scale(1.1) rotate(-5deg);
+  }
+  20% {
+    transform: scale(0.95) rotate(5deg);
+  }
+  30% {
+    transform: scale(1.05) rotate(-3deg);
+  }
+  40% {
+    transform: scale(0.98) rotate(3deg);
+  }
+  50% {
+    transform: scale(1.02) rotate(-2deg);
+  }
+  60% {
+    transform: scale(0.99) rotate(2deg);
+  }
+  70% {
+    transform: scale(1.01) rotate(-1deg);
+  }
+  80% {
+    transform: scale(1) rotate(1deg);
+  }
+  90% {
+    transform: scale(1) rotate(0deg);
+  }
+}
+
 
 .card {
   --base-transform: none;

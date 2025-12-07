@@ -13,6 +13,8 @@ interface CardProps {
   offsetY: number;
   moves?: any;
   isClickable?: boolean;
+  triggerCardMovement: (card: CardType | null, fromId: string, toId: string) => void;
+  playerID: string;
 }
 
 export default function Card({
@@ -24,6 +26,8 @@ export default function Card({
                                offsetY,
                                moves,
                                isClickable,
+                               triggerCardMovement,
+                               playerID,
                              }: CardProps) {
   const [isHovered, setIsHovered] = useState(false);
   const [showOnLeft, setShowOnLeft] = useState(false);
@@ -54,9 +58,13 @@ export default function Card({
   }, [isHovered]);
 
   const handleClick = () => {
-    if (isClickable && moves) {
+    if (isClickable && moves && card) {
       try {
+        // Try to execute move first
         moves.playCard(index);
+
+        // Only trigger animation if move didn't throw an error
+        triggerCardMovement(card, `player-${playerID}`, 'discard-pile');
       } catch (error) {
         if (error instanceof NotPlayable) {
           console.log('Card not playable');

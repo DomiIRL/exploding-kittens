@@ -8,6 +8,7 @@ import PlayerSelectionOverlay from './player-selection-overlay/PlayerSelectionOv
 import {BoardProps} from 'boardgame.io/react';
 import {Card, GameState} from '../../../common';
 import PlayerState from '../../model/PlayerState';
+import {useCardAnimations} from '../../hooks/useCardAnimations';
 
 interface PlayerPlugin {
   data: {
@@ -97,6 +98,8 @@ export default function ExplodingKittensBoard({
   const players = Object.keys(ctx.playOrder);
   const alivePlayers = players.filter(player => allPlayers[player].isAlive);
 
+  const {AnimationLayer, triggerCardMovement} = useCardAnimations(G);
+
   const isSpectator = playerID == null;
   const selfPlayerId = isSpectator ? null : parseInt(playerID || '0');
   const isSelfDead = !isSpectator &&
@@ -177,10 +180,12 @@ export default function ExplodingKittensBoard({
               moves={moves}
               isSelectable={isSelectable}
               onPlayerSelect={handlePlayerSelect}
+              triggerCardMovement={triggerCardMovement}
             />
           );
         })}
       </div>
+      <AnimationLayer />
       {isSelectingPlayer && <PlayerSelectionOverlay />}
       {isSelfDead && !isGameOver && <DeadOverlay/>}
       {isGameOver && G.winner && (
