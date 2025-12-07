@@ -16,9 +16,9 @@ interface PlayerAreaProps {
   playerState: PlayerState;
   cardPosition: CardPosition;
   infoPosition: Position;
-  moves?: any;
-  isSelectable?: boolean;
-  onPlayerSelect?: (playerId: string) => void;
+  moves: any;
+  isSelectable: boolean;
+  onPlayerSelect: (playerId: string) => void;
 }
 
 export default function Player({

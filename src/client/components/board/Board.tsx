@@ -102,8 +102,8 @@ export default function ExplodingKittensBoard({
   const isSelfDead = !isSpectator &&
     selfPlayerId !== null &&
     !allPlayers[selfPlayerId.toString()].isAlive;
-  const isSelfSpectator = isSpectator ||
-    (isSelfDead && G.gameRules.deadPlayersCanSeeAllCards) ||
+  const isSelfSpectator = isSpectator || 
+    (isSelfDead && G.gameRules.deadPlayersCanSeeAllCards) || 
     G.gameRules.openCards;
 
   const isGameOver = ctx.phase === 'gameover';
@@ -162,6 +162,11 @@ export default function ExplodingKittensBoard({
             playerInfo.hand
           );
 
+          const isSelectable = isSelectingPlayer
+            && player !== playerID
+            && playerState.isAlive
+            && playerState.handCount > 0;
+
           return (
             <Player
               key={player}
@@ -170,7 +175,7 @@ export default function ExplodingKittensBoard({
               cardPosition={cardPosition}
               infoPosition={infoPosition}
               moves={moves}
-              isSelectable={isSelectingPlayer && player !== playerID}
+              isSelectable={isSelectable}
               onPlayerSelect={handlePlayerSelect}
             />
           );

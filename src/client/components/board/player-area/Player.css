@@ -27,12 +27,12 @@
 }
 
 .selectable .player-info:hover {
-  background: linear-gradient(135deg, var(--color-accent-light) 0%, var(--color-accent) 100%);
-  border: calc(var(--scale) * 0.4) solid var(--color-accent-dark);
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+  border: calc(var(--scale) * 0.4) solid var(--color-primary-darker);
   transform: scale(1.1);
-  box-shadow: 0 6px 20px var(--color-accent-glow-medium),
-              0 0 30px var(--color-accent-glow-light),
-              inset 0 1px 2px var(--color-highlight);
+  box-shadow: 0 6px 20px var(--color-primary-glow),
+              0 0 30px var(--color-primary-glow),
+              inset 0 1px 2px var(--color-primary-darkest);
 }
 
 .selectable .player-info:active {

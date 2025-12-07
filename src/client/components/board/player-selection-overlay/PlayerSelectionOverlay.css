@@ -1,8 +1,8 @@
 .player-selection-overlay {
   position: fixed;
-  top: calc(var(--scale) * 1);
+  top: 50%;
   left: 50%;
-  transform: translateX(-50%);
+  transform: translateX(-50%) translateY(-50%);
   z-index: 1000;
   pointer-events: none;
 }
@@ -10,7 +10,7 @@
 .selection-message {
   background: linear-gradient(135deg, var(--color-accent) 0%, var(--color-accent-light) 100%);
   color: var(--color-text-light);
-  padding: calc(var(--scale) * 2) calc(var(--scale) * 4);
+  padding: calc(var(--scale) * 2) calc(var(--scale) * 2);
   border-radius: calc(var(--scale) * 2);
   border: calc(var(--scale) * 0.4) solid var(--color-accent-dark);
   box-shadow: 0 4px 16px var(--color-accent-glow-medium),
