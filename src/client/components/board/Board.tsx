@@ -102,7 +102,9 @@ export default function ExplodingKittensBoard({
   const isSelfDead = !isSpectator &&
     selfPlayerId !== null &&
     !allPlayers[selfPlayerId.toString()].isAlive;
-  const isSelfSpectator = isSpectator || (isSelfDead && G.deadPlayersCanSeeAllCards);
+  const isSelfSpectator = isSpectator ||
+    (isSelfDead && G.gameRules.deadPlayersCanSeeAllCards) ||
+    G.gameRules.openCards;
 
   const isGameOver = ctx.phase === 'gameover';
   const currentPlayer = parseInt(ctx.currentPlayer);

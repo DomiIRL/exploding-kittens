@@ -14,6 +14,12 @@ export const ExplodingKittens: Game<GameState, PluginAPIs> = {
 
   setup: setupGame,
 
+  playerView: ({G}) => {
+    // The player plugin's playerView will handle filtering the player data
+    // We need to pass G through so it's available
+    return G;
+  },
+
   phases: {
     play: {
       start: true,

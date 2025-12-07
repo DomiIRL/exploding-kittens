@@ -6,8 +6,7 @@ export const stealCard = (context: FnContext, targetPlayerId: PlayerID) => {
 
   // Can't steal from yourself
   if (targetPlayerId === ctx.currentPlayer) {
-    console.error('Cannot steal from yourself');
-    return;
+    throw Error('Cannot steal from yourself');
   }
 
   const currentPlayerData: Player = player.get();
@@ -15,38 +14,31 @@ export const stealCard = (context: FnContext, targetPlayerId: PlayerID) => {
 
   // Check if target player exists and is alive
   if (!targetPlayerData || !targetPlayerData.isAlive) {
-    console.error('Invalid target player');
-    return;
+    throw Error('Target player does not exist or is dead');
   }
 
   // Check if target has any cards
   if (targetPlayerData.hand.length === 0) {
-    console.log('Target player has no cards');
-    events.endStage();
-    return;
+    throw Error('Target player has no cards');
   }
 
-  // Pick a random card from target player using boardgame.io's random API
+  // Pick a random card from target player
   const randomIndex = random.Die(targetPlayerData.hand.length) - 1;
   const stolenCard = targetPlayerData.hand[randomIndex];
 
-  // Remove card from target player
   const newTargetHand = targetPlayerData.hand.filter((_, idx) => idx !== randomIndex);
 
-  // Update target player state through the player plugin
   player.state[targetPlayerId] = {
     ...targetPlayerData,
     hand: newTargetHand,
     hand_count: newTargetHand.length,
   };
 
-  // Add card to current player
   player.set({
     ...currentPlayerData,
     hand: [...currentPlayerData.hand, stolenCard],
   });
 
-  // End the stage
   events.endStage();
 };
 

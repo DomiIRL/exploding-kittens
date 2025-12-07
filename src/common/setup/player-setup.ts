@@ -1,4 +1,4 @@
-import type {Card, Player, Players} from '../models';
+import type {Card, GameState, Player, Players} from '../models';
 import type {Deck} from '../entities/deck';
 
 export const createPlayerState = (): Player => ({
@@ -10,7 +10,10 @@ export const createPlayerState = (): Player => ({
 /**
  * Create a full view of a player (used for self-view and spectators)
  */
-const createFullPlayerView = (player: Player): Player => ({...player, hand_count: player.hand.length});
+const createFullPlayerView = (player: Player): Player => ({
+  ...player,
+  hand_count: player.hand.length
+});
 
 /**
  * Create a limited view of a player (used for opponent views)
@@ -25,23 +28,26 @@ const createLimitedPlayerView = (player: Player): Player => ({
  * Check if the viewing player should see all cards (spectator or dead player)
  */
 const shouldSeeAllCards = (
+  G: GameState,
   players: Players,
   playerID?: string | null,
-  G?: any
 ): boolean => {
   // Spectators see all cards
   if (!playerID) return true;
 
+  // If openCards rule is enabled, everyone sees all cards
+  if (G.gameRules.openCards) return true;
+
   const currentPlayer = players[playerID];
   const isCurrentPlayerDead = currentPlayer && !currentPlayer.isAlive;
-  const deadPlayersCanSeeAll = G?.deadPlayersCanSeeAllCards ?? true;
+  const deadPlayersCanSeeAll = G?.gameRules?.deadPlayersCanSeeAllCards ?? true;
 
   // Dead players with permission see all cards
   return isCurrentPlayerDead && deadPlayersCanSeeAll;
 };
 
-export const filterPlayerView = (players: Players, playerID?: string | null, G?: any): Players => {
-  const canSeeAllCards = shouldSeeAllCards(players, playerID, G);
+export const filterPlayerView = (G: GameState, players: Players, playerID?: string | null): Players => {
+  const canSeeAllCards = shouldSeeAllCards(G, players, playerID);
 
   const view: Players = {};
   Object.entries(players).forEach(([id, pdata]) => {

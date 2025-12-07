@@ -16,8 +16,11 @@ export const setupGame = ({ctx, player}: { ctx: Ctx; player: PlayerAPI }): GameS
     winner: null,
     drawPile: shuffle(pile),
     discardPile: [],
-    deadPlayersCanSeeAllCards: true,
     turnsRemaining: 1,
+    gameRules: {
+      deadPlayersCanSeeAllCards: false,
+      openCards: true,
+    },
   };
 };
 
