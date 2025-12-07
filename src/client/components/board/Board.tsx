@@ -4,6 +4,7 @@ import Player from './player-area/Player.tsx';
 import DebugPanel from './debug-panel/DebugPanel';
 import WinnerOverlay from './winner-overlay/WinnerOverlay';
 import DeadOverlay from './dead-overlay/DeadOverlay';
+import PlayerSelectionOverlay from './player-selection-overlay/PlayerSelectionOverlay';
 import {BoardProps} from 'boardgame.io/react';
 import {Card, GameState} from '../../../common';
 import PlayerState from '../../model/PlayerState';
@@ -106,6 +107,21 @@ export default function ExplodingKittensBoard({
   const isGameOver = ctx.phase === 'gameover';
   const currentPlayer = parseInt(ctx.currentPlayer);
 
+  // Check if the current player is in the "choosePlayerToStealFrom" stage
+  const isSelectingPlayer = !isSpectator &&
+    selfPlayerId !== null &&
+    selfPlayerId === currentPlayer &&
+    ctx.activePlayers?.[playerID || ''] === 'choosePlayerToStealFrom';
+
+  /**
+   * Handle player selection for stealing a card
+   */
+  const handlePlayerSelect = (targetPlayerId: string) => {
+    if (isSelectingPlayer && moves.stealCard) {
+      moves.stealCard(targetPlayerId);
+    }
+  };
+
   /**
    * Calculate positions for a player around the table
    */
@@ -152,10 +168,13 @@ export default function ExplodingKittensBoard({
               cardPosition={cardPosition}
               infoPosition={infoPosition}
               moves={moves}
+              isSelectable={isSelectingPlayer && player !== playerID}
+              onPlayerSelect={handlePlayerSelect}
             />
           );
         })}
       </div>
+      {isSelectingPlayer && <PlayerSelectionOverlay />}
       {isSelfDead && !isGameOver && <DeadOverlay/>}
       {isGameOver && G.winner && (
         <WinnerOverlay winnerID={G.winner} playerID={playerID}/>

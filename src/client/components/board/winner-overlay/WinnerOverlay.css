@@ -4,7 +4,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.85);
+  background: var(--color-overlay-dark);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -22,13 +22,13 @@
 }
 
 .winner-content {
-  background: linear-gradient(135deg, #8B1538 0%, #C41E3A 100%);
+  background: linear-gradient(135deg, var(--color-primary-dark) 0%, var(--color-primary) 100%);
   padding: calc(var(--scale) * 4) calc(var(--scale) * 5);
   border-radius: calc(var(--scale) * 1.5);
   text-align: center;
-  box-shadow: 0 calc(var(--scale) * 2) calc(var(--scale) * 6) rgba(0, 0, 0, 0.5);
+  box-shadow: 0 calc(var(--scale) * 2) calc(var(--scale) * 6) var(--color-shadow-dark);
   animation: scaleIn 0.5s ease-out 0.2s both;
-  border: calc(var(--scale) * 0.4) solid #FDB927;
+  border: calc(var(--scale) * 0.4) solid var(--color-accent);
   min-width: calc(var(--scale) * 40);
 }
 
@@ -61,21 +61,21 @@
 .winner-title {
   font-size: calc(var(--scale) * 4);
   font-weight: bold;
-  color: #FDB927;
+  color: var(--color-accent);
   margin-bottom: calc(var(--scale) * 1);
-  text-shadow: calc(var(--scale) * 0.2) calc(var(--scale) * 0.2) calc(var(--scale) * 0.4) rgba(0, 0, 0, 0.5);
+  text-shadow: calc(var(--scale) * 0.2) calc(var(--scale) * 0.2) calc(var(--scale) * 0.4) var(--color-shadow-dark);
 }
 
 .winner-name {
   font-size: calc(var(--scale) * 3);
-  color: white;
+  color: var(--color-text-light);
   margin-bottom: calc(var(--scale) * 0.5);
   font-weight: 600;
 }
 
 .winner-subtitle {
   font-size: calc(var(--scale) * 1.8);
-  color: rgba(255, 255, 255, 0.8);
+  color: var(--color-text-light-dim);
   margin-top: calc(var(--scale) * 1);
   overflow-wrap: break-word;
 }
@@ -84,7 +84,7 @@
   position: absolute;
   width: calc(var(--scale) * 1);
   height: calc(var(--scale) * 1);
-  background: #FDB927;
+  background: var(--color-accent);
   animation: confetti-fall 3s linear infinite;
 }
 

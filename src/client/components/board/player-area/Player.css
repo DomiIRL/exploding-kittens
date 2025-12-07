@@ -5,32 +5,50 @@
   text-align: center;
   font-size: calc(var(--scale) * 2);
   font-weight: 700;
-  color: #2d2d2d;
-  text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.8);
+  color: var(--color-text-dark);
+  text-shadow: 1px 1px 0 var(--color-highlight);
 
-  background: linear-gradient(135deg, #fff 0%, #bbb 100%);
-  border: calc(var(--scale) * 0.3) solid #333;
+  background: linear-gradient(135deg, var(--color-surface-light) 0%, var(--color-surface-medium) 100%);
+  border: calc(var(--scale) * 0.3) solid var(--color-border-medium);
   border-radius: calc(var(--scale) * 1.2);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4),
-  inset 0 1px 2px rgba(255, 255, 255, 0.8);
+  box-shadow: 0 4px 12px var(--color-shadow-light),
+  inset 0 1px 2px var(--color-highlight);
 }
 
 .turn .player-info {
-  background: linear-gradient(135deg, #FDB927 0%, #FFD700 100%);
-  border: calc(var(--scale) * 0.4) solid #8B6914;
+  background: linear-gradient(135deg, var(--color-accent) 0%, var(--color-accent-light) 100%);
+  border: calc(var(--scale) * 0.4) solid var(--color-accent-dark);
   animation: pulse 2s ease-in-out infinite;
+}
+
+.selectable .player-info {
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.selectable .player-info:hover {
+  background: linear-gradient(135deg, var(--color-accent-light) 0%, var(--color-accent) 100%);
+  border: calc(var(--scale) * 0.4) solid var(--color-accent-dark);
+  transform: scale(1.1);
+  box-shadow: 0 6px 20px var(--color-accent-glow-medium),
+              0 0 30px var(--color-accent-glow-light),
+              inset 0 1px 2px var(--color-highlight);
+}
+
+.selectable .player-info:active {
+  transform: scale(1.05);
 }
 
 @keyframes pulse {
   0%, 100% {
-    box-shadow: 0 4px 16px rgba(253, 185, 39, 0.6),
-    0 0 20px rgba(253, 185, 39, 0.4),
-    inset 0 1px 2px rgba(255, 255, 255, 0.6);
+    box-shadow: 0 4px 16px var(--color-accent-glow-medium),
+    0 0 20px var(--color-accent-glow-light),
+    inset 0 1px 2px var(--color-highlight-medium);
   }
   50% {
-    box-shadow: 0 4px 20px rgba(253, 185, 39, 0.8),
-    0 0 30px rgba(253, 185, 39, 0.6),
-    inset 0 1px 2px rgba(255, 255, 255, 0.6);
+    box-shadow: 0 4px 20px var(--color-accent-glow-strong),
+    0 0 30px var(--color-accent-glow-medium),
+    inset 0 1px 2px var(--color-highlight-medium);
   }
 }
 

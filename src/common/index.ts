@@ -29,9 +29,6 @@ export {
 // Constants - Decks
 export {ORIGINAL} from './constants/decks';
 
-// Constants - Game config
-export {GAME_CONFIG, turnConfig, moves} from './constants/game-config';
-
 // Setup functions
 export {setupGame} from './setup/game-setup';
 export {createPlayerState, filterPlayerView, dealHands} from './setup/player-setup';

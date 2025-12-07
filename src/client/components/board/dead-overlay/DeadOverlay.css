@@ -11,11 +11,11 @@
 }
 
 .dead-overlay-content {
-  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+  background: linear-gradient(135deg, var(--color-bg-dark) 0%, var(--color-bg-medium) 100%);
   padding: calc(var(--scale) * 1.5) calc(var(--scale) * 6);
   border-radius: calc(var(--scale) * 3);
-  box-shadow: 0 calc(var(--scale) * 0.4) calc(var(--scale) * 2) rgba(0, 0, 0, 0.5);
-  border: calc(var(--scale) * 0.7) solid #C41E3A;
+  box-shadow: 0 calc(var(--scale) * 0.4) calc(var(--scale) * 2) var(--color-shadow-dark);
+  border: calc(var(--scale) * 0.7) solid var(--color-primary);
   animation: fadeSlideDown 0.5s ease-out;
   display: flex;
   align-items: center;
@@ -36,9 +36,9 @@
 .dead-overlay-title {
   font-size: calc(var(--scale) * 6);
   font-weight: bold;
-  color: #C41E3A;
+  color: var(--color-primary);
   text-align: center;
-  text-shadow: calc(var(--scale) * 0.2) calc(var(--scale) * 0.2) calc(var(--scale) * 0.4) rgba(0, 0, 0, 0.8);
+  text-shadow: calc(var(--scale) * 0.2) calc(var(--scale) * 0.2) calc(var(--scale) * 0.4) var(--color-shadow-dark);
   margin: 0;
   display: flex;
   align-items: center;

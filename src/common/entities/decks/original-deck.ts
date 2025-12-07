@@ -40,7 +40,7 @@ export class OriginalDeck extends Deck {
       pile.push(SHUFFLE.createCard(i));
       pile.push(FAVOR.createCard(i));
       for (let j = 0; j < 5; j++) {
-        pile.push(CAT_CARD.createCard(j));
+        pile.push(CAT_CARD.createCard(1));
       }
     }
 

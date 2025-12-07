@@ -1,6 +1,6 @@
 .card-base, .card, .pile, .card-preview {
   aspect-ratio: 6 / 8.4;
-  background: linear-gradient(135deg, #222 0%, #111 100%) no-repeat center;
+  background: linear-gradient(135deg, var(--color-surface-card) 0%, var(--color-surface-card-dark) 100%) no-repeat center;
   background-size: 102%;
 }
 
@@ -15,11 +15,11 @@
 
   font-size: calc(var(--scale) * 2);
   font-weight: bold;
-  color: #2d2d2d;
+  color: var(--color-text-dark);
 
-  border: calc(var(--scale) * 0.4) solid #1c1c1c;
+  border: calc(var(--scale) * 0.4) solid var(--color-border-dark);
   border-radius: calc(var(--scale) * 0.8);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 2px 6px var(--color-shadow-light);
 }
 
 .pile {
@@ -45,9 +45,9 @@
 .pile:not(.empty):hover {
   cursor: pointer;
   filter: brightness(1.1);
-  border-color: #FDB927;
-  box-shadow: 0 8px 24px rgba(253, 185, 39, 0.6),
-  0 0 20px rgba(253, 185, 39, 0.4);
+  border-color: var(--color-accent);
+  box-shadow: 0 8px 24px var(--color-accent-glow-medium),
+  0 0 20px var(--color-accent-glow-light);
 }
 
 .hand-interactable .card:hover {
@@ -95,10 +95,10 @@
   height: calc(var(--scale) * 50);
   width: auto;
 
-  border: calc(var(--scale) * 0.8) solid #FDB927;
+  border: calc(var(--scale) * 0.8) solid var(--color-accent);
   border-radius: calc(var(--scale) * 2.4);
-  box-shadow: 0 calc(var(--scale) * 2) calc(var(--scale) * 6) rgba(0, 0, 0, 0.8),
-  0 0 calc(var(--scale) * 4) rgba(253, 185, 39, 0.6);
+  box-shadow: 0 calc(var(--scale) * 2) calc(var(--scale) * 6) var(--color-shadow-dark),
+  0 0 calc(var(--scale) * 4) var(--color-accent-glow-medium);
 
   animation: cardPreviewAppear 0.15s cubic-bezier(0.34, 1.56, 0.64, 1);
 }

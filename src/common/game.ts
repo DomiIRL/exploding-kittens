@@ -1,11 +1,14 @@
 import {Game} from 'boardgame.io';
 import {createPlayerPlugin} from './plugins/player-plugin';
 import {setupGame} from './setup/game-setup';
-import {GAME_CONFIG, moves, turnConfig} from './constants/game-config';
 import type {GameState, PluginAPIs} from './models';
+import {drawCard} from "./moves/draw-move";
+import {playCard} from "./moves/play-card-move";
+import {stealCard} from "./moves/steal-card-move";
+import {skipDeadPlayers} from "./utils/turn-order";
 
 export const ExplodingKittens: Game<GameState, PluginAPIs> = {
-  name: GAME_CONFIG.name,
+  name: "Exploding-Kittens",
 
   plugins: [createPlayerPlugin()],
 
@@ -14,8 +17,30 @@ export const ExplodingKittens: Game<GameState, PluginAPIs> = {
   phases: {
     play: {
       start: true,
-      turn: turnConfig,
-      moves: moves,
+      turn: {
+        minMoves: 1,
+        order: skipDeadPlayers,
+        onEnd: ({G}: any) => {
+          // Decrement the turns remaining counter
+          G.turnsRemaining = G.turnsRemaining - 1;
+
+          // If we're moving to the next player, reset the counter
+          if (G.turnsRemaining <= 0) {
+            G.turnsRemaining = 1;
+          }
+        },
+        stages: {
+          choosePlayerToStealFrom: {
+            moves: {
+              stealCard: stealCard,
+            },
+          },
+        },
+      },
+      moves: {
+        drawCard: drawCard,
+        playCard: playCard,
+      },
       endIf: ({player}) => {
         const alivePlayers = Object.entries(player.state).filter(
           ([_, p]) => p.isAlive

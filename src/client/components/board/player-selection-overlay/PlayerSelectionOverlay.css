@@ -1,0 +1,34 @@
+.player-selection-overlay {
+  position: fixed;
+  top: calc(var(--scale) * 1);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  pointer-events: none;
+}
+
+.selection-message {
+  background: linear-gradient(135deg, var(--color-accent) 0%, var(--color-accent-light) 100%);
+  color: var(--color-text-light);
+  padding: calc(var(--scale) * 2) calc(var(--scale) * 4);
+  border-radius: calc(var(--scale) * 2);
+  border: calc(var(--scale) * 0.4) solid var(--color-accent-dark);
+  box-shadow: 0 4px 16px var(--color-accent-glow-medium),
+              0 0 30px var(--color-accent-glow-light);
+  font-size: calc(var(--scale) * 3);
+  font-weight: bold;
+  text-align: center;
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 4px 16px var(--color-accent-glow-medium),
+                0 0 30px var(--color-accent-glow-light);
+  }
+  50% {
+    box-shadow: 0 6px 20px var(--color-accent-glow-strong),
+                0 0 40px var(--color-accent-glow-medium);
+  }
+}
+

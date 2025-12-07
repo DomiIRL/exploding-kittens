@@ -17,12 +17,28 @@ interface PlayerAreaProps {
   cardPosition: CardPosition;
   infoPosition: Position;
   moves?: any;
+  isSelectable?: boolean;
+  onPlayerSelect?: (playerId: string) => void;
 }
 
-export default function Player({playerID, playerState, cardPosition, infoPosition, moves}: PlayerAreaProps) {
+export default function Player({
+  playerID, 
+  playerState, 
+  cardPosition, 
+  infoPosition, 
+  moves,
+  isSelectable = false,
+  onPlayerSelect
+}: PlayerAreaProps) {
   const cardRotation = cardPosition.angle - 90;
 
-  const extraClasses = `${playerState.isSelf ? 'hand-interactable self' : ''} ${playerState.isTurn ? 'turn' : ''}`
+  const extraClasses = `${playerState.isSelf ? 'hand-interactable self' : ''} ${playerState.isTurn ? 'turn' : ''} ${isSelectable ? 'selectable' : ''}`
+
+  const handleClick = () => {
+    if (isSelectable && onPlayerSelect) {
+      onPlayerSelect(playerID);
+    }
+  };
 
   return (
     <>
@@ -48,6 +64,7 @@ export default function Player({playerID, playerState, cardPosition, infoPositio
           transform: 'translate(-50%, -50%)',
           zIndex: 3,
         }}
+        onClick={handleClick}
       >
         <div className="player-info flex flex-col items-center">
           <div className="player-id mt-2 font-bold">
