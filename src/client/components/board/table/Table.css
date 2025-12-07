@@ -39,3 +39,34 @@
   flex-direction: row;
   gap: calc(var(--scale) * 1);
 }
+
+.card-counter {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  font-size: calc(var(--scale) * 4);
+  font-weight: bold;
+  color: var(--color-accent);
+  text-shadow:
+    0 0 calc(var(--scale) * 1) var(--color-shadow-dark),
+    0 0 calc(var(--scale) * 2) var(--color-shadow-dark),
+    calc(var(--scale) * 0.2) calc(var(--scale) * 0.2) calc(var(--scale) * 0.4) var(--color-shadow-dark);
+
+  pointer-events: none;
+  z-index: 10;
+  animation: fadeIn 0.2s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+

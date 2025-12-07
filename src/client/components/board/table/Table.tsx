@@ -8,6 +8,7 @@ export default function Table({G, moves}: { G: GameState, moves: any }) {
   const [isShuffling, setIsShuffling] = useState(false);
   const [lastDrawPileLength, setLastDrawPileLength] = useState(G.drawPile.length);
   const [lastDiscardPileLength, setLastDiscardPileLength] = useState(G.discardPile.length);
+  const [isHoveringDrawPile, setIsHoveringDrawPile] = useState(false);
 
   const discardCard = G.discardPile[G.discardPile.length - 1];
   const discardImage = discardCard ? `/assets/cards/${discardCard.name}/${discardCard.index}.png` : "None";
@@ -50,8 +51,16 @@ export default function Table({G, moves}: { G: GameState, moves: any }) {
             className={`pile draw-pile ${isDrawing ? 'drawing' : ''} ${isShuffling ? 'shuffling' : ''}`}
             style={{backgroundImage: `url(${back})`}}
             onClick={handleDrawClick}
+            onMouseEnter={() => setIsHoveringDrawPile(true)}
+            onMouseLeave={() => setIsHoveringDrawPile(false)}
             data-animation-id="draw-pile"
-          />
+          >
+            {isHoveringDrawPile && G.drawPile.length > 0 && (
+              <div className="card-counter">
+                {G.drawPile.length}
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>

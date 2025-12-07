@@ -7,7 +7,7 @@ import {ShuffleCard} from "../entities/cards/shuffle-card";
 import {Registry} from "../registry/registry";
 import {AttackCard} from "../entities/cards/attack-card";
 
-// Registry for card types
+// Registry for card models
 export const cardTypeRegistry = new Registry<CardType>();
 
 // Card instances

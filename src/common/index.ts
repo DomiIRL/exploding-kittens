@@ -12,7 +12,7 @@ export type {DefuseCard} from './entities/cards/defuse-card';
 export type {ExplodingKittenCard} from './entities/cards/exploding-kitten-card';
 export type {OriginalDeck} from './entities/decks/original-deck';
 
-// Constants - Card types
+// Constants - Card models
 export {
   ATTACK,
   SKIP,

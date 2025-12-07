@@ -1,0 +1,123 @@
+.explosion-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9500;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.explosion-overlay.visible {
+  opacity: 1;
+}
+
+.explosion-overlay::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.4) 100%);
+}
+
+.explosion-content {
+  position: relative;
+  text-align: center;
+  padding: calc(var(--scale) * 4);
+  background: linear-gradient(135deg, var(--color-bg-dark) 0%, var(--color-bg-medium) 100%);
+  border-radius: calc(var(--scale) * 3);
+  box-shadow: 0 calc(var(--scale) * 2) calc(var(--scale) * 8) var(--color-shadow-dark);
+  animation: explosionAppear 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  min-width: calc(var(--scale) * 40);
+}
+
+.explosion-overlay.exploding .explosion-content {
+  border: calc(var(--scale) * 0.6) solid var(--color-primary);
+  box-shadow:
+    0 calc(var(--scale) * 2) calc(var(--scale) * 8) var(--color-shadow-dark),
+    0 0 calc(var(--scale) * 4) rgba(196, 30, 58, 0.6),
+    inset 0 0 calc(var(--scale) * 2) rgba(196, 30, 58, 0.2);
+}
+
+/* Defused variant - gold theme */
+.explosion-overlay.defused .explosion-content {
+  border: calc(var(--scale) * 0.6) solid var(--color-accent);
+  box-shadow:
+    0 calc(var(--scale) * 2) calc(var(--scale) * 8) var(--color-shadow-dark),
+    0 0 calc(var(--scale) * 4) var(--color-accent-glow-medium),
+    inset 0 0 calc(var(--scale) * 2) var(--color-accent-glow-light);
+}
+
+@keyframes explosionAppear {
+  0% {
+    opacity: 0;
+    transform: scale(0.5) rotate(-5deg);
+  }
+  50% {
+    transform: scale(1.1) rotate(2deg);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
+}
+
+.explosion-icon {
+  font-size: calc(var(--scale) * 12);
+  margin-bottom: calc(var(--scale) * 2);
+  animation: iconPulse 1s ease-in-out infinite;
+}
+
+.explosion-overlay.exploding .explosion-icon {
+  animation: iconShake 0.5s ease-in-out infinite;
+}
+
+@keyframes iconPulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+@keyframes iconShake {
+  0%, 100% {
+    transform: rotate(0deg) scale(1);
+  }
+  25% {
+    transform: rotate(-10deg) scale(1.1);
+  }
+  75% {
+    transform: rotate(10deg) scale(1.1);
+  }
+}
+
+.explosion-title {
+  font-size: calc(var(--scale) * 6);
+  font-weight: bold;
+  margin-bottom: calc(var(--scale) * 1);
+  text-shadow: calc(var(--scale) * 0.2) calc(var(--scale) * 0.2) calc(var(--scale) * 0.6) var(--color-shadow-dark);
+}
+
+.explosion-overlay.exploding .explosion-title {
+  color: var(--color-primary);
+}
+
+.explosion-overlay.defused .explosion-title {
+  color: var(--color-accent);
+}
+
+.explosion-subtitle {
+  font-size: calc(var(--scale) * 2.5);
+  color: var(--color-text-light-dim);
+  font-weight: 600;
+}
+
