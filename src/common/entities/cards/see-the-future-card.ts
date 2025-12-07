@@ -7,7 +7,12 @@ export class SeeTheFutureCard extends CardType {
     super(name);
   }
 
-  canBePlayed(_context: FnContext, _card: Card): boolean {
-    return false;
+  onPlayed(context: FnContext, _card: Card) {
+    const { events } = context;
+
+    // Set stage to view the future
+    events.setActivePlayers({
+      currentPlayer: 'viewingFuture',
+    });
   }
 }

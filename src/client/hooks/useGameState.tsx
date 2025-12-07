@@ -19,6 +19,7 @@ interface GameStateData {
   currentPlayer: number;
   isSelectingPlayer: boolean;
   isChoosingCardToGive: boolean;
+  isViewingFuture: boolean;
   alivePlayers: string[];
   alivePlayersSorted: string[];
 }
@@ -64,6 +65,12 @@ export const useGameState = (
       ctx.activePlayers?.[playerID || ''] === 'chooseCardToGive';
   }, [isSpectator, selfPlayerId, ctx.activePlayers, playerID]);
 
+  const isViewingFuture = useMemo(() => {
+    return !isSpectator &&
+      selfPlayerId !== null &&
+      ctx.activePlayers?.[playerID || ''] === 'viewingFuture';
+  }, [isSpectator, selfPlayerId, ctx.activePlayers, playerID]);
+
   const alivePlayers = useMemo(() => {
     return Object.keys(ctx.playOrder).filter(player => allPlayers[player]?.isAlive);
   }, [ctx.playOrder, allPlayers]);
@@ -81,6 +88,7 @@ export const useGameState = (
     currentPlayer,
     isSelectingPlayer,
     isChoosingCardToGive,
+    isViewingFuture,
     alivePlayers,
     alivePlayersSorted,
   };

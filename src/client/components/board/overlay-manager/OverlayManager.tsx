@@ -2,7 +2,9 @@ import WinnerOverlay from '../winner-overlay/WinnerOverlay';
 import DeadOverlay from '../dead-overlay/DeadOverlay';
 import PlayerSelectionOverlay from '../player-selection-overlay/PlayerSelectionOverlay';
 import ExplosionOverlay from '../explosion-overlay/ExplosionOverlay';
+import SeeTheFutureOverlay from '../see-future-overlay/SeeTheFutureOverlay';
 import {Ctx} from 'boardgame.io';
+import {GameState} from '../../../../common';
 
 interface OverlayManagerProps {
   // Explosion overlay
@@ -17,6 +19,9 @@ interface OverlayManagerProps {
   // Card giving overlay
   isChoosingCardToGive: boolean;
 
+  // See the future overlay
+  isViewingFuture: boolean;
+
   // Dead overlay
   isSelfDead: boolean;
   isGameOver: boolean;
@@ -27,6 +32,10 @@ interface OverlayManagerProps {
 
   // Context
   ctx: Ctx;
+  G: GameState;
+
+  // Handlers
+  onCloseFutureView: () => void;
 }
 
 /**
@@ -39,11 +48,14 @@ export default function OverlayManager({
   onExplosionComplete,
   isSelectingPlayer,
   isChoosingCardToGive,
+  isViewingFuture,
   isSelfDead,
   isGameOver,
   winnerID,
   playerID,
   ctx,
+  G,
+  onCloseFutureView,
 }: OverlayManagerProps) {
   // Determine the overlay message based on the current stage
   let selectionMessage = "Select a player to steal a card from";
@@ -53,6 +65,9 @@ export default function OverlayManager({
       selectionMessage = "Select a player to request a card from";
     }
   }
+
+  // Get the top 3 cards from the draw pile for the see the future overlay
+  const futureCards = isViewingFuture ? G.drawPile.slice(0, 3) : [];
 
   return (
     <>
@@ -64,6 +79,9 @@ export default function OverlayManager({
       />
       {isSelectingPlayer && <PlayerSelectionOverlay message={selectionMessage} />}
       {isChoosingCardToGive && <PlayerSelectionOverlay message="Choose a card to give" />}
+      {isViewingFuture && (
+        <SeeTheFutureOverlay cards={futureCards} onClose={onCloseFutureView} />
+      )}
       {isSelfDead && !isGameOver && <DeadOverlay />}
       {isGameOver && winnerID && (
         <WinnerOverlay winnerID={winnerID} playerID={playerID} />

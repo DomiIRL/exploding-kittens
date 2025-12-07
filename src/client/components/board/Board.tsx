@@ -60,6 +60,15 @@ export default function ExplodingKittensBoard({
     }
   };
 
+  /**
+   * Handle closing the see the future overlay
+   */
+  const handleCloseFutureView = () => {
+    if (gameState.isViewingFuture && moves.closeFutureView) {
+      moves.closeFutureView();
+    }
+  };
+
   return (
     <div className="w-full h-full flex flex-col items-center justify-center bg-blue-200">
       <div className={`board-container ${gameState.isSelfSpectator ? 'hand-interactable' : ''} ${gameState.isSelfDead ? 'dimmed' : ''}`}>
@@ -91,11 +100,14 @@ export default function ExplodingKittensBoard({
         onExplosionComplete={explosion.clearEvent}
         isSelectingPlayer={gameState.isSelectingPlayer}
         isChoosingCardToGive={gameState.isChoosingCardToGive}
+        isViewingFuture={gameState.isViewingFuture}
         isSelfDead={gameState.isSelfDead}
         isGameOver={gameState.isGameOver}
         winnerID={G.winner}
         playerID={playerID}
         ctx={ctx}
+        G={G}
+        onCloseFutureView={handleCloseFutureView}
       />
 
       <DebugPanel data={{ctx, G, moves, plugins, playerID}} />
