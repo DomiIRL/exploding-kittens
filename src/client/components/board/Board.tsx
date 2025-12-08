@@ -101,6 +101,8 @@ export default function ExplodingKittensBoard({
         isSelectingPlayer={gameState.isSelectingPlayer}
         isChoosingCardToGive={gameState.isChoosingCardToGive}
         isViewingFuture={gameState.isViewingFuture}
+        turnsRemaining={G.turnsRemaining - 1}
+        isCurrentPlayer={gameState.selfPlayerId === gameState.currentPlayer}
         isSelfDead={gameState.isSelfDead}
         isGameOver={gameState.isGameOver}
         winnerID={G.winner}

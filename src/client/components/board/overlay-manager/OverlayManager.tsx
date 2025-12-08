@@ -3,6 +3,7 @@ import DeadOverlay from '../dead-overlay/DeadOverlay';
 import PlayerSelectionOverlay from '../player-selection-overlay/PlayerSelectionOverlay';
 import ExplosionOverlay from '../explosion-overlay/ExplosionOverlay';
 import SeeTheFutureOverlay from '../see-future-overlay/SeeTheFutureOverlay';
+import TurnsOverlay from '../turns-overlay/TurnsOverlay';
 import {Ctx} from 'boardgame.io';
 import {GameState} from '../../../../common';
 
@@ -21,6 +22,10 @@ interface OverlayManagerProps {
 
   // See the future overlay
   isViewingFuture: boolean;
+
+  // Turns overlay
+  turnsRemaining: number;
+  isCurrentPlayer: boolean;
 
   // Dead overlay
   isSelfDead: boolean;
@@ -49,6 +54,8 @@ export default function OverlayManager({
   isSelectingPlayer,
   isChoosingCardToGive,
   isViewingFuture,
+  turnsRemaining,
+  isCurrentPlayer,
   isSelfDead,
   isGameOver,
   winnerID,
@@ -82,6 +89,7 @@ export default function OverlayManager({
       {isViewingFuture && (
         <SeeTheFutureOverlay cards={futureCards} onClose={onCloseFutureView} />
       )}
+      <TurnsOverlay turnsRemaining={turnsRemaining} isCurrentPlayer={isCurrentPlayer} />
       {isSelfDead && !isGameOver && <DeadOverlay />}
       {isGameOver && winnerID && (
         <WinnerOverlay winnerID={winnerID} playerID={playerID} />

@@ -10,11 +10,13 @@ export class AttackCard extends CardType {
   onPlayed(context: FnContext, _card: Card) {
     const { G, ctx, events } = context;
 
-    // Add 2 turns to the counter (next player will have to play 2 turns)
-    // Add 3 turns because endTurn will remove one turn from the counter
-    G.turnsRemaining = 3;
+    // Add 3 to turnsRemaining for proper 2, 4, 6, 8 stacking
+    // Formula: current + 2 (attack bonus) + 1 (compensate for onEnd decrement)
+    // Example: turnsRemaining = 1 → 4, after onEnd = 3, next player takes 2 turns
+    // Stacking: turnsRemaining = 2 → 5, after onEnd = 4, next player takes 4 turns (2+2)
+    G.turnsRemaining = G.turnsRemaining + 3;
 
-    // End the current player's turn
+    // End turn and force move to next player
     const nextPlayer = ctx.playOrderPos + 1;
     const nextPlayerIndex = nextPlayer % ctx.numPlayers;
     events.endTurn({ next: nextPlayerIndex + "" });
