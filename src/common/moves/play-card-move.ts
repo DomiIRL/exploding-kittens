@@ -1,6 +1,5 @@
 import type {Card, FnContext, Player} from "../models";
 import {cardTypeRegistry} from "../constants/card-types";
-import {NotPlayable} from "../exceptions/not-playable";
 
 export const playCard = (context: FnContext, cardIndex: number) => {
   const {G, player} = context;
@@ -25,7 +24,7 @@ export const playCard = (context: FnContext, cardIndex: number) => {
 
   const playable = cardType.canBePlayed(context, cardToPlay)
   if (!playable) {
-    throw new NotPlayable();
+    return;
   }
 
   const newHand = playerData.hand.filter((_: Card, index: number) => index !== cardIndex);

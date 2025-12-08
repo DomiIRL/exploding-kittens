@@ -21,6 +21,9 @@ export const setupGame = ({ctx, player}: { ctx: Ctx; player: PlayerAPI }): GameS
       deadPlayersCanSeeAllCards: false,
       openCards: true,
     },
+    client: {
+      drawPileLength: 0
+    }
   };
 };
 

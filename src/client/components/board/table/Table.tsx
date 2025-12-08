@@ -6,7 +6,7 @@ import {useEffect, useState} from "react";
 export default function Table({G, moves}: { G: GameState, moves: any }) {
   const [isDrawing, setIsDrawing] = useState(false);
   const [isShuffling, setIsShuffling] = useState(false);
-  const [lastDrawPileLength, setLastDrawPileLength] = useState(G.drawPile.length);
+  const [lastDrawPileLength, setLastDrawPileLength] = useState(G.client.drawPileLength);
   const [lastDiscardPileLength, setLastDiscardPileLength] = useState(G.discardPile.length);
   const [isHoveringDrawPile, setIsHoveringDrawPile] = useState(false);
 
@@ -15,12 +15,12 @@ export default function Table({G, moves}: { G: GameState, moves: any }) {
 
   // Detect when a card is drawn
   useEffect(() => {
-    if (G.drawPile.length < lastDrawPileLength) {
+    if (G.client.drawPileLength< lastDrawPileLength) {
       setIsDrawing(true);
       setTimeout(() => setIsDrawing(false), 400);
     }
-    setLastDrawPileLength(G.drawPile.length);
-  }, [G.drawPile.length, lastDrawPileLength]);
+    setLastDrawPileLength(G.client.drawPileLength);
+  }, [G.client.drawPileLength, lastDrawPileLength]);
 
   // Detect when a shuffle card is played
   useEffect(() => {
@@ -55,9 +55,9 @@ export default function Table({G, moves}: { G: GameState, moves: any }) {
             onMouseLeave={() => setIsHoveringDrawPile(false)}
             data-animation-id="draw-pile"
           >
-            {isHoveringDrawPile && G.drawPile.length > 0 && (
+            {isHoveringDrawPile && G.client.drawPileLength > 0 && (
               <div className="card-counter">
-                {G.drawPile.length}
+                {G.client.drawPileLength}
               </div>
             )}
           </div>

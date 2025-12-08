@@ -56,17 +56,16 @@
 
   pointer-events: none;
   z-index: 10;
-  animation: fadeIn 0.2s ease-in;
+  animation: fade 0.2s ease-in;
 }
 
-@keyframes fadeIn {
+@keyframes fade {
   from {
     opacity: 0;
-    transform: translate(-50%, -50%) scale(0.8);
+    scale: 0.8;
   }
   to {
     opacity: 1;
-    transform: translate(-50%, -50%) scale(1);
+    scale: 1;
   }
 }
-

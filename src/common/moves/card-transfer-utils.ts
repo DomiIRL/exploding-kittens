@@ -59,7 +59,6 @@ export function transferCard(
   player.state[fromPlayerId] = {
     ...fromPlayerData,
     hand: newFromHand,
-    hand_count: newFromHand.length,
   };
 
   // Add card to destination player's hand
@@ -68,7 +67,6 @@ export function transferCard(
   player.state[toPlayerId] = {
     ...toPlayerData,
     hand: newToHand,
-    hand_count: newToHand.length,
   };
 }
 

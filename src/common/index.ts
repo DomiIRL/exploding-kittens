@@ -35,6 +35,3 @@ export {createPlayerState, filterPlayerView, dealHands} from './setup/player-set
 
 // Plugins
 export {createPlayerPlugin} from './plugins/player-plugin';
-
-// Exceptions
-export {NotPlayable} from './exceptions/not-playable';

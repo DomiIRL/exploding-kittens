@@ -1,14 +1,6 @@
 import {useMemo} from 'react';
 import {Ctx} from 'boardgame.io';
-import {GameState} from '../../common';
-
-interface PlayerData {
-  [key: string]: {
-    hand: any[];
-    hand_count: number;
-    isAlive: boolean;
-  };
-}
+import {GameState, Players} from '../../common';
 
 interface GameStateData {
   isSpectator: boolean;
@@ -30,7 +22,7 @@ interface GameStateData {
 export const useGameState = (
   ctx: Ctx,
   G: GameState,
-  allPlayers: PlayerData,
+  allPlayers: Players,
   playerID: string | null
 ): GameStateData => {
   const isSpectator = playerID == null;

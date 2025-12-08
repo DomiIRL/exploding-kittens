@@ -1,10 +1,10 @@
 import './Board.css';
 import {BoardProps} from 'boardgame.io/react';
-import {GameState} from '../../../common';
+import {GameState, Players} from '../../../common';
 import {useCardAnimations} from '../../hooks/useCardAnimations';
 import {useExplosionEvents} from '../../hooks/useExplosionEvents';
 import {useGameState} from '../../hooks/useGameState';
-import {BoardPlugins} from '../../models/client.model.ts';
+import {BoardPlugins} from '../../models/client.model';
 import Table from './table/Table';
 import PlayerList from './player-list/PlayerList';
 import OverlayManager from './overlay-manager/OverlayManager';
@@ -25,7 +25,7 @@ export default function ExplodingKittensBoard({
   plugins,
   playerID
 }: BoardPropsWithPlugins) {
-  const allPlayers = plugins.player.data.players;
+  const allPlayers: Players = plugins.player.data.players;
 
   // Derive game state properties
   const gameState = useGameState(ctx, G, allPlayers, playerID);

@@ -1,7 +1,7 @@
-import {Game} from 'boardgame.io';
+import {Ctx, Game} from 'boardgame.io';
 import {createPlayerPlugin} from './plugins/player-plugin';
 import {setupGame} from './setup/game-setup';
-import type {GameState, PluginAPIs} from './models';
+import type {Card, GameState, PluginAPIs} from './models';
 import {drawCard} from "./moves/draw-move";
 import {playCard} from "./moves/play-card-move";
 import {stealCard} from "./moves/steal-card-move";
@@ -16,10 +16,23 @@ export const ExplodingKittens: Game<GameState, PluginAPIs> = {
 
   setup: setupGame,
 
-  playerView: ({G}) => {
+  playerView: ({G, ctx, playerID}: {G: GameState; ctx: Ctx; playerID: any}) => {
     // The player plugin's playerView will handle filtering the player data
     // We need to pass G through so it's available
-    return G;
+
+    let viewableDrawPile: Card[] = [];
+
+    if (ctx.activePlayers?.[playerID!] === 'viewingFuture') {
+      viewableDrawPile = G.drawPile.slice(0, 3);
+    }
+
+    return {
+      ...G,
+      drawPile: viewableDrawPile,
+      client: {
+        drawPileLength: G.drawPile.length
+      }
+    };
   },
 
   phases: {
@@ -40,12 +53,18 @@ export const ExplodingKittens: Game<GameState, PluginAPIs> = {
         stages: {
           choosePlayerToStealFrom: {
             moves: {
-              stealCard: stealCard,
+              stealCard: {
+                move: stealCard,
+                client: false
+              },
             },
           },
           choosePlayerToRequestFrom: {
             moves: {
-              requestCard: requestCard,
+              requestCard: {
+                move: requestCard,
+                client: false
+              },
             },
           },
           chooseCardToGive: {
@@ -61,8 +80,14 @@ export const ExplodingKittens: Game<GameState, PluginAPIs> = {
         },
       },
       moves: {
-        drawCard: drawCard,
-        playCard: playCard,
+        drawCard: {
+          move: drawCard,
+          client: false
+        },
+        playCard: {
+          move: playCard,
+          client: false
+        },
       },
       endIf: ({player}) => {
         const alivePlayers = Object.entries(player.state).filter(

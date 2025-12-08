@@ -1,14 +1,6 @@
 import {useState, useEffect, useRef} from 'react';
-import {GameState} from '../../common';
+import {GameState, Players} from '../../common';
 import {ExplosionEvent} from '../components/board/explosion-overlay/ExplosionOverlay';
-
-interface PlayerData {
-  [key: string]: {
-    hand: any[];
-    hand_count: number;
-    isAlive: boolean;
-  };
-}
 
 interface ExplosionEventData {
   event: ExplosionEvent;
@@ -21,7 +13,7 @@ interface ExplosionEventData {
  */
 export const useExplosionEvents = (
   G: GameState,
-  allPlayers: PlayerData,
+  allPlayers: Players,
   playerID: string | null
 ): ExplosionEventData & { clearEvent: () => void } => {
   const [explosionEvent, setExplosionEvent] = useState<ExplosionEvent>(null);
@@ -45,7 +37,7 @@ export const useExplosionEvents = (
         let defusePlayerID: string | null = null;
 
         for (const pid of Object.keys(allPlayers)) {
-          const currentHandCount = allPlayers[pid].hand_count;
+          const currentHandCount = allPlayers[pid].client.handCount;
           const previousHandCount = previousPlayerHandCounts.current[pid] ?? currentHandCount;
 
           // The player who defused will have lost a card from their hand
@@ -94,7 +86,7 @@ export const useExplosionEvents = (
 
     // Update previous hand counts for all players
     for (const pid of Object.keys(allPlayers)) {
-      previousPlayerHandCounts.current[pid] = allPlayers[pid].hand_count;
+      previousPlayerHandCounts.current[pid] = allPlayers[pid].client.handCount;
     }
 
     previousDiscardPileLength.current = G.discardPile.length;

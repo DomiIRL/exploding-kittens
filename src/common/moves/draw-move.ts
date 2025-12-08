@@ -3,7 +3,7 @@ import {EXPLODING_KITTEN, DEFUSE} from "../constants/card-types";
 
 export const drawCard = (context: FnContext) => {
   const { G, player, events, random } = context;
-  const cardToDraw = G.drawPile.pop();
+  const cardToDraw = G.drawPile.shift();
   if (!cardToDraw) {
     throw new Error('No card to draw');
   }
@@ -44,8 +44,7 @@ export const drawCard = (context: FnContext) => {
   player.set({
     ...playerData,
     hand: newHand,
-    hand_count: newHand.length,
-    isAlive: alive,
+    isAlive: alive
   });
 
   events.endTurn();

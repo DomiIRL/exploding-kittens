@@ -2,7 +2,7 @@ import './Card.css';
 import back from '/assets/cards/back/0.jpg';
 import {CSSProperties, useEffect, useRef, useState} from 'react';
 import {createPortal} from 'react-dom';
-import {Card as CardType, NotPlayable} from "../../../../common";
+import {Card as CardType} from "../../../../common";
 
 interface CardProps {
   card: CardType | null;
@@ -77,11 +77,7 @@ export default function Card({
         // Only trigger animation if move didn't throw an error
         triggerCardMovement(card, `player-${playerID}`, 'discard-pile');
       } catch (error) {
-        if (error instanceof NotPlayable) {
-          console.log('Card not playable');
-        } else {
-          console.error('Unexpected error playing card:', error);
-        }
+        console.error('Unexpected error playing card:', error);
       }
     }
   };

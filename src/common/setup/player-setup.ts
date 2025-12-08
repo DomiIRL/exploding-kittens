@@ -3,8 +3,10 @@ import type {Deck} from '../entities/deck';
 
 export const createPlayerState = (): Player => ({
   hand: [],
-  hand_count: 0,
   isAlive: true,
+  client: {
+    handCount: 0
+  }
 });
 
 /**
@@ -12,7 +14,9 @@ export const createPlayerState = (): Player => ({
  */
 const createFullPlayerView = (player: Player): Player => ({
   ...player,
-  hand_count: player.hand.length
+  client: {
+    handCount: player.hand.length
+  }
 });
 
 /**
@@ -20,8 +24,10 @@ const createFullPlayerView = (player: Player): Player => ({
  */
 const createLimitedPlayerView = (player: Player): Player => ({
   hand: [],
-  hand_count: player.hand.length,
   isAlive: player.isAlive,
+  client: {
+    handCount: player.hand.length
+  }
 });
 
 /**

@@ -1,17 +1,11 @@
 import Player from '../player-area/Player';
 import PlayerState from '../../../model/PlayerState';
 import {calculatePlayerPositions} from '../../../utils/playerPositioning';
-import {Card} from '../../../../common';
+import {Card, Players} from '../../../../common';
 
 interface PlayerListProps {
   alivePlayersSorted: string[];
-  allPlayers: {
-    [key: string]: {
-      hand: Card[];
-      hand_count: number;
-      isAlive: boolean;
-    };
-  };
+  allPlayers: Players,
   selfPlayerId: number | null;
   isSelfDead: boolean;
   isSelfSpectator: boolean;
@@ -61,7 +55,7 @@ export default function PlayerList({
           selfPlayerId !== null && playerNumber === selfPlayerId,
           playerInfo.isAlive,
           playerNumber === currentPlayer,
-          playerInfo.hand_count,
+          playerInfo.client.handCount,
           playerInfo.hand
         );
 
