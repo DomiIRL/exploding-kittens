@@ -8,7 +8,6 @@ import {BoardPlugins} from '../../models/client.model';
 import Table from './table/Table';
 import PlayerList from './player-list/PlayerList';
 import OverlayManager from './overlay-manager/OverlayManager';
-import DebugPanel from './debug-panel/DebugPanel';
 
 interface BoardPropsWithPlugins extends BoardProps<GameState> {
   plugins: BoardPlugins;
@@ -111,8 +110,6 @@ export default function ExplodingKittensBoard({
         G={G}
         onCloseFutureView={handleCloseFutureView}
       />
-
-      <DebugPanel data={{ctx, G, moves, plugins, playerID}} />
     </div>
   );
 }
