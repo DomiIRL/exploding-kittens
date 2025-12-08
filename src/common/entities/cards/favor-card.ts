@@ -15,4 +15,8 @@ export class FavorCard extends CardType {
       currentPlayer: 'choosePlayerToRequestFrom',
     });
   }
+
+  sortOrder(): number {
+    return 3;
+  }
 }

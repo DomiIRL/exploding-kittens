@@ -11,4 +11,8 @@ export class ShuffleCard extends CardType {
     const { G, random } = context;
     G.drawPile = random.Shuffle(G.drawPile)
   }
+
+  sortOrder(): number {
+    return 4;
+  }
 }

@@ -21,4 +21,8 @@ export class AttackCard extends CardType {
     const nextPlayerIndex = nextPlayer % ctx.numPlayers;
     events.endTurn({ next: nextPlayerIndex + "" });
   }
+
+  sortOrder(): number {
+    return 1;
+  }
 }

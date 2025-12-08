@@ -10,4 +10,8 @@ export class NopeCard extends CardType {
   canBePlayed(_context: FnContext, _card: Card): boolean {
     return false;
   }
+
+  sortOrder(): number {
+    return 6;
+  }
 }

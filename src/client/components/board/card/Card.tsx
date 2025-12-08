@@ -3,9 +3,10 @@ import back from '/assets/cards/back/0.jpg';
 import {CSSProperties, useEffect, useRef, useState} from 'react';
 import {createPortal} from 'react-dom';
 import {Card as CardType} from "../../../../common";
+import {CardWithServerIndex} from "../../../model/PlayerState";
 
 interface CardProps {
-  card: CardType | null;
+  card: CardWithServerIndex | null;
   index: number;
   count: number;
   angle: number;
@@ -62,20 +63,26 @@ export default function Card({
   }, [isHovered]);
 
   const handleClick = () => {
+    if (!card) return;
+
+    const serverIndex = card.serverIndex ?? index;
+
     // If choosing a card to give (favor card flow)
     if (isChoosingCardToGive && onCardGive) {
-      onCardGive(index);
+      onCardGive(serverIndex);
       return;
     }
 
     // Otherwise, play the card normally
-    if (isClickable && moves && card) {
+    if (isClickable && moves) {
       try {
-        // Try to execute move first
-        moves.playCard(index);
+        // Try to execute move first using server index
+        moves.playCard(serverIndex);
 
         // Only trigger animation if move didn't throw an error
-        triggerCardMovement(card, `player-${playerID}`, 'discard-pile');
+        // Cast to base Card type for animation (serverIndex not needed for animation)
+        const baseCard: CardType = { name: card.name, index: card.index };
+        triggerCardMovement(baseCard, `player-${playerID}`, 'discard-pile');
       } catch (error) {
         console.error('Unexpected error playing card:', error);
       }

@@ -17,4 +17,11 @@ export class CardType {
 
   onPlayed(_context: FnContext, _card: Card): void {}
 
+  /**
+   * Returns the sort order for this card type.
+   */
+  sortOrder(): number {
+    return 100;
+  }
+
 }

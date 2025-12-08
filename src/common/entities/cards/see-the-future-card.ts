@@ -15,4 +15,8 @@ export class SeeTheFutureCard extends CardType {
       currentPlayer: 'viewingFuture',
     });
   }
+
+  sortOrder(): number {
+    return 5;
+  }
 }

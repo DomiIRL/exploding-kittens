@@ -52,5 +52,9 @@ export class CatCard extends CardType {
       currentPlayer: 'choosePlayerToStealFrom',
     });
   }
+
+  sortOrder(): number {
+    return 98;
+  }
 }
 

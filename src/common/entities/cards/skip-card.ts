@@ -11,4 +11,8 @@ export class SkipCard extends CardType {
     const { events } = context;
     events.endTurn();
   }
+
+  sortOrder(): number {
+    return 2;
+  }
 }

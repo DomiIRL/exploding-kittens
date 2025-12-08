@@ -35,3 +35,6 @@ export {createPlayerState, filterPlayerView, dealHands} from './setup/player-set
 
 // Plugins
 export {createPlayerPlugin} from './plugins/player-plugin';
+
+// Utilities
+export {sortCards} from './utils/card-sorting';
