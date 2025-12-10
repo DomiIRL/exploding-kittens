@@ -19,7 +19,7 @@ export const setupGame = ({ctx, player}: { ctx: Ctx; player: PlayerAPI }): GameS
     turnsRemaining: 1,
     gameRules: {
       deadPlayersCanSeeAllCards: false,
-      openCards: true,
+      openCards: false,
     },
     client: {
       drawPileLength: 0
