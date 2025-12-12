@@ -9,6 +9,7 @@
 
 .turns-overlay-content {
   display: flex;
+  justify-content: center;
   align-items: center;
   gap: 1rem;
   background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);

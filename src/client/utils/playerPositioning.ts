@@ -31,6 +31,25 @@ export const calculateCircularPosition = (
 };
 
 /**
+ * Calculate angle from slot position
+ */
+const calculateAngleFromSlot = (slotPosition: number, totalSlots: number): number => {
+  const angleStep = 360 / totalSlots;
+  return 180 + (slotPosition * angleStep);
+};
+
+/**
+ * Find relative position in a circular array
+ */
+const getRelativePosition = (
+  targetIndex: number,
+  referenceIndex: number,
+  arrayLength: number
+): number => {
+  return (targetIndex - referenceIndex + arrayLength) % arrayLength;
+};
+
+/**
  * Calculate the angle for a player position around the table
  * Takes into account whether the viewer is alive or dead
  */
@@ -40,26 +59,31 @@ export const calculatePlayerAngle = (
   selfPlayerId: number | null,
   isSelfDead: boolean
 ): number => {
-  const alivePlayersSorted = [...alivePlayers].sort((a, b) => parseInt(a) - parseInt(b));
-  const aliveIndex = alivePlayersSorted.indexOf(playerIdStr);
+  const alivePlayerIds = [...alivePlayers]
+    .map(p => parseInt(p))
+    .sort((a, b) => a - b);
 
-  // Self is alive or spectator: normal circular distribution
-  if (!isSelfDead) {
-    const numAlive = alivePlayers.length;
+  const playerId = parseInt(playerIdStr);
+  const playerIndex = alivePlayerIds.indexOf(playerId);
+
+  // Self is alive or spectator: distribute alive players evenly
+  if (!isSelfDead || selfPlayerId === null) {
     const selfIndex = selfPlayerId !== null
-      ? alivePlayersSorted.findIndex(p => parseInt(p) === selfPlayerId)
+      ? alivePlayerIds.indexOf(selfPlayerId)
       : 0;
 
-    const angleStep = 360 / numAlive;
-    const relativePosition = (aliveIndex - selfIndex + numAlive) % numAlive;
-    return 180 + (relativePosition * angleStep);
+    const relativePosition = getRelativePosition(playerIndex, selfIndex, alivePlayerIds.length);
+    return calculateAngleFromSlot(relativePosition, alivePlayerIds.length);
   }
 
-  // Self is dead: leave empty slot at position 0 (bottom)
-  const totalSlotsToUse = alivePlayers.length + 1;
-  const angleStep = 360 / totalSlotsToUse;
-  const positionIndex = aliveIndex + 1;
-  return 180 + (positionIndex * angleStep);
+  // Self is dead: leave empty slot at position 0 where self was
+  // Maintain relative positions based on original player IDs
+  const allPlayerIds = [...alivePlayerIds, selfPlayerId].sort((a, b) => a - b);
+  const selfIndex = allPlayerIds.indexOf(selfPlayerId);
+  const fullPlayerIndex = allPlayerIds.indexOf(playerId);
+
+  const relativePosition = getRelativePosition(fullPlayerIndex, selfIndex, allPlayerIds.length);
+  return calculateAngleFromSlot(relativePosition, allPlayerIds.length);
 };
 
 /**
@@ -73,15 +97,12 @@ export const calculatePlayerPositions = (
 ): PlayerPositions => {
   const angle = calculatePlayerAngle(playerIdStr, alivePlayers, selfPlayerId, isSelfDead);
 
-  const cardRadius = 'min(35vw, 35vh)';
-  const cardPosition: CardPosition = {
-    ...calculateCircularPosition(angle, cardRadius),
-    angle: angle - 90,
+  return {
+    cardPosition: {
+      ...calculateCircularPosition(angle, 'min(35vw, 35vh)'),
+      angle: angle - 90,
+    },
+    infoPosition: calculateCircularPosition(angle, 'min(45vw, 45vh)'),
   };
-
-  const tableRadius = 'min(45vw, 45vh)';
-  const infoPosition = calculateCircularPosition(angle, tableRadius);
-
-  return {cardPosition, infoPosition};
 };
 
