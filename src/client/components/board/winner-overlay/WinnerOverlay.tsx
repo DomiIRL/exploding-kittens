@@ -1,13 +1,15 @@
 import './WinnerOverlay.css';
+import {MatchPlayer, getPlayerName} from '../../../utils/matchData';
 
 interface WinnerOverlayProps {
   winnerID: string;
   playerID: string | null;
+  matchData?: MatchPlayer[];
 }
 
-export default function WinnerOverlay({winnerID, playerID}: WinnerOverlayProps) {
-  const winnerNumber = parseInt(winnerID) + 1;
+export default function WinnerOverlay({winnerID, playerID, matchData}: WinnerOverlayProps) {
   const isWinner = playerID === winnerID;
+  const winnerName = getPlayerName(winnerID, matchData);
 
   return (
     <div className="winner-overlay">
@@ -15,7 +17,7 @@ export default function WinnerOverlay({winnerID, playerID}: WinnerOverlayProps) 
         <div className="winner-trophy">🏆</div>
         <div className="winner-title">Game Over!</div>
         <div className="winner-name">
-          {isWinner ? 'You Win!' : `Player ${winnerNumber} Wins!`}
+          {isWinner ? 'You Win!' : `${winnerName} Wins!`}
         </div>
         <div className="winner-subtitle">
           {isWinner

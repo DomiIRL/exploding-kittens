@@ -9,7 +9,7 @@
     "build:server": "tsc -p src/server/tsconfig.json",
     "preview": "vite preview",
     "lint": "eslint .",
-    "serve": "npm run build:server && node dist/server/server/server.js",
+    "server": "npm run build:server && node dist/server/server/server.js",
     "serve:watch": "nodemon --watch src/server --watch src/common --ext ts --exec \"npm run serve\""
   },
   "dependencies": {

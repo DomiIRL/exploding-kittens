@@ -1,43 +1,36 @@
 import './Player.css';
 import PlayerCards from '../player-cards/PlayerCards';
 import PlayerState from "../../../model/PlayerState";
-import {Card} from "../../../../common";
-
-interface Position {
-  top: string;
-  left: string;
-}
-
-interface CardPosition extends Position {
-  angle: number;
-}
+import {MatchPlayer, getPlayerName} from "../../../utils/matchData";
+import {PlayerPosition, AnimationCallbacks, PlayerInteractionHandlers} from "../../../types/component-props";
 
 interface PlayerAreaProps {
   playerID: string;
   playerState: PlayerState;
-  cardPosition: CardPosition;
-  infoPosition: Position;
+  position: PlayerPosition;
   moves: any;
   isSelectable: boolean;
   isChoosingCardToGive: boolean;
-  onPlayerSelect: (playerId: string) => void;
-  onCardGive: (cardIndex: number) => void;
-  triggerCardMovement: (card: Card | null, fromId: string, toId: string) => void;
+  interactionHandlers: PlayerInteractionHandlers;
+  animationCallbacks: AnimationCallbacks;
+  matchData?: MatchPlayer[];
 }
 
 export default function Player({
   playerID, 
   playerState, 
-  cardPosition, 
-  infoPosition, 
+  position,
   moves,
   isSelectable = false,
   isChoosingCardToGive = false,
-  onPlayerSelect,
-  onCardGive,
-  triggerCardMovement
+  interactionHandlers,
+  animationCallbacks,
+  matchData
 }: PlayerAreaProps) {
+  const {cardPosition, infoPosition} = position;
+  const {onPlayerSelect} = interactionHandlers;
   const cardRotation = cardPosition.angle - 90;
+  const playerName = getPlayerName(playerID, matchData);
 
   const extraClasses = `${playerState.isSelf ? 'hand-interactable self' : ''} ${playerState.isTurn ? 'turn' : ''} ${isSelectable ? 'selectable' : ''}`
 
@@ -62,10 +55,10 @@ export default function Player({
         <PlayerCards
           playerState={playerState}
           moves={moves}
-          triggerCardMovement={triggerCardMovement}
           playerID={playerID}
           isChoosingCardToGive={isChoosingCardToGive}
-          onCardGive={onCardGive}
+          animationCallbacks={animationCallbacks}
+          interactionHandlers={interactionHandlers}
         />
       </div>
 
@@ -85,7 +78,7 @@ export default function Player({
       >
         <div className="player-info flex flex-col items-center">
           <div className="player-id mt-2 font-bold">
-            Player Nr. {parseInt(playerID) + 1}
+            {playerName}
             {playerState.isSelf && ' (You)'}
           </div>
           <div className="player-hand border-2 border-black bg-white p-2 rounded">

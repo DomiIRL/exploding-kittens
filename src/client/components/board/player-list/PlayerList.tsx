@@ -1,22 +1,21 @@
 import Player from '../player-area/Player';
 import PlayerState from '../../../model/PlayerState';
 import {calculatePlayerPositions} from '../../../utils/playerPositioning';
-import {Card, Players} from '../../../../common';
+import {
+  GameContext,
+  PlayerStateBundle,
+  OverlayStateBundle,
+  AnimationCallbacks,
+  PlayerInteractionHandlers
+} from '../../../types/component-props';
 
 interface PlayerListProps {
   alivePlayersSorted: string[];
-  allPlayers: Players,
-  selfPlayerId: number | null;
-  isSelfDead: boolean;
-  isSelfSpectator: boolean;
-  currentPlayer: number;
-  isSelectingPlayer: boolean;
-  isChoosingCardToGive: boolean;
-  playerID: string | null;
-  moves: any;
-  triggerCardMovement: (card: Card | null, fromId: string, toId: string) => void;
-  onPlayerSelect: (playerId: string) => void;
-  onCardGive: (cardIndex: number) => void;
+  playerState: PlayerStateBundle;
+  overlayState: OverlayStateBundle;
+  animationCallbacks: AnimationCallbacks;
+  interactionHandlers: PlayerInteractionHandlers;
+  gameContext: GameContext;
 }
 
 /**
@@ -24,19 +23,15 @@ interface PlayerListProps {
  */
 export default function PlayerList({
   alivePlayersSorted,
-  allPlayers,
-  selfPlayerId,
-  isSelfDead,
-  isSelfSpectator,
-  currentPlayer,
-  isSelectingPlayer,
-  isChoosingCardToGive,
-  playerID,
-  moves,
-  triggerCardMovement,
-  onPlayerSelect,
-  onCardGive,
+  playerState,
+  overlayState,
+  animationCallbacks,
+  interactionHandlers,
+  gameContext,
 }: PlayerListProps) {
+  const {allPlayers, selfPlayerId, isSelfDead, isSelfSpectator, currentPlayer} = playerState;
+  const {isSelectingPlayer, isChoosingCardToGive} = overlayState;
+  const {playerID, moves, matchData} = gameContext;
   return (
     <>
       {alivePlayersSorted.map((player) => {
@@ -50,7 +45,7 @@ export default function PlayerList({
         const playerNumber = parseInt(player);
         const playerInfo = allPlayers[player];
 
-        const playerState = new PlayerState(
+        const playerRenderState = new PlayerState(
           isSelfSpectator,
           selfPlayerId !== null && playerNumber === selfPlayerId,
           playerInfo.isAlive,
@@ -61,8 +56,8 @@ export default function PlayerList({
 
         const isSelectable = isSelectingPlayer
           && player !== playerID
-          && playerState.isAlive
-          && playerState.handCount > 0;
+          && playerRenderState.isAlive
+          && playerRenderState.handCount > 0;
 
         const isSelfChoosingCard = isChoosingCardToGive
           && player === playerID;
@@ -71,15 +66,14 @@ export default function PlayerList({
           <Player
             key={player}
             playerID={player}
-            playerState={playerState}
-            cardPosition={cardPosition}
-            infoPosition={infoPosition}
-            moves={moves}
+            playerState={playerRenderState}
+            position={{cardPosition, infoPosition}}
             isSelectable={isSelectable}
             isChoosingCardToGive={isSelfChoosingCard}
-            onPlayerSelect={onPlayerSelect}
-            onCardGive={onCardGive}
-            triggerCardMovement={triggerCardMovement}
+            interactionHandlers={interactionHandlers}
+            animationCallbacks={animationCallbacks}
+            moves={moves}
+            matchData={matchData}
           />
         );
       })}

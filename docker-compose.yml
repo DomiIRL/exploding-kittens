@@ -16,7 +16,7 @@ services:
     container_name: exploding-kittens-server
     ports:
       - "8000:8000"
-    command: npm run serve
+    command: npm run server
     networks:
       - proxy
     restart: unless-stopped

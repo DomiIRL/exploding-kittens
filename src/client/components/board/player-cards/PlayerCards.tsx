@@ -1,24 +1,26 @@
 import Card from '../card/Card';
 import PlayerRenderState from "../../../model/PlayerState";
-import {Card as CardType} from "../../../../common";
+import {AnimationCallbacks, PlayerInteractionHandlers} from "../../../types/component-props";
 
 interface PlayerCardsProps {
   playerState: PlayerRenderState;
   moves?: any;
-  triggerCardMovement: (card: CardType | null, fromId: string, toId: string) => void;
   playerID: string;
   isChoosingCardToGive: boolean;
-  onCardGive: (cardIndex: number) => void;
+  animationCallbacks: AnimationCallbacks;
+  interactionHandlers: PlayerInteractionHandlers;
 }
 
 export default function PlayerCards({
   playerState,
   moves,
-  triggerCardMovement,
   playerID,
   isChoosingCardToGive,
-  onCardGive
+  animationCallbacks,
+  interactionHandlers
 }: PlayerCardsProps) {
+  const {triggerCardMovement} = animationCallbacks;
+  const {onCardGive} = interactionHandlers;
   const {isSelfSpectator, isSelf, isTurn, handCount, hand} = playerState;
   const fanSpread = isSelfSpectator || isSelf ? Math.min(handCount * 6, 60) : Math.min(handCount * 4, 40);
   const angleStep = handCount > 1 ? fanSpread / (handCount - 1) : 0;

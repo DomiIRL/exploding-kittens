@@ -12,6 +12,8 @@ export const createPlayerPlugin = (): Plugin => {
   return {
     ...basePlugin,
     playerView: ({G, data, playerID}: {G: GameState, data: any, playerID?: string | null}) => {
+      console.log(G);
+      console.log(data);
       // Use our custom filterPlayerView that has access to G
       const filteredPlayers = filterPlayerView(G, data.players, playerID ?? null);
       return { players: filteredPlayers };

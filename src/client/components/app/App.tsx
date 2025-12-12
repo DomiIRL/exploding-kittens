@@ -1,5 +1,5 @@
 import {Component} from 'react';
-import {Client} from 'boardgame.io/react';
+import {Client, Lobby} from 'boardgame.io/react';
 import {SocketIO} from 'boardgame.io/multiplayer'
 import {ExplodingKittens} from '../../../common';
 import ExplodingKittensBoard from "../board/Board";
@@ -7,15 +7,7 @@ import {preloadCardImages} from '../../utils/preloadImages';
 
 const SERVER_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
-const ExplodingKittensClient = Client({
-  game: ExplodingKittens,
-  board: ExplodingKittensBoard,
-  numPlayers: 5,
-  debug: {
-    collapseOnLoad: true,
-  },
-  multiplayer: SocketIO({server: SERVER_URL}),
-});
+const DEV = false;
 
 interface AppState {
   playerID: string | null;
@@ -33,6 +25,19 @@ export default class App extends Component<{}, AppState> {
   }
 
   render() {
+    if (!DEV) {
+      return (
+        <Lobby
+          debug={{collapseOnLoad: true}}
+          gameServer={SERVER_URL}
+          lobbyServer={SERVER_URL}
+          gameComponents={[
+            // @ts-ignore
+            { game: ExplodingKittens, board: ExplodingKittensBoard }
+          ]}
+        />
+      )
+    }
     if (this.state.playerID === null) {
       return (
         <div>
@@ -55,6 +60,17 @@ export default class App extends Component<{}, AppState> {
         </div>
       );
     }
+
+    const ExplodingKittensClient = Client({
+      game: ExplodingKittens,
+      board: ExplodingKittensBoard,
+      numPlayers: 5,
+      debug: {
+        collapseOnLoad: true,
+      },
+      multiplayer: SocketIO({server: SERVER_URL}),
+    });
+
     return (
       <div>
         <ExplodingKittensClient playerID={this.state.playerID}/>

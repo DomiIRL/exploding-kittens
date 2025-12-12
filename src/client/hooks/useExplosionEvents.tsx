@@ -1,6 +1,7 @@
 import {useState, useEffect, useRef} from 'react';
 import {GameState, Players} from '../../common';
 import {ExplosionEvent} from '../components/board/explosion-overlay/ExplosionOverlay';
+import {MatchPlayer, getPlayerName} from '../utils/matchData';
 
 interface ExplosionEventData {
   event: ExplosionEvent;
@@ -14,7 +15,8 @@ interface ExplosionEventData {
 export const useExplosionEvents = (
   G: GameState,
   allPlayers: Players,
-  playerID: string | null
+  playerID: string | null,
+  matchData?: MatchPlayer[]
 ): ExplosionEventData & { clearEvent: () => void } => {
   const [explosionEvent, setExplosionEvent] = useState<ExplosionEvent>(null);
   const [explosionPlayerName, setExplosionPlayerName] = useState<string>('');
@@ -51,7 +53,7 @@ export const useExplosionEvents = (
 
         if (defusePlayerID && eventId !== lastDefuseEventId.current && !explosionEvent) {
           const isSelf = defusePlayerID === playerID;
-          const playerName = isSelf ? 'You' : `Player ${parseInt(defusePlayerID) + 1}`;
+          const playerName = isSelf ? 'You' : getPlayerName(defusePlayerID, matchData);
 
           lastDefuseEventId.current = eventId;
           setExplosionEvent('defused');
@@ -72,7 +74,7 @@ export const useExplosionEvents = (
 
         if (eventId !== lastExplosionEventId.current && !explosionEvent) {
           const isSelf = pid === playerID;
-          const playerName = isSelf ? 'You' : `Player ${parseInt(pid) + 1}`;
+          const playerName = isSelf ? 'You' : getPlayerName(pid, matchData);
 
           lastExplosionEventId.current = eventId;
           setExplosionEvent('exploding');

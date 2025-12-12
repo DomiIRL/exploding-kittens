@@ -20,6 +20,9 @@ export const ExplodingKittens: Game<GameState, PluginAPIs> = {
     // The player plugin's playerView will handle filtering the player data
     // We need to pass G through so it's available
 
+    console.log(G);
+    console.log(ctx);
+
     let viewableDrawPile: Card[] = [];
 
     if (ctx.activePlayers?.[playerID!] === 'viewingFuture') {

@@ -1,9 +1,14 @@
 import back from '/assets/cards/back/0.jpg';
 import './Table.css';
-import {GameState} from "../../../../common";
 import {useEffect, useState} from "react";
+import {GameContext} from "../../../types/component-props";
 
-export default function Table({G, moves}: { G: GameState, moves: any }) {
+interface TableProps {
+  gameContext: GameContext;
+}
+
+export default function Table({gameContext}: TableProps) {
+  const {G, moves} = gameContext;
   const [isDrawing, setIsDrawing] = useState(false);
   const [isShuffling, setIsShuffling] = useState(false);
   const [lastDrawPileLength, setLastDrawPileLength] = useState(G.client.drawPileLength);

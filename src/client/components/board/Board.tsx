@@ -1,10 +1,11 @@
 import './Board.css';
 import {BoardProps} from 'boardgame.io/react';
-import {GameState, Players} from '../../../common';
+import {GameState} from '../../../common';
 import {useCardAnimations} from '../../hooks/useCardAnimations';
 import {useExplosionEvents} from '../../hooks/useExplosionEvents';
 import {useGameState} from '../../hooks/useGameState';
 import {BoardPlugins} from '../../models/client.model';
+import {GameContext, PlayerStateBundle, OverlayStateBundle} from '../../types/component-props';
 import Table from './table/Table';
 import PlayerList from './player-list/PlayerList';
 import OverlayManager from './overlay-manager/OverlayManager';
@@ -22,18 +23,46 @@ export default function ExplodingKittensBoard({
   G,
   moves,
   plugins,
-  playerID
+  playerID,
+  matchData
 }: BoardPropsWithPlugins) {
-  const allPlayers: Players = plugins.player.data.players;
+  const allPlayers = plugins.player.data.players;
+
+  // Bundle game context
+  const gameContext: GameContext = {
+    ctx,
+    G,
+    moves,
+    playerID,
+    matchData
+  };
 
   // Derive game state properties
   const gameState = useGameState(ctx, G, allPlayers, playerID);
+
+  // Bundle player state
+  const playerState: PlayerStateBundle = {
+    allPlayers,
+    selfPlayerId: gameState.selfPlayerId,
+    currentPlayer: gameState.currentPlayer,
+    isSelfDead: gameState.isSelfDead,
+    isSelfSpectator: gameState.isSelfSpectator,
+    isSelfTurn: gameState.selfPlayerId === gameState.currentPlayer
+  };
+
+  // Bundle overlay state
+  const overlayState: OverlayStateBundle = {
+    isSelectingPlayer: gameState.isSelectingPlayer,
+    isChoosingCardToGive: gameState.isChoosingCardToGive,
+    isViewingFuture: gameState.isViewingFuture,
+    isGameOver: gameState.isGameOver
+  };
 
   // Handle card animations
   const {AnimationLayer, triggerCardMovement} = useCardAnimations(G);
 
   // Handle explosion/defuse events
-  const explosion = useExplosionEvents(G, allPlayers, playerID);
+  const explosion = useExplosionEvents(G, allPlayers, playerID, matchData);
 
   /**
    * Handle player selection for stealing/requesting a card
@@ -70,44 +99,36 @@ export default function ExplodingKittensBoard({
 
   return (
     <div className="w-full h-full flex flex-col items-center justify-center bg-blue-200">
-      <div className={`board-container ${gameState.isSelfSpectator ? 'hand-interactable' : ''} ${gameState.isSelfDead ? 'dimmed' : ''}`}>
-        <Table G={G} moves={moves} />
+      <div className={`board-container ${playerState.isSelfSpectator ? 'hand-interactable' : ''} ${playerState.isSelfDead ? 'dimmed' : ''}`}>
+        <Table gameContext={gameContext} />
 
         <PlayerList
           alivePlayersSorted={gameState.alivePlayersSorted}
-          allPlayers={allPlayers}
-          selfPlayerId={gameState.selfPlayerId}
-          isSelfDead={gameState.isSelfDead}
-          isSelfSpectator={gameState.isSelfSpectator}
-          currentPlayer={gameState.currentPlayer}
-          isSelectingPlayer={gameState.isSelectingPlayer}
-          isChoosingCardToGive={gameState.isChoosingCardToGive}
-          playerID={playerID}
-          moves={moves}
-          triggerCardMovement={triggerCardMovement}
-          onPlayerSelect={handlePlayerSelect}
-          onCardGive={handleCardGive}
+          playerState={playerState}
+          overlayState={overlayState}
+          animationCallbacks={{triggerCardMovement}}
+          interactionHandlers={{
+            onPlayerSelect: handlePlayerSelect,
+            onCardGive: handleCardGive
+          }}
+          gameContext={gameContext}
         />
       </div>
 
       <AnimationLayer />
 
       <OverlayManager
-        explosionEvent={explosion.event}
-        explosionPlayerName={explosion.playerName}
-        explosionIsSelf={explosion.isSelf}
-        onExplosionComplete={explosion.clearEvent}
-        isSelectingPlayer={gameState.isSelectingPlayer}
-        isChoosingCardToGive={gameState.isChoosingCardToGive}
-        isViewingFuture={gameState.isViewingFuture}
+        gameContext={gameContext}
+        playerState={playerState}
+        overlayState={overlayState}
+        explosionEvent={{
+          event: explosion.event,
+          playerName: explosion.playerName,
+          isSelf: explosion.isSelf,
+          onComplete: explosion.clearEvent
+        }}
         turnsRemaining={G.turnsRemaining - 1}
-        isCurrentPlayer={gameState.selfPlayerId === gameState.currentPlayer}
-        isSelfDead={gameState.isSelfDead}
-        isGameOver={gameState.isGameOver}
         winnerID={G.winner}
-        playerID={playerID}
-        ctx={ctx}
-        G={G}
         onCloseFutureView={handleCloseFutureView}
       />
     </div>
