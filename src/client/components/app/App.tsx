@@ -11,7 +11,9 @@ const ExplodingKittensClient = Client({
   game: ExplodingKittens,
   board: ExplodingKittensBoard,
   numPlayers: 5,
-  debug: true,
+  debug: {
+    collapseOnLoad: true,
+  },
   multiplayer: SocketIO({server: SERVER_URL}),
 });
 
