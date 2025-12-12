@@ -11,6 +11,12 @@ if (process.env.SERVER_ORIGINS) {
 const server = Server({
   games: [ExplodingKittens as any],
   origins,
+  // Enable lobby API - required for match creation and joining
+  // Using default in-memory database (for development)
+  // For production, configure with a persistent database like PostgreSQL or MongoDB
 });
 
-server.run(port);
+server.run(port, () => {
+  console.log(`🎮 Exploding Kittens server running on port ${port}`);
+  console.log(`🌐 Lobby API enabled at http://localhost:${port}/games`);
+});

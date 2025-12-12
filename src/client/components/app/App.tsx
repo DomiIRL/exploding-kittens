@@ -1,20 +1,31 @@
 import {Component} from 'react';
-import {Client, Lobby} from 'boardgame.io/react';
-import {SocketIO} from 'boardgame.io/multiplayer'
+import {Client} from 'boardgame.io/react';
+import {SocketIO} from 'boardgame.io/multiplayer';
 import {ExplodingKittens} from '../../../common';
 import ExplodingKittensBoard from "../board/Board";
+import LobbyClient from '../lobby/LobbyClient';
+import GameView from '../game-view/GameView';
 import {preloadCardImages} from '../../utils/preloadImages';
 
 const SERVER_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
-
-const DEV = false;
+const GAME_NAME = 'Exploding-Kittens'; // Must match the name in game.ts exactly
 
 interface AppState {
+  inMatch: boolean;
+  matchID: string | null;
   playerID: string | null;
+  credentials: string | null;
+  matchName?: string;
 }
 
 export default class App extends Component<{}, AppState> {
-  state: AppState = {playerID: null};
+  state: AppState = {
+    inMatch: false,
+    matchID: null,
+    playerID: null,
+    credentials: null,
+    matchName: undefined
+  };
 
   componentDidMount() {
     preloadCardImages().then(() => {
@@ -22,49 +33,105 @@ export default class App extends Component<{}, AppState> {
     }).catch((err) => {
       console.error('Error preloading card images:', err);
     });
+
+    // Check for saved match session
+    const savedMatch = localStorage.getItem('currentMatch');
+    if (savedMatch) {
+      const matchData = JSON.parse(savedMatch);
+      this.setState({
+        inMatch: true,
+        matchID: matchData.matchID,
+        playerID: matchData.playerID,
+        credentials: matchData.credentials,
+        matchName: matchData.matchName
+      });
+    }
   }
 
-  render() {
-    if (!DEV) {
-      return (
-        <Lobby
-          debug={{collapseOnLoad: true}}
-          gameServer={SERVER_URL}
-          lobbyServer={SERVER_URL}
-          gameComponents={[
-            // @ts-ignore
-            { game: ExplodingKittens, board: ExplodingKittensBoard }
-          ]}
-        />
-      )
+  handleJoinMatch = (matchID: string, playerID: string, credentials: string) => {
+    // Fetch match details to get the name
+    fetch(`${SERVER_URL}/games/${GAME_NAME}/${matchID}`)
+      .then(res => res.json())
+      .then(data => {
+        const matchName = data.setupData?.matchName;
+
+        // Save match session
+        const matchData = {matchID, playerID, credentials, matchName};
+        localStorage.setItem('currentMatch', JSON.stringify(matchData));
+
+        this.setState({
+          inMatch: true,
+          matchID,
+          playerID,
+          credentials,
+          matchName
+        });
+      })
+      .catch(() => {
+        // If fetch fails, still join but without name
+        const matchData = {matchID, playerID, credentials};
+        localStorage.setItem('currentMatch', JSON.stringify(matchData));
+
+        this.setState({
+          inMatch: true,
+          matchID,
+          playerID,
+          credentials
+        });
+      });
+  };
+
+  handleLeaveMatch = async () => {
+    // Attempt to leave the match on the server
+    if (this.state.matchID && this.state.playerID && this.state.credentials) {
+      try {
+        await fetch(
+          `${SERVER_URL}/games/${GAME_NAME}/${this.state.matchID}/leave`,
+          {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+              playerID: this.state.playerID,
+              credentials: this.state.credentials
+            })
+          }
+        );
+      } catch (err) {
+        console.error('Error leaving match:', err);
+      }
     }
-    if (this.state.playerID === null) {
+
+    // Clear local state
+    localStorage.removeItem('currentMatch');
+    this.setState({
+      inMatch: false,
+      matchID: null,
+      playerID: null,
+      credentials: null,
+      matchName: undefined
+    });
+  };
+
+  render() {
+    const {inMatch, matchID, playerID, credentials, matchName} = this.state;
+
+    if (!inMatch) {
       return (
-        <div>
-          <p>Play as</p>
-          <button onClick={() => this.setState({playerID: "0"})}>
-            Spieler 1
-          </button>
-          <button onClick={() => this.setState({playerID: "1"})}>
-            Spieler 2
-          </button>
-          <button onClick={() => this.setState({playerID: "2"})}>
-            Spieler 3
-          </button>
-          <button onClick={() => this.setState({playerID: "3"})}>
-            Spieler 4
-          </button>
-          <button onClick={() => this.setState({playerID: "4"})}>
-            Spieler 5
-          </button>
-        </div>
+        <LobbyClient
+          gameServer={SERVER_URL}
+          gameName={GAME_NAME}
+          onJoinMatch={this.handleJoinMatch}
+        />
       );
+    }
+
+    if (!matchID || !playerID || !credentials) {
+      return <div>Error: Invalid match data</div>;
     }
 
     const ExplodingKittensClient = Client({
       game: ExplodingKittens,
       board: ExplodingKittensBoard,
-      numPlayers: 5,
       debug: {
         collapseOnLoad: true,
       },
@@ -72,9 +139,17 @@ export default class App extends Component<{}, AppState> {
     });
 
     return (
-      <div>
-        <ExplodingKittensClient playerID={this.state.playerID}/>
-      </div>
+      <GameView
+        matchID={matchID}
+        matchName={matchName}
+        onLeave={this.handleLeaveMatch}
+      >
+        <ExplodingKittensClient
+          matchID={matchID}
+          playerID={playerID}
+          credentials={credentials}
+        />
+      </GameView>
     );
   }
 }
