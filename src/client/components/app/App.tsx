@@ -19,18 +19,10 @@ interface AppState {
   matchName?: string;
 }
 
-// Create the Client instance once outside the component
-const ExplodingKittensClient = Client({
-  game: ExplodingKittens,
-  board: ExplodingKittensBoard,
-  debug: {
-    collapseOnLoad: true,
-  },
-  multiplayer: SocketIO({server: SERVER_URL}),
-});
-
 export default class App extends Component<{}, AppState> {
   private lobbyClient = new BgioLobbyClient({server: SERVER_URL});
+  private gameClient: ReturnType<typeof Client> | null = null;
+  private socketIO: ReturnType<typeof SocketIO> | null = null;
 
   state: AppState = {
     inMatch: false,
@@ -47,6 +39,32 @@ export default class App extends Component<{}, AppState> {
       console.error('Error preloading card images:', err);
     });
   }
+
+  componentWillUnmount() {
+    this.cleanupGameClient();
+  }
+
+  createGameClient = () => {
+    if (!this.gameClient) {
+      this.socketIO = SocketIO({server: SERVER_URL});
+      this.gameClient = Client({
+        game: ExplodingKittens,
+        board: ExplodingKittensBoard,
+        debug: {
+          collapseOnLoad: true,
+        },
+        multiplayer: this.socketIO,
+      });
+    }
+    return this.gameClient;
+  };
+
+  cleanupGameClient = () => {
+    // The SocketIO connection will be cleaned up automatically
+    // when the client component unmounts, but we reset our references
+    this.gameClient = null;
+    this.socketIO = null;
+  };
 
   handleJoinMatch = (matchID: string, playerID: string, credentials: string) => {
     this.lobbyClient.getMatch(GAME_NAME, matchID)
@@ -77,6 +95,7 @@ export default class App extends Component<{}, AppState> {
         playerID: this.state.playerID,
         credentials: this.state.credentials
       }).then(() => {
+        this.cleanupGameClient();
         this.setState({
           inMatch: false,
           matchID: null,
@@ -106,6 +125,8 @@ export default class App extends Component<{}, AppState> {
     if (!matchID || !playerID || !credentials) {
       return <div>Error: Invalid match data</div>;
     }
+
+    const ExplodingKittensClient = this.createGameClient();
 
     return (
       <GameView

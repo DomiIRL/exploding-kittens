@@ -1,16 +1,17 @@
 import {useState, useEffect, useMemo} from 'react';
 import {LobbyClient as BgioLobbyClient} from 'boardgame.io/client';
 import './Lobby.css';
+import {MatchPlayer} from "../../utils/matchData";
 
 interface LobbyMatch {
   matchID: string;
   gameName: string;
-  players: Array<{id: number; name?: string}>;
-  setupData?: {
-    matchName?: string;
-    maxPlayers?: number;
-    openCards?: boolean;
-    spectatorsCanSeeCards?: boolean;
+  players: Array<MatchPlayer>;
+  setupData: {
+    matchName: string;
+    maxPlayers: number;
+    openCards: boolean;
+    spectatorsCanSeeCards: boolean;
   };
 }
 
@@ -47,7 +48,8 @@ export default function LobbyClient({gameServer, gameName, onJoinMatch}: LobbyCl
   const fetchMatches = async () => {
     try {
       const data = await lobbyClient.listMatches(gameName, {isGameover: false});
-      setMatches(data.matches || []);
+      // @ts-ignore
+      setMatches(data.matches);
       setError(null);
     } catch (err) {
       setError('Failed to connect to server');
@@ -118,9 +120,9 @@ export default function LobbyClient({gameServer, gameName, onJoinMatch}: LobbyCl
   };
 
   const getAvailableSlot = (match: LobbyMatch): number | null => {
-    const maxPlayers = match.setupData?.maxPlayers || match.players.length;
+    const maxPlayers = match.setupData.maxPlayers;
     for (let i = 0; i < maxPlayers; i++) {
-      if (!match.players[i]?.name) {
+      if (!match.players[i].isConnected) {
         return i;
       }
     }
@@ -132,7 +134,7 @@ export default function LobbyClient({gameServer, gameName, onJoinMatch}: LobbyCl
   };
 
   const getJoinedPlayersCount = (match: LobbyMatch): number => {
-    return match.players.filter(p => p.name).length;
+    return match.players.filter(p => p.isConnected).length;
   };
 
   if (showNameModal) {
@@ -296,7 +298,7 @@ export default function LobbyClient({gameServer, gameName, onJoinMatch}: LobbyCl
           ) : (
             <div className="match-list">
               {matches.map((match) => {
-                const maxPlayers = match.setupData?.maxPlayers || match.players.length;
+                const maxPlayers = match.setupData.maxPlayers;
                 const joinedCount = getJoinedPlayersCount(match);
                 const availableSlot = getAvailableSlot(match);
                 const isFull = isMatchFull(match);
@@ -337,9 +339,9 @@ export default function LobbyClient({gameServer, gameName, onJoinMatch}: LobbyCl
                       {Array.from({length: maxPlayers}).map((_, i) => (
                         <div
                           key={i}
-                          className={`player-badge ${match.players[i]?.name ? 'joined' : ''}`}
+                          className={`player-badge ${match.players[i]?.isConnected ? 'joined' : ''}`}
                         >
-                          {match.players[i]?.name || `Slot ${i + 1}`}
+                          {match.players[i].isConnected ? match.players[i]?.name || "Unknown" : `Slot ${i + 1}`}
                         </div>
                       ))}
                     </div>
