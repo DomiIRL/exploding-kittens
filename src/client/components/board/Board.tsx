@@ -9,6 +9,7 @@ import {GameContext, PlayerStateBundle, OverlayStateBundle} from '../../types/co
 import Table from './table/Table';
 import PlayerList from './player-list/PlayerList';
 import OverlayManager from './overlay-manager/OverlayManager';
+import LobbyOverlay from './lobby-overlay/LobbyOverlay';
 
 interface BoardPropsWithPlugins extends BoardProps<GameState> {
   plugins: BoardPlugins;
@@ -16,7 +17,6 @@ interface BoardPropsWithPlugins extends BoardProps<GameState> {
 
 /**
  * Main game board component
- * Orchestrates the game view by composing specialized components and hooks
  */
 export default function ExplodingKittensBoard({
   ctx,
@@ -64,6 +64,7 @@ export default function ExplodingKittensBoard({
   // Handle explosion/defuse events
   const explosion = useExplosionEvents(G, allPlayers, playerID, matchData);
 
+
   /**
    * Handle player selection for stealing/requesting a card
    */
@@ -97,9 +98,23 @@ export default function ExplodingKittensBoard({
     }
   };
 
+  // Check if we're in lobby phase
+  const isInLobby = ctx.phase === 'lobby';
+
+
+  /**
+   * Handle starting the game from lobby
+   */
+  const handleStartGame = () => {
+    if (moves.startGame) {
+      moves.startGame();
+    }
+  };
+
   return (
     <div className="w-full h-full flex flex-col items-center justify-center bg-blue-200">
-      <div className={`board-container ${playerState.isSelfSpectator ? 'hand-interactable' : ''} ${playerState.isSelfDead ? 'dimmed' : ''}`}>
+      {/*<DebugPanel data={matchData} />*/}
+      <div className={`board-container ${playerState.isSelfSpectator ? 'hand-interactable' : ''} ${playerState.isSelfDead ? 'dimmed' : ''} ${isInLobby ? 'pointer-events-none' : ''}`}>
         <Table gameContext={gameContext} />
 
         <PlayerList
@@ -131,6 +146,14 @@ export default function ExplodingKittensBoard({
         winnerID={G.winner}
         onCloseFutureView={handleCloseFutureView}
       />
+
+      {isInLobby && (
+        <LobbyOverlay
+          matchData={matchData}
+          numPlayers={ctx.numPlayers}
+          onStartGame={handleStartGame}
+        />
+      )}
     </div>
   );
 }

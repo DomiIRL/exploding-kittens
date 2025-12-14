@@ -4,7 +4,7 @@
   right: 0;
   bottom: 0;
   padding: calc(var(--scale) * 4);
-  z-index: 9000;
+  z-index: 9;
   pointer-events: none;
   display: flex;
   justify-content: center;

@@ -6,7 +6,7 @@ export interface ClientGameState {
 }
 
 export interface GameRules {
-  deadPlayersCanSeeAllCards: boolean;
+  spectatorsCanSeeCards: boolean;
   openCards: boolean;
 }
 
@@ -17,4 +17,5 @@ export interface GameState {
   turnsRemaining: number;
   gameRules: GameRules;
   client: ClientGameState;
+  lobbyReady: boolean;
 }

@@ -46,10 +46,10 @@ const shouldSeeAllCards = (
 
   const currentPlayer = players[playerID];
   const isCurrentPlayerDead = currentPlayer && !currentPlayer.isAlive;
-  const deadPlayersCanSeeAll = G?.gameRules?.deadPlayersCanSeeAllCards ?? true;
+  const spectatorsCanSeeAll = G.gameRules.spectatorsCanSeeCards ?? true;
 
   // Dead players with permission see all cards
-  return isCurrentPlayerDead && deadPlayersCanSeeAll;
+  return isCurrentPlayerDead && spectatorsCanSeeAll;
 };
 
 export const filterPlayerView = (G: GameState, players: Players, playerID?: string | null): Players => {

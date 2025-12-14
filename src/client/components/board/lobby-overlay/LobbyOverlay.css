@@ -1,0 +1,141 @@
+.game-lobby-overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 11;
+  width: 90%;
+  max-width: 500px;
+}
+
+.game-lobby-content {
+  background: white;
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  text-align: center;
+  border: 3px solid #667eea;
+  display: flex;
+  flex-direction: column;
+}
+
+.game-lobby-title {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #2d3748;
+  margin: 0 0 0.5rem;
+}
+
+.game-lobby-subtitle {
+  font-size: 0.875rem;
+  color: #4a5568;
+  margin: 0 0 1.5rem;
+}
+
+.game-lobby-progress {
+  margin-bottom: 2rem;
+}
+
+.game-lobby-progress-bar {
+  width: 100%;
+  height: 12px;
+  background: #e2e8f0;
+  border-radius: 6px;
+  overflow: hidden;
+  margin-bottom: 0.75rem;
+}
+
+.game-lobby-progress-fill {
+  height: 100%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  transition: width 0.3s ease;
+}
+
+.game-lobby-progress-text {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #4a5568;
+}
+
+.game-lobby-players {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.game-lobby-player-slot {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  background: #f7fafc;
+  border: 2px solid #e2e8f0;
+  border-radius: 10px;
+  transition: all 0.3s;
+}
+
+.game-lobby-player-slot.joined {
+  background: #f0fff4;
+  border-color: #48bb78;
+}
+
+.game-lobby-player-slot.empty {
+  opacity: 0.6;
+}
+
+.game-lobby-player-icon {
+  font-size: 1.25rem;
+  flex-shrink: 0;
+}
+
+.game-lobby-player-name {
+  flex: 1;
+  text-align: left;
+  font-weight: 600;
+  color: #2d3748;
+  font-size: 0.875rem;
+}
+
+.game-lobby-player-status {
+  color: #38a169;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+@keyframes game-lobby-pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.game-lobby-player-slot.empty {
+  animation: game-lobby-pulse 2s infinite;
+}
+
+.game-lobby-start-btn {
+  margin-top: 1.5rem;
+  padding: 1rem 2rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 1.125rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s;
+  box-shadow: 0 4px 14px rgba(102, 126, 234, 0.4);
+  width: 100%;
+}
+
+.game-lobby-start-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+}
+
+.game-lobby-start-btn:active {
+  transform: translateY(0);
+}
+

@@ -1,4 +1,5 @@
-import {useState, useEffect} from 'react';
+import {useState, useEffect, useMemo} from 'react';
+import {LobbyClient as BgioLobbyClient} from 'boardgame.io/client';
 import './Lobby.css';
 
 interface LobbyMatch {
@@ -8,6 +9,8 @@ interface LobbyMatch {
   setupData?: {
     matchName?: string;
     maxPlayers?: number;
+    openCards?: boolean;
+    spectatorsCanSeeCards?: boolean;
   };
 }
 
@@ -18,6 +21,9 @@ interface LobbyClientProps {
 }
 
 export default function LobbyClient({gameServer, gameName, onJoinMatch}: LobbyClientProps) {
+  // Create LobbyClient instance
+  const lobbyClient = useMemo(() => new BgioLobbyClient({server: gameServer}), [gameServer]);
+
   const [matches, setMatches] = useState<LobbyMatch[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -26,6 +32,8 @@ export default function LobbyClient({gameServer, gameName, onJoinMatch}: LobbyCl
   const [tempPlayerName, setTempPlayerName] = useState(playerName);
   const [matchName, setMatchName] = useState('');
   const [numPlayers, setNumPlayers] = useState(2);
+  const [openCards, setOpenCards] = useState(false);
+  const [spectatorsCanSeeCards, setSpectatorsCanSeeCards] = useState(true);
   const [creating, setCreating] = useState(false);
 
   useEffect(() => {
@@ -34,13 +42,11 @@ export default function LobbyClient({gameServer, gameName, onJoinMatch}: LobbyCl
       const interval = setInterval(fetchMatches, 3000);
       return () => clearInterval(interval);
     }
-  }, [playerName]);
+  }, [playerName, lobbyClient]);
 
   const fetchMatches = async () => {
     try {
-      const response = await fetch(`${gameServer}/games/${gameName}`);
-      if (!response.ok) throw new Error('Failed to fetch matches');
-      const data = await response.json();
+      const data = await lobbyClient.listMatches(gameName, {isGameover: false});
       setMatches(data.matches || []);
       setError(null);
     } catch (err) {
@@ -59,20 +65,15 @@ export default function LobbyClient({gameServer, gameName, onJoinMatch}: LobbyCl
 
     setCreating(true);
     try {
-      const response = await fetch(`${gameServer}/games/${gameName}/create`, {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({
-          numPlayers,
-          setupData: {
-            matchName: matchName.trim(),
-            maxPlayers: numPlayers
-          }
-        })
+      const {matchID} = await lobbyClient.createMatch(gameName, {
+        numPlayers,
+        setupData: {
+          matchName: matchName.trim(),
+          maxPlayers: numPlayers,
+          openCards: openCards,
+          spectatorsCanSeeCards: openCards ? false : spectatorsCanSeeCards
+        }
       });
-
-      if (!response.ok) throw new Error('Failed to create match');
-      const {matchID} = await response.json();
 
       // Join the match immediately
       await joinMatch(matchID, 0);
@@ -88,17 +89,10 @@ export default function LobbyClient({gameServer, gameName, onJoinMatch}: LobbyCl
 
   const joinMatch = async (matchID: string, playerID: number) => {
     try {
-      const response = await fetch(`${gameServer}/games/${gameName}/${matchID}/join`, {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({
-          playerID,
-          playerName
-        })
+      const {playerCredentials} = await lobbyClient.joinMatch(gameName, matchID, {
+        playerID: playerID.toString(),
+        playerName
       });
-
-      if (!response.ok) throw new Error('Failed to join match');
-      const {playerCredentials} = await response.json();
 
       onJoinMatch(matchID, playerID.toString(), playerCredentials);
     } catch (err) {
@@ -239,6 +233,29 @@ export default function LobbyClient({gameServer, gameName, onJoinMatch}: LobbyCl
               </select>
             </div>
 
+            <div className="form-group">
+              <label className="form-label">Game Rules</label>
+              <div className="checkbox-group">
+                <label className="checkbox-label">
+                  <input
+                    type="checkbox"
+                    checked={openCards}
+                    onChange={(e) => setOpenCards(e.target.checked)}
+                  />
+                  <span>Open Cards (all players can see each other's cards)</span>
+                </label>
+                <label className={`checkbox-label ${openCards ? 'disabled' : ''}`}>
+                  <input
+                    type="checkbox"
+                    checked={spectatorsCanSeeCards}
+                    onChange={(e) => setSpectatorsCanSeeCards(e.target.checked)}
+                    disabled={openCards}
+                  />
+                  <span>Spectators Can See Cards (eliminated players can see all cards)</span>
+                </label>
+              </div>
+            </div>
+
             <button
               className="btn btn-primary"
               onClick={createMatch}
@@ -304,6 +321,17 @@ export default function LobbyClient({gameServer, gameName, onJoinMatch}: LobbyCl
                         <span>{match.matchID.slice(0, 8)}</span>
                       </div>
                     </div>
+
+                    {(match.setupData?.openCards || match.setupData?.spectatorsCanSeeCards) && (
+                      <div className="match-rules">
+                        {match.setupData?.openCards && (
+                          <span className="rule-badge">👁️ Open Cards</span>
+                        )}
+                        {match.setupData?.spectatorsCanSeeCards && (
+                          <span className="rule-badge">👻 Spectators Can See</span>
+                        )}
+                      </div>
+                    )}
 
                     <div className="match-players">
                       {Array.from({length: maxPlayers}).map((_, i) => (

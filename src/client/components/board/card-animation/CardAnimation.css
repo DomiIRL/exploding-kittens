@@ -17,7 +17,7 @@ body {
   box-shadow: 0 calc(var(--scale) * 1) calc(var(--scale) * 3) var(--color-shadow-dark),
               0 0 calc(var(--scale) * 2) var(--color-accent-glow-medium);
   pointer-events: none;
-  z-index: 9999;
+  z-index: 9;
   /* Start at origin, will be positioned via left/top in component */
   transform: translate(-50%, -50%) scale(0.8);
   opacity: 0;

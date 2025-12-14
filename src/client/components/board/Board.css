@@ -15,3 +15,8 @@
   linear-gradient(135deg, var(--color-primary-darker) 0%, var(--color-primary-muted) 50%, var(--color-primary-darkest) 100%);
 }
 
+.board-container.pointer-events-none {
+  pointer-events: none;
+  user-select: none;
+}
+

@@ -55,7 +55,7 @@
     calc(var(--scale) * 0.2) calc(var(--scale) * 0.2) calc(var(--scale) * 0.4) var(--color-shadow-dark);
 
   pointer-events: none;
-  z-index: 10;
+  z-index: 1;
   animation: fade 0.2s ease-in;
 }
 

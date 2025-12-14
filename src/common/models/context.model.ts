@@ -9,5 +9,6 @@ export type FnContext = Record<string, unknown> & {
   ctx: Ctx;
   player: PlayerAPI;
   events: EventsAPI; // TODO: Define proper type for events
-  random: RandomAPI
+  random: RandomAPI;
+  playerID?: string;
 };

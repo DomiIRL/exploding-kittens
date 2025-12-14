@@ -36,7 +36,7 @@ export const useGameState = (
 
   const isSelfSpectator = useMemo(() => {
     return isSpectator ||
-      (isSelfDead && G.gameRules.deadPlayersCanSeeAllCards) ||
+      (isSelfDead && G.gameRules.spectatorsCanSeeCards) ||
       G.gameRules.openCards;
   }, [isSpectator, isSelfDead, G.gameRules]);
 

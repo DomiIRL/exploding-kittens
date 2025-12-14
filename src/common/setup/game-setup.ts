@@ -1,31 +1,28 @@
-import {Ctx} from 'boardgame.io';
-import type {Card, GameState, PlayerAPI} from '../models';
-import {OriginalDeck} from '../entities/decks/original-deck';
-import {dealHands} from './player-setup';
+import type {GameState} from '../models';
 
-export const setupGame = ({ctx, player}: { ctx: Ctx; player: PlayerAPI }): GameState => {
-  const deck = new OriginalDeck();
+interface SetupData {
+  matchName?: string;
+  maxPlayers?: number;
+  openCards?: boolean;
+  spectatorsCanSeeCards?: boolean;
+}
 
-  const pile: Card[] = shuffle(deck.buildBaseDeck());
-
-  dealHands(pile, player.state, deck);
-
-  deck.addPostDealCards(pile, Object.keys(ctx.playOrder).length);
-
+export const setupGame = (_context: any, setupData?: SetupData): GameState => {
+  // Don't deal cards yet - will be done when lobby phase ends
   return {
     winner: null,
-    drawPile: shuffle(pile),
+    drawPile: [],
     discardPile: [],
     turnsRemaining: 1,
     gameRules: {
-      deadPlayersCanSeeAllCards: false,
-      openCards: false,
+      spectatorsCanSeeCards: setupData?.spectatorsCanSeeCards ?? false,
+      openCards: setupData?.openCards ?? false,
     },
     client: {
       drawPileLength: 0
-    }
+    },
+    lobbyReady: false,
   };
 };
 
-const shuffle = <T>(arr: T[]): T[] => [...arr].sort(() => Math.random() - 0.5);
 

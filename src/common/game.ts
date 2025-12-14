@@ -8,6 +8,8 @@ import {stealCard} from "./moves/steal-card-move";
 import {requestCard, giveCard} from "./moves/favor-card-move";
 import {closeFutureView} from "./moves/see-future-move";
 import {skipDeadPlayers} from "./utils/turn-order";
+import {OriginalDeck} from './entities/decks/original-deck';
+import {dealHands} from './setup/player-setup';
 
 export const ExplodingKittens: Game<GameState, PluginAPIs> = {
   name: "Exploding-Kittens",
@@ -35,9 +37,48 @@ export const ExplodingKittens: Game<GameState, PluginAPIs> = {
     };
   },
 
+  moves: {},
+
   phases: {
-    play: {
+    lobby: {
       start: true,
+      next: 'play',
+      onBegin: ({G}) => {
+        // Reset game state for lobby
+        G.lobbyReady = false;
+      },
+      onEnd: ({G, ctx, player}) => {
+        // Deal cards when leaving lobby phase
+        const deck = new OriginalDeck();
+        const pile: Card[] = deck.buildBaseDeck().sort(() => Math.random() - 0.5);
+
+        dealHands(pile, player.state, deck);
+        deck.addPostDealCards(pile, Object.keys(ctx.playOrder).length);
+
+        G.drawPile = pile.sort(() => Math.random() - 0.5);
+      },
+      endIf: ({G}) => {
+        // Move to play phase only when lobbyReady flag is explicitly set
+        if (G.lobbyReady) {
+          return {next: 'play'};
+        }
+      },
+      moves: {
+        startGame: {
+          move: ({G}: any) => {
+            G.lobbyReady = true;
+          },
+          client: false,
+        },
+      },
+      turn: {
+        order: {
+          first: () => 0,
+          next: () => undefined,
+        },
+      },
+    },
+    play: {
       turn: {
         minMoves: 1,
         order: skipDeadPlayers,

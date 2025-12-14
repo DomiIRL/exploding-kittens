@@ -11,7 +11,7 @@
   position: fixed;
   top: 1rem;
   left: 1rem;
-  z-index: 9999;
+  z-index: 11;
   padding: 0.75rem 1.5rem;
   background: rgba(255, 255, 255, 0.95);
   border: 2px solid #e2e8f0;
@@ -44,7 +44,7 @@
   position: fixed;
   top: 1rem;
   right: 1rem;
-  z-index: 9999;
+  z-index: 11;
   padding: 0.75rem 1.25rem;
   background: rgba(255, 255, 255, 0.95);
   border: 2px solid #e2e8f0;
@@ -75,7 +75,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 10000;
+  z-index: 11;
   animation: fadeIn 0.2s;
 }
 

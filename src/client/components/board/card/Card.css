@@ -146,14 +146,14 @@
 }
 
 .hand-interactable .card:hover {
-  z-index: 1000;
+  z-index: 10;
   transform: var(--base-transform) translateY(calc(var(--scale) * -2)) scale(1.2) rotate(0deg);
 }
 
 .hand-interactable .card:hover::after {
   content: '';
   position: absolute;
-  z-index: 1000;
+  z-index: 10;
   top: 0;
   left: 0;
   right: 0;
@@ -179,7 +179,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  z-index: 10000;
+  z-index: 10;
   display: flex;
   align-items: center;
   justify-content: flex-start;
