@@ -21,8 +21,6 @@ interface AppState {
 
 export default class App extends Component<{}, AppState> {
   private lobbyClient = new BgioLobbyClient({server: SERVER_URL});
-  private gameClient: ReturnType<typeof Client> | null = null;
-  private socketIO: ReturnType<typeof SocketIO> | null = null;
 
   state: AppState = {
     inMatch: false,
@@ -39,31 +37,6 @@ export default class App extends Component<{}, AppState> {
       console.error('Error preloading card images:', err);
     });
   }
-
-  componentWillUnmount() {
-    this.cleanupGameClient();
-  }
-
-  createGameClient = () => {
-    if (!this.gameClient) {
-      this.socketIO = SocketIO({server: SERVER_URL});
-      this.gameClient = Client({
-        game: ExplodingKittens,
-        board: ExplodingKittensBoard,
-        debug: {
-          collapseOnLoad: true,
-        },
-        multiplayer: this.socketIO,
-      });
-    }
-    return this.gameClient;
-  };
-
-  cleanupGameClient = () => {
-    // The SocketIO connection will be cleaned up automatically
-    this.gameClient = null;
-    this.socketIO = null;
-  };
 
   handleJoinMatch = (matchID: string, playerID: string, credentials: string) => {
     this.lobbyClient.getMatch(GAME_NAME, matchID)
@@ -90,21 +63,39 @@ export default class App extends Component<{}, AppState> {
 
   handleLeaveMatch = async () => {
     if (this.state.matchID && this.state.playerID && this.state.credentials) {
-      await this.lobbyClient.leaveMatch(GAME_NAME, this.state.matchID, {
-        playerID: this.state.playerID,
-        credentials: this.state.credentials
-      }).then(() => {
-        this.cleanupGameClient();
-        this.setState({
-          inMatch: false,
-          matchID: null,
-          playerID: null,
-          credentials: null,
-          matchName: undefined
-        });
-      }).catch(err => {
-        console.error('Error leaving match:', err);
+      const matchID = this.state.matchID;
+      const playerID = this.state.playerID;
+      const credentials = this.state.credentials;
+
+      console.log('Leaving match...');
+
+      this.setState({
+        inMatch: false,
+        matchID: null,
+        playerID: null,
+        credentials: null,
+        matchName: undefined
       });
+
+      console.log('Returned to lobby');
+
+      // Wait for React to process the state change and unmount the component
+      // This ensures Socket.IO disconnects before we call the API
+      await new Promise(resolve => setTimeout(resolve, 200));
+
+      // Now leave the match via the lobby API
+      // By this time, the client has been unmounted and Socket.IO has disconnected
+      try {
+        await this.lobbyClient.leaveMatch(GAME_NAME, matchID, {
+          playerID: playerID,
+          credentials: credentials
+        });
+        console.log('Successfully left match via API');
+      } catch (err) {
+        console.error('Error calling leaveMatch API:', err);
+      }
+
+      console.log('Successfully left match');
     }
   };
 
@@ -121,11 +112,21 @@ export default class App extends Component<{}, AppState> {
       );
     }
 
+    console.log('Mounting game view for match', matchID, 'with player', playerID);
+
     if (!matchID || !playerID || !credentials) {
       return <div>Error: Invalid match data</div>;
     }
 
-    const ExplodingKittensClient = this.createGameClient();
+    // Create a fresh client component for each match
+    const ExplodingKittensClient = Client({
+      game: ExplodingKittens,
+      board: ExplodingKittensBoard,
+      debug: {
+        collapseOnLoad: true,
+      },
+      multiplayer: SocketIO({server: SERVER_URL}),
+    });
 
     return (
       <GameView
@@ -134,6 +135,7 @@ export default class App extends Component<{}, AppState> {
         onLeave={this.handleLeaveMatch}
       >
         <ExplodingKittensClient
+          key={matchID}
           matchID={matchID}
           playerID={playerID}
           credentials={credentials}
