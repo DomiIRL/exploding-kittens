@@ -78,7 +78,7 @@ export default function LobbyClient({gameServer, gameName, onJoinMatch}: LobbyCl
       });
 
       // Join the match immediately
-      await joinMatch(matchID, 0);
+      await joinMatch(matchID);
 
       setMatchName('');
     } catch (err) {
@@ -89,18 +89,17 @@ export default function LobbyClient({gameServer, gameName, onJoinMatch}: LobbyCl
     }
   };
 
-  const joinMatch = async (matchID: string, playerID: number) => {
-    try {
-      const {playerCredentials} = await lobbyClient.joinMatch(gameName, matchID, {
-        playerID: playerID.toString(),
-        playerName
-      });
-
-      onJoinMatch(matchID, playerID.toString(), playerCredentials);
-    } catch (err) {
+  const joinMatch = async (matchID: string) => {
+    console.log(`Joining match ${matchID}`);
+    await lobbyClient.joinMatch(gameName, matchID, {
+      playerName
+    }).then(({playerID, playerCredentials}) => {
+      onJoinMatch(matchID, playerID, playerCredentials);
+    }).catch((err) => {
       setError('Failed to join match');
       console.error('Error joining match:', err);
-    }
+      throw err;
+    });
   };
 
   const savePlayerName = () => {
@@ -134,7 +133,7 @@ export default function LobbyClient({gameServer, gameName, onJoinMatch}: LobbyCl
   };
 
   const getJoinedPlayersCount = (match: LobbyMatch): number => {
-    return match.players.filter(p => p.isConnected).length;
+    return match.players.filter(p => p?.isConnected).length;
   };
 
   if (showNameModal) {
@@ -300,7 +299,6 @@ export default function LobbyClient({gameServer, gameName, onJoinMatch}: LobbyCl
               {matches.map((match) => {
                 const maxPlayers = match.setupData.maxPlayers;
                 const joinedCount = getJoinedPlayersCount(match);
-                const availableSlot = getAvailableSlot(match);
                 const isFull = isMatchFull(match);
                 const matchDisplayName = match.setupData?.matchName || match.matchID;
 
@@ -341,16 +339,16 @@ export default function LobbyClient({gameServer, gameName, onJoinMatch}: LobbyCl
                           key={i}
                           className={`player-badge ${match.players[i]?.isConnected ? 'joined' : ''}`}
                         >
-                          {match.players[i].isConnected ? match.players[i]?.name || "Unknown" : `Slot ${i + 1}`}
+                          {match.players[i]?.isConnected ? match.players[i]?.name || "Unknown" : `Slot ${i + 1}`}
                         </div>
                       ))}
                     </div>
 
                     <div className="match-actions">
-                      {!isFull && availableSlot !== null ? (
+                      {!isFull ? (
                         <button
                           className="btn btn-success btn-small"
-                          onClick={() => joinMatch(match.matchID, availableSlot)}
+                          onClick={() => joinMatch(match.matchID)}
                         >
                           Join Match
                         </button>
@@ -370,4 +368,3 @@ export default function LobbyClient({gameServer, gameName, onJoinMatch}: LobbyCl
     </div>
   );
 }
-

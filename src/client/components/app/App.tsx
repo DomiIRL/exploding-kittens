@@ -61,7 +61,6 @@ export default class App extends Component<{}, AppState> {
 
   cleanupGameClient = () => {
     // The SocketIO connection will be cleaned up automatically
-    // when the client component unmounts, but we reset our references
     this.gameClient = null;
     this.socketIO = null;
   };
@@ -69,7 +68,7 @@ export default class App extends Component<{}, AppState> {
   handleJoinMatch = (matchID: string, playerID: string, credentials: string) => {
     this.lobbyClient.getMatch(GAME_NAME, matchID)
       .then(data => {
-        const matchName = data.setupData?.matchName;
+        const matchName = data.setupData.matchName;
 
         this.setState({
           inMatch: true,

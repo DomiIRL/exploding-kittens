@@ -114,7 +114,7 @@ export default function ExplodingKittensBoard({
 
   return (
     <div className="w-full h-full flex flex-col items-center justify-center bg-blue-200">
-      <DebugPanel data={matchData} />
+      <DebugPanel data={{gameContext}}/>
       <div className={`board-container ${playerState.isSelfSpectator ? 'hand-interactable' : ''} ${playerState.isSelfDead ? 'dimmed' : ''} ${isInLobby ? 'pointer-events-none' : ''}`}>
         <Table gameContext={gameContext} />
 
