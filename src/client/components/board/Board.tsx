@@ -10,7 +10,6 @@ import Table from './table/Table';
 import PlayerList from './player-list/PlayerList';
 import OverlayManager from './overlay-manager/OverlayManager';
 import LobbyOverlay from './lobby-overlay/LobbyOverlay';
-import DebugPanel from "./debug-panel/DebugPanel.tsx";
 
 interface BoardPropsWithPlugins extends BoardProps<GameState> {
   plugins: BoardPlugins;
@@ -114,7 +113,6 @@ export default function ExplodingKittensBoard({
 
   return (
     <div className="w-full h-full flex flex-col items-center justify-center bg-blue-200">
-      <DebugPanel data={{gameContext}}/>
       <div className={`board-container ${playerState.isSelfSpectator ? 'hand-interactable' : ''} ${playerState.isSelfDead ? 'dimmed' : ''} ${isInLobby ? 'pointer-events-none' : ''}`}>
         <Table gameContext={gameContext} />
 

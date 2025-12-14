@@ -1,7 +1,7 @@
 import {Ctx, Game} from 'boardgame.io';
 import {createPlayerPlugin} from './plugins/player-plugin';
 import {setupGame} from './setup/game-setup';
-import type {Card, GameState, PluginAPIs} from './models';
+import type {Card, FnContext, GameState, PluginAPIs} from './models';
 import {drawCard} from "./moves/draw-move";
 import {playCard} from "./moves/play-card-move";
 import {stealCard} from "./moves/steal-card-move";
@@ -17,6 +17,8 @@ export const ExplodingKittens: Game<GameState, PluginAPIs> = {
   plugins: [createPlayerPlugin()],
 
   setup: setupGame,
+
+  disableUndo: true,
 
   playerView: ({G, ctx, playerID}: {G: GameState; ctx: Ctx; playerID: any}) => {
     // The player plugin's playerView will handle filtering the player data
@@ -43,7 +45,7 @@ export const ExplodingKittens: Game<GameState, PluginAPIs> = {
     lobby: {
       start: true,
       next: 'play',
-      onBegin: ({G}) => {
+      onBegin: ({G}: FnContext) => {
         // Reset game state for lobby
         G.lobbyReady = false;
       },
@@ -63,15 +65,24 @@ export const ExplodingKittens: Game<GameState, PluginAPIs> = {
           return {next: 'play'};
         }
       },
-      moves: {
-        startGame: {
-          move: ({G}: any) => {
-            G.lobbyReady = true;
-          },
-          client: false,
-        },
-      },
       turn: {
+        activePlayers: {
+          all: 'waitingForStart',
+        },
+        stages: {
+          'waitingForStart': {
+            moves: {
+              startGame: {
+                move: ({G}: FnContext) => {
+                  // Need to trust players since there is no api to see who is currently connected
+                  // Only the client has that info exposed by boardgame.io for some reason
+                  G.lobbyReady = true;
+                },
+                client: false,
+              },
+            }
+          }
+        },
         order: {
           first: () => 0,
           next: () => undefined,
