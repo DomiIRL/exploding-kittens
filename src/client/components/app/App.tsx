@@ -19,6 +19,7 @@ interface AppState {
   playerID: string | null;
   credentials: string | null;
   matchName?: string;
+  numPlayers?: number;
 }
 
 export default class App extends Component<{}, AppState> {
@@ -29,7 +30,8 @@ export default class App extends Component<{}, AppState> {
     matchID: null,
     playerID: null,
     credentials: null,
-    matchName: undefined
+    matchName: undefined,
+    numPlayers: undefined
   };
 
   componentDidMount() {
@@ -44,13 +46,15 @@ export default class App extends Component<{}, AppState> {
     this.lobbyClient.getMatch(GAME_NAME, matchID)
       .then(data => {
         const matchName = data.setupData.matchName;
+        const numPlayers = data.setupData.maxPlayers;
 
         this.setState({
           inMatch: true,
           matchID,
           playerID,
           credentials,
-          matchName
+          matchName,
+          numPlayers
         });
       })
       .catch(() => {
@@ -76,7 +80,8 @@ export default class App extends Component<{}, AppState> {
         matchID: null,
         playerID: null,
         credentials: null,
-        matchName: undefined
+        matchName: undefined,
+        numPlayers: undefined
       });
 
       console.log('Returned to lobby');
@@ -102,7 +107,7 @@ export default class App extends Component<{}, AppState> {
   };
 
   render() {
-    const {inMatch, matchID, playerID, credentials, matchName} = this.state;
+    const {inMatch, matchID, playerID, credentials, matchName, numPlayers} = this.state;
 
     if (!inMatch) {
       return (
@@ -134,6 +139,7 @@ export default class App extends Component<{}, AppState> {
       <GameView
         matchID={matchID}
         matchName={matchName}
+        numPlayers={numPlayers}
         onLeave={this.handleLeaveMatch}
       >
         <ExplodingKittensClient

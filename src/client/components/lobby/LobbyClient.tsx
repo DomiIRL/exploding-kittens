@@ -253,17 +253,13 @@ export default function LobbyClient({gameServer, gameName, onJoinMatch}: LobbyCl
                   <div key={match.matchID} className="match-card">
                     <div className="match-header">
                       <div className="match-header-left">
-                        <h3 className="match-name">{matchDisplayName}</h3>
                         <span className={`match-status ${joinedCount < maxPlayers ? 'status-waiting' : 'status-playing'}`}>
                           {joinedCount < maxPlayers ? 'Waiting' : 'Playing'}
                         </span>
+                        <h3 className="match-name">{matchDisplayName}</h3>
                         <div className="match-info-item">
                           <span>👥</span>
                           <span>{joinedCount} / {maxPlayers}</span>
-                        </div>
-                        <div className="match-info-item">
-                          <span>🆔</span>
-                          <span>{match.matchID.slice(0, 8)}</span>
                         </div>
                       </div>
                     </div>

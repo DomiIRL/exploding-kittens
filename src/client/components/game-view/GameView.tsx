@@ -4,11 +4,12 @@ import './GameView.css';
 interface GameViewProps {
   matchID: string;
   matchName?: string;
+  numPlayers?: number;
   onLeave: () => void;
   children: React.ReactNode;
 }
 
-export default function GameView({matchID, matchName, onLeave, children}: GameViewProps) {
+export default function GameView({matchName, numPlayers, onLeave, children}: GameViewProps) {
   const [showLeaveModal, setShowLeaveModal] = useState(false);
 
   const handleLeaveClick = () => {
@@ -31,15 +32,16 @@ export default function GameView({matchID, matchName, onLeave, children}: GameVi
         <span>Leave Match</span>
       </button>
 
-      <div className="match-info-badge">
-        <div className="match-info-item">
-          <span>🎮</span>
-          <span>{matchName || 'Match'}</span>
+      <div className="game-info-badge">
+        <div className="game-info-item">
+          <span>{matchName}</span>
         </div>
-        <div className="match-info-item">
-          <span>🆔</span>
-          <span>{matchID.slice(0, 8)}</span>
-        </div>
+        {numPlayers && (
+          <div className="game-info-item">
+            <span>👥</span>
+            <span>{numPlayers} players</span>
+          </div>
+        )}
       </div>
 
       {children}
