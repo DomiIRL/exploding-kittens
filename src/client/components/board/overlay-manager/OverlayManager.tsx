@@ -57,7 +57,7 @@ export default function OverlayManager({
         onComplete={explosionEvent.onComplete}
       />
       {isSelectingPlayer && <PlayerSelectionOverlay message={selectionMessage} />}
-      {isChoosingCardToGive && <PlayerSelectionOverlay message="You we're chosen to gift a card. Pick one." />}
+      {isChoosingCardToGive && <PlayerSelectionOverlay message="You were chosen to gift a card. Pick one." />}
       {isViewingFuture && (
         <SeeTheFutureOverlay cards={futureCards} onClose={onCloseFutureView} />
       )}
