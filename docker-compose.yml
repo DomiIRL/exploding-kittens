@@ -2,6 +2,11 @@ services:
   client:
     build:
       context: .
+      args:
+        VITE_API_URL: ${VITE_API_URL}
+        VITE_HOST: ${VITE_HOST}
+        VITE_PORT: ${VITE_PORT}
+        VITE_ALLOWED_HOSTS: ${VITE_ALLOWED_HOSTS}
     container_name: exploding-kittens-client
     ports:
       - "5173:5173"
