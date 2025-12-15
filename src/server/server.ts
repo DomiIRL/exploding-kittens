@@ -16,4 +16,5 @@ const server = Server({
 server.run(port, () => {
   console.log(`🎮 Exploding Kittens server running on port ${port}`);
   console.log(`🌐 Lobby API enabled at http://localhost:${port}/games`);
+  console.log(`📡 Server environment: ${process.env.NODE_ENV || 'development'}`);
 });
