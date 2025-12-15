@@ -11,9 +11,7 @@ import {preloadCardImages} from '../../utils/preloadImages';
 const SERVER_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 const GAME_NAME = 'Exploding-Kittens';
 
-// Debug: Log the API URL being used
-console.log('🔗 Client API URL:', SERVER_URL);
-console.log('🔗 VITE_API_URL env:', import.meta.env.VITE_API_URL);
+console.log('🔗 API URL:', SERVER_URL);
 
 interface AppState {
   inMatch: boolean;
