@@ -46,7 +46,7 @@ const shouldSeeAllCards = (
 
   const currentPlayer = players[playerID];
   const isCurrentPlayerDead = currentPlayer && !currentPlayer.isAlive;
-  const spectatorsCanSeeAll = G.gameRules.spectatorsCanSeeCards ?? true;
+  const spectatorsCanSeeAll = !G.gameRules.spectatorsCardsHidden;
 
   // Dead players with permission see all cards
   return isCurrentPlayerDead && spectatorsCanSeeAll;

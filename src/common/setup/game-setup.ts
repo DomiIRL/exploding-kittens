@@ -4,7 +4,8 @@ interface SetupData {
   matchName?: string;
   maxPlayers?: number;
   openCards?: boolean;
-  spectatorsCanSeeCards?: boolean;
+  spectatorsCardsHidden?: boolean;
+  deckType?: string;
 }
 
 export const setupGame = (_context: any, setupData?: SetupData): GameState => {
@@ -15,9 +16,10 @@ export const setupGame = (_context: any, setupData?: SetupData): GameState => {
     discardPile: [],
     turnsRemaining: 1,
     gameRules: {
-      spectatorsCanSeeCards: setupData?.spectatorsCanSeeCards ?? false,
+      spectatorsCardsHidden: setupData?.spectatorsCardsHidden ?? false,
       openCards: setupData?.openCards ?? false,
     },
+    deckType: setupData?.deckType ?? 'original',
     client: {
       drawPileLength: 0
     },

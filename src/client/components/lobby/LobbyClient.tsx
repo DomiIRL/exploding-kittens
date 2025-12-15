@@ -3,16 +3,19 @@ import {LobbyClient as BgioLobbyClient} from 'boardgame.io/client';
 import './Lobby.css';
 import {MatchPlayer} from "../../utils/matchData";
 
+interface MatchSetupData {
+  matchName: string;
+  maxPlayers: number;
+  openCards: boolean;
+  spectatorsCardsHidden?: boolean;
+  deckType?: string;
+}
+
 interface LobbyMatch {
   matchID: string;
   gameName: string;
   players: Array<MatchPlayer>;
-  setupData: {
-    matchName: string;
-    maxPlayers: number;
-    openCards: boolean;
-    spectatorsCanSeeCards: boolean;
-  };
+  setupData: MatchSetupData;
 }
 
 interface LobbyClientProps {
@@ -33,8 +36,9 @@ export default function LobbyClient({gameServer, gameName, onJoinMatch}: LobbyCl
   const [tempPlayerName, setTempPlayerName] = useState(playerName);
   const [matchName, setMatchName] = useState('');
   const [numPlayers, setNumPlayers] = useState(2);
+  const [deckType, setDeckType] = useState('original');
   const [openCards, setOpenCards] = useState(false);
-  const [spectatorsCanSeeCards, setSpectatorsCanSeeCards] = useState(true);
+  const [spectatorsCardsHidden, setSpectatorsCardsHidden] = useState(false);
   const [creating, setCreating] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false);
 
@@ -73,8 +77,9 @@ export default function LobbyClient({gameServer, gameName, onJoinMatch}: LobbyCl
         setupData: {
           matchName: matchName.trim(),
           maxPlayers: numPlayers,
+          deckType: deckType,
           openCards: openCards,
-          spectatorsCanSeeCards: openCards ? false : spectatorsCanSeeCards
+          spectatorsCardsHidden: openCards ? false : spectatorsCardsHidden
         }
       });
 
@@ -272,21 +277,22 @@ export default function LobbyClient({gameServer, gameName, onJoinMatch}: LobbyCl
                               key={i}
                               className={`player-badge ${match.players[i]?.isConnected ? 'joined' : ''}`}
                             >
-                              {match.players[i]?.isConnected ? match.players[i]?.name || "Unknown" : `Slot ${i + 1}`}
+                              {match.players[i]?.isConnected ? match.players[i]?.name || "Unknown" : `Empty Slot`}
                             </div>
                           ))}
                         </div>
 
-                        {(match.setupData?.openCards || match.setupData?.spectatorsCanSeeCards) && (
-                          <div className="match-rules">
-                            {match.setupData?.openCards && (
-                              <span className="rule-badge">👁️ Open</span>
-                            )}
-                            {match.setupData?.spectatorsCanSeeCards && (
-                              <span className="rule-badge">👻 Spectators</span>
-                            )}
-                          </div>
-                        )}
+                        <div className="match-rules">
+                          {match.setupData?.deckType && (
+                            <span className="rule-badge">🃏 {match.setupData.deckType === 'original' ? 'Original' : match.setupData.deckType}</span>
+                          )}
+                          {match.setupData?.openCards && (
+                            <span className="rule-badge">👁️ Open</span>
+                          )}
+                          {match.setupData?.spectatorsCardsHidden && (
+                            <span className="rule-badge">🚫 Cards Hidden</span>
+                          )}
+                        </div>
                       </div>
 
                       <div className="match-actions">
@@ -349,6 +355,17 @@ export default function LobbyClient({gameServer, gameName, onJoinMatch}: LobbyCl
               </div>
 
               <div className="form-group">
+                <label className="form-label">Deck</label>
+                <select
+                  className="form-select"
+                  value={deckType}
+                  onChange={(e) => setDeckType(e.target.value)}
+                >
+                  <option value="original">🃏 Original Version</option>
+                </select>
+              </div>
+
+              <div className="form-group">
                 <label className="form-label">Game Rules</label>
                 <div className="checkbox-group">
                   <label className="checkbox-label">
@@ -362,11 +379,11 @@ export default function LobbyClient({gameServer, gameName, onJoinMatch}: LobbyCl
                   <label className={`checkbox-label ${openCards ? 'disabled' : ''}`}>
                     <input
                       type="checkbox"
-                      checked={spectatorsCanSeeCards}
-                      onChange={(e) => setSpectatorsCanSeeCards(e.target.checked)}
+                      checked={spectatorsCardsHidden}
+                      onChange={(e) => setSpectatorsCardsHidden(e.target.checked)}
                       disabled={openCards}
                     />
-                    <span>Spectators Can See Cards (eliminated players can see all cards)</span>
+                    <span>Hide Cards from Spectators (eliminated players cannot see cards)</span>
                   </label>
                 </div>
               </div>

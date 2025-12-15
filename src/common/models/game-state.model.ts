@@ -6,7 +6,7 @@ export interface ClientGameState {
 }
 
 export interface GameRules {
-  spectatorsCanSeeCards: boolean;
+  spectatorsCardsHidden: boolean;
   openCards: boolean;
 }
 
@@ -16,6 +16,7 @@ export interface GameState {
   discardPile: Card[];
   turnsRemaining: number;
   gameRules: GameRules;
+  deckType: string;
   client: ClientGameState;
   lobbyReady: boolean;
 }
