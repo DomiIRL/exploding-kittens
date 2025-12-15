@@ -44,7 +44,7 @@ export default function LobbyOverlay({matchData, numPlayers, onStartGame}: Lobby
                   {hasJoined ? '👤' : '⏳'}
                 </div>
                 <div className="game-lobby-player-name">
-                  {hasJoined ? player?.name || "Unknown" : `Waiting for Player ${i + 1}...`}
+                  {hasJoined ? player?.name || "Unknown" : `Waiting for Player`}
                 </div>
                 {hasJoined && (
                   <div className="game-lobby-player-status">✓ Ready</div>

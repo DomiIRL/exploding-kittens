@@ -60,3 +60,7 @@ body {
   font-family: "bebas-neue-pro-semiexpanded", "Comic Sans MS", "Comic Neue", cursive, sans-serif;
   user-select: none;
 }
+
+*, *::before, *::after {
+  box-sizing: border-box
+}
