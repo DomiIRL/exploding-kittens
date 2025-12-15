@@ -7,4 +7,7 @@ RUN npm install
 
 COPY . .
 
-CMD ["npm", "run", "dev"]
+# Build the application
+RUN npm run build
+
+CMD ["npm", "run", "preview"]

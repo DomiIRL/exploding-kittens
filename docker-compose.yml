@@ -1,10 +1,10 @@
 services:
   client:
-    build: .
+    build:
+      context: .
     container_name: exploding-kittens-client
     ports:
       - "5173:5173"
-    command: npm run dev
     networks:
       - proxy
     restart: unless-stopped
