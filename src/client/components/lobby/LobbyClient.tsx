@@ -36,6 +36,7 @@ export default function LobbyClient({gameServer, gameName, onJoinMatch}: LobbyCl
   const [openCards, setOpenCards] = useState(false);
   const [spectatorsCanSeeCards, setSpectatorsCanSeeCards] = useState(true);
   const [creating, setCreating] = useState(false);
+  const [showCreateModal, setShowCreateModal] = useState(false);
 
   useEffect(() => {
     if (playerName) {
@@ -81,6 +82,7 @@ export default function LobbyClient({gameServer, gameName, onJoinMatch}: LobbyCl
       await joinMatch(matchID);
 
       setMatchName('');
+      setShowCreateModal(false);
     } catch (err) {
       setError('Failed to create match');
       console.error('Error creating match:', err);
@@ -186,89 +188,34 @@ export default function LobbyClient({gameServer, gameName, onJoinMatch}: LobbyCl
       <div className="lobby-header">
         <h1 className="lobby-title">🐱💣 Exploding Kittens</h1>
         <p className="lobby-subtitle">Create or join a match to start playing!</p>
-        <div className="player-profile">
-          <div className="player-profile-info">
-            <span className="player-profile-label">Playing as:</span>
-            <span className="player-profile-name">👤 {playerName}</span>
-          </div>
-          <button
-            className="btn-change-name"
-            onClick={openNameModal}
-            title="Change your name"
-          >
-            ✏️ Change Name
-          </button>
-        </div>
       </div>
 
       <div className="lobby-content">
-        {/* Create Match Section */}
-        <div className="lobby-section">
-          <div className="section-header">
-            <h2 className="section-title">Create Match</h2>
-          </div>
-
-          <div className="create-match-form">
-            <div className="form-group">
-              <label className="form-label">Match Name</label>
-              <input
-                type="text"
-                className="form-input"
-                value={matchName}
-                onChange={(e) => setMatchName(e.target.value)}
-                placeholder="Enter match name..."
-              />
+        <div className="lobby-top-bar">
+          <div className="player-profile">
+            <div className="player-profile-info">
+              <span className="player-profile-label">Playing as</span>
+              <span className="player-profile-name">👤 {playerName}</span>
             </div>
-
-            <div className="form-group">
-              <label className="form-label">Number of Players</label>
-              <select
-                className="form-select"
-                value={numPlayers}
-                onChange={(e) => setNumPlayers(parseInt(e.target.value))}
-              >
-                <option value={2}>2 Players</option>
-                <option value={3}>3 Players</option>
-                <option value={4}>4 Players</option>
-                <option value={5}>5 Players</option>
-              </select>
-            </div>
-
-            <div className="form-group">
-              <label className="form-label">Game Rules</label>
-              <div className="checkbox-group">
-                <label className="checkbox-label">
-                  <input
-                    type="checkbox"
-                    checked={openCards}
-                    onChange={(e) => setOpenCards(e.target.checked)}
-                  />
-                  <span>Open Cards (all players can see each other's cards)</span>
-                </label>
-                <label className={`checkbox-label ${openCards ? 'disabled' : ''}`}>
-                  <input
-                    type="checkbox"
-                    checked={spectatorsCanSeeCards}
-                    onChange={(e) => setSpectatorsCanSeeCards(e.target.checked)}
-                    disabled={openCards}
-                  />
-                  <span>Spectators Can See Cards (eliminated players can see all cards)</span>
-                </label>
-              </div>
-            </div>
-
             <button
-              className="btn btn-primary"
-              onClick={createMatch}
-              disabled={creating || !matchName.trim()}
+              className="btn-change-name"
+              onClick={openNameModal}
+              title="Change your name"
             >
-              {creating ? 'Creating...' : '🎮 Create Match'}
+              ✏️ Edit
             </button>
           </div>
+
+          <button
+            className="btn btn-create-match"
+            onClick={() => setShowCreateModal(true)}
+          >
+            💥 Create New Match
+          </button>
         </div>
 
         {/* Available Matches Section */}
-        <div className="lobby-section">
+        <div className="lobby-section matches-section">
           <div className="section-header">
             <h2 className="section-title">Available Matches</h2>
             <button className="refresh-btn" onClick={fetchMatches} title="Refresh">
@@ -305,58 +252,61 @@ export default function LobbyClient({gameServer, gameName, onJoinMatch}: LobbyCl
                 return (
                   <div key={match.matchID} className="match-card">
                     <div className="match-header">
-                      <h3 className="match-name">{matchDisplayName}</h3>
-                      <span className={`match-status ${joinedCount < maxPlayers ? 'status-waiting' : 'status-playing'}`}>
-                        {joinedCount < maxPlayers ? 'Waiting' : 'Playing'}
-                      </span>
-                    </div>
-
-                    <div className="match-info">
-                      <div className="match-info-item">
-                        <span>👥</span>
-                        <span>{joinedCount} / {maxPlayers} players</span>
-                      </div>
-                      <div className="match-info-item">
-                        <span>🆔</span>
-                        <span>{match.matchID.slice(0, 8)}</span>
-                      </div>
-                    </div>
-
-                    {(match.setupData?.openCards || match.setupData?.spectatorsCanSeeCards) && (
-                      <div className="match-rules">
-                        {match.setupData?.openCards && (
-                          <span className="rule-badge">👁️ Open Cards</span>
-                        )}
-                        {match.setupData?.spectatorsCanSeeCards && (
-                          <span className="rule-badge">👻 Spectators Can See</span>
-                        )}
-                      </div>
-                    )}
-
-                    <div className="match-players">
-                      {Array.from({length: maxPlayers}).map((_, i) => (
-                        <div
-                          key={i}
-                          className={`player-badge ${match.players[i]?.isConnected ? 'joined' : ''}`}
-                        >
-                          {match.players[i]?.isConnected ? match.players[i]?.name || "Unknown" : `Slot ${i + 1}`}
+                      <div className="match-header-left">
+                        <h3 className="match-name">{matchDisplayName}</h3>
+                        <span className={`match-status ${joinedCount < maxPlayers ? 'status-waiting' : 'status-playing'}`}>
+                          {joinedCount < maxPlayers ? 'Waiting' : 'Playing'}
+                        </span>
+                        <div className="match-info-item">
+                          <span>👥</span>
+                          <span>{joinedCount} / {maxPlayers}</span>
                         </div>
-                      ))}
+                        <div className="match-info-item">
+                          <span>🆔</span>
+                          <span>{match.matchID.slice(0, 8)}</span>
+                        </div>
+                      </div>
                     </div>
 
-                    <div className="match-actions">
-                      {!isFull ? (
-                        <button
-                          className="btn btn-success btn-small"
-                          onClick={() => joinMatch(match.matchID)}
-                        >
-                          Join Match
-                        </button>
-                      ) : (
-                        <button className="btn btn-secondary btn-small" disabled>
-                          Match Full
-                        </button>
-                      )}
+                    <div className="match-content">
+                      <div className="match-left-content">
+                        <div className="match-players">
+                          {Array.from({length: maxPlayers}).map((_, i) => (
+                            <div
+                              key={i}
+                              className={`player-badge ${match.players[i]?.isConnected ? 'joined' : ''}`}
+                            >
+                              {match.players[i]?.isConnected ? match.players[i]?.name || "Unknown" : `Slot ${i + 1}`}
+                            </div>
+                          ))}
+                        </div>
+
+                        {(match.setupData?.openCards || match.setupData?.spectatorsCanSeeCards) && (
+                          <div className="match-rules">
+                            {match.setupData?.openCards && (
+                              <span className="rule-badge">👁️ Open</span>
+                            )}
+                            {match.setupData?.spectatorsCanSeeCards && (
+                              <span className="rule-badge">👻 Spectators</span>
+                            )}
+                          </div>
+                        )}
+                      </div>
+
+                      <div className="match-actions">
+                        {!isFull ? (
+                          <button
+                            className="btn btn-success btn-small"
+                            onClick={() => joinMatch(match.matchID)}
+                          >
+                            Join Match
+                          </button>
+                        ) : (
+                          <button className="btn btn-secondary btn-small" disabled>
+                            Match Full
+                          </button>
+                        )}
+                      </div>
                     </div>
                   </div>
                 );
@@ -365,6 +315,88 @@ export default function LobbyClient({gameServer, gameName, onJoinMatch}: LobbyCl
           )}
         </div>
       </div>
+
+      {/* Create Match Modal */}
+      {showCreateModal && (
+        <div className="create-match-modal">
+          <div className="create-match-modal-content">
+            <button className="modal-close" onClick={() => setShowCreateModal(false)}>
+              ✕
+            </button>
+            <h2 className="modal-title">💥 Create New Match 💥</h2>
+
+            <div className="create-match-form">
+              <div className="form-group">
+                <label className="form-label">Match Name</label>
+                <input
+                  type="text"
+                  className="form-input"
+                  value={matchName}
+                  onChange={(e) => setMatchName(e.target.value)}
+                  placeholder="Enter match name..."
+                  autoFocus
+                />
+              </div>
+
+              <div className="form-group">
+                <label className="form-label">Number of Players</label>
+                <select
+                  className="form-select"
+                  value={numPlayers}
+                  onChange={(e) => setNumPlayers(parseInt(e.target.value))}
+                >
+                  <option value={2}>2 Players</option>
+                  <option value={3}>3 Players</option>
+                  <option value={4}>4 Players</option>
+                  <option value={5}>5 Players</option>
+                </select>
+              </div>
+
+              <div className="form-group">
+                <label className="form-label">Game Rules</label>
+                <div className="checkbox-group">
+                  <label className="checkbox-label">
+                    <input
+                      type="checkbox"
+                      checked={openCards}
+                      onChange={(e) => setOpenCards(e.target.checked)}
+                    />
+                    <span>Open Cards (all players can see each other's cards)</span>
+                  </label>
+                  <label className={`checkbox-label ${openCards ? 'disabled' : ''}`}>
+                    <input
+                      type="checkbox"
+                      checked={spectatorsCanSeeCards}
+                      onChange={(e) => setSpectatorsCanSeeCards(e.target.checked)}
+                      disabled={openCards}
+                    />
+                    <span>Spectators Can See Cards (eliminated players can see all cards)</span>
+                  </label>
+                </div>
+              </div>
+
+              <div style={{display: 'flex', gap: '0.5rem', marginTop: '1rem'}}>
+                <button
+                  className="btn btn-secondary"
+                  onClick={() => setShowCreateModal(false)}
+                  style={{flex: 1}}
+                  disabled={creating}
+                >
+                  Cancel
+                </button>
+                <button
+                  className="btn btn-primary"
+                  onClick={createMatch}
+                  disabled={creating || !matchName.trim()}
+                  style={{flex: 1}}
+                >
+                  {creating ? 'Creating...' : '🎮 Create & Join'}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

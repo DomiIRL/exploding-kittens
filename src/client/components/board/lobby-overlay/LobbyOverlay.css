@@ -5,55 +5,89 @@
   transform: translate(-50%, -50%);
   z-index: 11;
   width: 90%;
-  max-width: 500px;
+  max-width: 600px;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 .game-lobby-content {
-  background: white;
-  border-radius: 16px;
-  padding: 2rem;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  background: linear-gradient(135deg, var(--color-primary-dark), var(--color-primary));
+  border-radius: 24px;
+  padding: 2.5rem;
+  box-shadow: 0 20px 60px var(--color-shadow-dark),
+              0 0 80px var(--color-accent-glow-light),
+              inset 0 2px 0 var(--color-highlight-dim);
   text-align: center;
-  border: 3px solid #667eea;
+  border: 3px solid var(--color-accent-glow-strong);
   display: flex;
   flex-direction: column;
+  gap: 2rem;
+  backdrop-filter: blur(15px);
+  animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .game-lobby-title {
-  font-size: 1.5rem;
-  font-weight: 800;
-  color: #2d3748;
-  margin: 0 0 0.5rem;
+  font-size: 2rem;
+  font-weight: 900;
+  color: var(--color-accent);
+  text-shadow: 0 2px 8px var(--color-shadow-light),
+               0 0 30px var(--color-accent-glow-light);
+  letter-spacing: 2px;
+  text-transform: uppercase;
 }
 
 .game-lobby-subtitle {
-  font-size: 0.875rem;
-  color: #4a5568;
-  margin: 0 0 1.5rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--color-text-light-dim);
+  text-shadow: 2px 2px 4px var(--color-shadow-dark);
+  letter-spacing: 0.5px;
 }
 
 .game-lobby-progress {
-  margin-bottom: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 
 .game-lobby-progress-bar {
   width: 100%;
-  height: 12px;
-  background: #e2e8f0;
-  border-radius: 6px;
-  margin-bottom: 0.75rem;
+  height: 14px;
+  background: var(--color-overlay-bg);
+  border: 2px solid var(--color-card-border);
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: inset 0 2px 4px var(--color-shadow-light);
 }
 
 .game-lobby-progress-fill {
   height: 100%;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, var(--color-accent) 0%, var(--color-accent-light) 50%, var(--color-accent) 100%);
   transition: width 0.3s ease;
+  box-shadow: 0 0 20px var(--color-accent-glow-light);
+  border-radius: 4px;
 }
 
 .game-lobby-progress-text {
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: #4a5568;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--color-accent);
+  text-shadow: 1px 1px 2px var(--color-shadow-light);
 }
 
 .game-lobby-players {
@@ -66,16 +100,18 @@
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  padding: 0.75rem 1rem;
-  background: #f7fafc;
-  border: 2px solid #e2e8f0;
-  border-radius: 10px;
+  padding: 0.875rem 1.25rem;
+  background: var(--color-overlay-bg);
+  border: 2px solid var(--color-card-border);
+  border-radius: 12px;
   transition: all 0.3s;
+  backdrop-filter: blur(5px);
 }
 
 .game-lobby-player-slot.joined {
-  background: #f0fff4;
-  border-color: #48bb78;
+  background: var(--color-primary-muted);
+  border-color: var(--color-primary);
+  box-shadow: 0 0 15px var(--color-primary-glow);
 }
 
 .game-lobby-player-slot.empty {
@@ -83,30 +119,34 @@
 }
 
 .game-lobby-player-icon {
-  font-size: 1.25rem;
+  font-size: 1.5rem;
   flex-shrink: 0;
 }
 
 .game-lobby-player-name {
   flex: 1;
   text-align: left;
-  font-weight: 600;
-  color: #2d3748;
-  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--color-text-light-dim);
+  font-size: 1rem;
+  text-shadow: 1px 1px 2px var(--color-shadow-light);
 }
 
 .game-lobby-player-status {
-  color: #38a169;
-  font-size: 0.875rem;
-  font-weight: 600;
+  color: var(--color-accent);
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-shadow: 1px 1px 2px var(--color-shadow-light);
 }
 
 @keyframes game-lobby-pulse {
   0%, 100% {
-    opacity: 1;
+    opacity: 0.6;
+    border-color: var(--color-card-border);
   }
   50% {
-    opacity: 0.5;
+    opacity: 0.8;
+    border-color: var(--color-card-border-hover);
   }
 }
 
@@ -115,26 +155,65 @@
 }
 
 .game-lobby-start-btn {
-  margin-top: 1.5rem;
-  padding: 1rem 2rem;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  border: none;
+  padding: 1.25rem 2.5rem;
+  background: linear-gradient(135deg, var(--color-accent) 0%, var(--color-accent-light) 50%, var(--color-accent) 100%);
+  color: var(--color-bg-dark);
+  border: 2px solid var(--color-accent-glow-strong);
   border-radius: 12px;
-  font-size: 1.125rem;
-  font-weight: 700;
+  font-size: 1.3rem;
+  font-weight: 800;
   cursor: pointer;
   transition: all 0.3s;
-  box-shadow: 0 4px 14px rgba(102, 126, 234, 0.4);
+  box-shadow: 0 6px 20px var(--color-accent-glow-light),
+              0 0 40px var(--color-accent-glow-light),
+              inset 0 2px 0 var(--color-highlight-medium);
   width: 100%;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  text-shadow: 1px 1px 2px var(--color-shadow-light);
 }
 
 .game-lobby-start-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 10px 30px var(--color-accent-glow-medium),
+              0 0 60px var(--color-accent-glow-light),
+              inset 0 2px 0 var(--color-highlight-medium);
 }
 
 .game-lobby-start-btn:active {
-  transform: translateY(0);
+  transform: translateY(-1px) scale(1);
+}
+
+.game-lobby-start-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.game-lobby-start-btn:disabled:hover {
+  transform: none;
+  box-shadow: 0 6px 20px var(--color-accent-glow-light),
+              0 0 40px var(--color-accent-glow-light),
+              inset 0 2px 0 var(--color-highlight-medium);
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .game-lobby-content {
+    padding: 2rem;
+  }
+
+  .game-lobby-title {
+    font-size: 1.75rem;
+  }
+
+  .game-lobby-subtitle {
+    font-size: 1rem;
+  }
+
+  .game-lobby-start-btn {
+    font-size: 1.1rem;
+    padding: 1rem 2rem;
+  }
 }
 

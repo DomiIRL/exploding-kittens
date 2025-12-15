@@ -48,6 +48,15 @@ body {
   --color-accent-glow-medium: rgba(253, 185, 39, 0.6);
   --color-accent-glow-strong: rgba(253, 185, 39, 0.8);
 
+  /* Card and overlay colors */
+  --color-card-bg: rgba(26, 26, 26, 0.8);
+  --color-card-bg-hover: rgba(26, 26, 26, 0.9);
+  --color-card-border: rgba(253, 185, 39, 0.3);
+  --color-card-border-hover: rgba(253, 185, 39, 0.6);
+  --color-overlay-bg: rgba(0, 0, 0, 0.6);
+  --color-overlay-bg-strong: rgba(0, 0, 0, 0.8);
+
   margin: 0;
   font-family: "bebas-neue-pro-semiexpanded", "Comic Sans MS", "Comic Neue", cursive, sans-serif;
+  user-select: none;
 }
