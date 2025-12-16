@@ -13,6 +13,16 @@ const server = Server({
   origins,
 });
 
+server.router.use('/games/:name', async (ctx, next) => {
+  await next();
+
+  if (ctx.method === 'GET' && ctx.body && ctx.body.matches) {
+    ctx.body.matches = ctx.body.matches.filter((match: any) => {
+      return match.players.some((player: any) => player.isConnected === true);
+    });
+  }
+});
+
 server.run(port, () => {
   console.log(`🎮 Exploding Kittens server running on port ${port}`);
   console.log(`🌐 Lobby API enabled at http://localhost:${port}/games`);
