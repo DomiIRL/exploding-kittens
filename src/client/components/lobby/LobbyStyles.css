@@ -1,0 +1,375 @@
+/* Lobby Container */
+.lobby-container {
+  min-height: 100vh;
+  background: radial-gradient(ellipse at center, var(--color-primary-glow) 0%, transparent 70%),
+  linear-gradient(135deg, var(--color-primary-dark) 0%, var(--color-primary) 50%, var(--color-primary-dark) 100%);
+  padding: 1.5rem;
+  font-family: "bebas-neue-pro-semiexpanded", "Comic Sans MS", "Comic Neue", cursive, sans-serif;
+  display: flex;
+  flex-direction: column;
+  overflow-y: hidden;
+  gap: 2rem;
+}
+
+/* Header */
+.lobby-header {
+  max-width: 1400px;
+  width: 100%;
+  padding: 1rem 0 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  align-self: center;
+}
+
+.lobby-title {
+  font-size: 4.5rem;
+  font-weight: 900;
+  color: var(--color-accent);
+  text-shadow: 4px 4px 0 var(--color-primary),
+               8px 8px 0 var(--color-primary-muted),
+               0 0 40px var(--color-accent-glow-medium),
+               0 0 80px var(--color-accent-glow-light);
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  background: linear-gradient(180deg, var(--color-accent-light) 0%, var(--color-accent) 50%, #FF8C00 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  position: relative;
+  text-align: center;
+  filter: drop-shadow(4px 4px 0 var(--color-primary)) drop-shadow(0 0 40px var(--color-accent-glow-light));
+}
+
+.lobby-subtitle {
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: var(--color-text-light);
+  text-shadow: 2px 2px 4px var(--color-shadow-dark),
+               0 0 20px var(--color-accent-glow-light);
+  letter-spacing: 1px;
+}
+
+/* Main Content */
+.lobby-content {
+  max-width: 1200px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  align-items: stretch;
+  flex: 1;
+  align-self: center;
+}
+
+.lobby-top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+/* Player Profile */
+.lobby-player-profile {
+  display: inline-flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.25rem 2rem;
+  background: var(--color-overlay-bg);
+  border: 2px solid var(--color-card-border);
+  border-radius: 12px;
+  box-shadow: 0 4px 16px var(--color-shadow-light),
+              0 0 20px var(--color-accent-glow-light),
+              inset 0 1px 0 var(--color-highlight-dim);
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+}
+
+.lobby-player-profile:hover {
+  border-color: var(--color-card-border-hover);
+  box-shadow: 0 6px 20px var(--color-shadow-medium),
+              0 0 30px var(--color-accent-glow-light),
+              inset 0 1px 0 var(--color-highlight-dim);
+}
+
+.lobby-player-info {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex: 1;
+}
+
+.lobby-player-label {
+  font-size: 0.85rem;
+  color: var(--color-text-light-dim);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.lobby-player-name {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--color-accent);
+  text-shadow: 0 2px 4px var(--color-shadow-light);
+}
+
+.lobby-edit-name-btn {
+  padding: 0.5rem 1rem;
+  background: var(--color-accent-glow-light);
+  border: 1.5px solid var(--color-card-border);
+  border-radius: 8px;
+  color: var(--color-accent);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  white-space: nowrap;
+}
+
+.lobby-edit-name-btn:hover {
+  background: var(--color-accent-glow-light);
+  border-color: var(--color-accent);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px var(--color-accent-glow-light);
+}
+
+.lobby-edit-name-btn:active {
+  transform: translateY(0);
+}
+
+/* Section Cards */
+.lobby-section {
+  background: var(--color-overlay-bg);
+  border: 2px solid var(--color-card-border-hover);
+  border-radius: 20px;
+  padding: 2rem;
+  box-shadow: 0 8px 32px var(--color-shadow-medium),
+              0 0 40px var(--color-accent-glow-light),
+              inset 0 1px 0 var(--color-highlight-dim);
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  backdrop-filter: blur(15px);
+  transition: all 0.3s ease;
+}
+
+.lobby-section-matches {
+  flex: 1;
+  height: auto;
+}
+
+.lobby-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid var(--color-card-border);
+  position: relative;
+}
+
+.lobby-section-header::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 80px;
+  height: 2px;
+  background: linear-gradient(90deg, var(--color-accent), transparent);
+}
+
+.lobby-section-title {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: var(--color-accent);
+  text-shadow: 0 2px 8px var(--color-accent-glow-light),
+               0 0 20px var(--color-accent-glow-light);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+}
+
+.lobby-refresh-btn {
+  width: 42px;
+  height: 42px;
+  border: none;
+  background: transparent;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.lobby-refresh-btn:hover {
+  background: var(--color-accent-glow-light);
+  transform: rotate(90deg);
+}
+
+/* Match List */
+.lobby-match-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.lobby-match-list::-webkit-scrollbar {
+  width: 8px;
+}
+
+.lobby-match-list::-webkit-scrollbar-track {
+  background: var(--color-overlay-bg-strong);
+  border-radius: 4px;
+}
+
+.lobby-match-list::-webkit-scrollbar-thumb {
+  background: var(--color-accent-glow-light);
+  border-radius: 4px;
+}
+
+.lobby-match-list::-webkit-scrollbar-thumb:hover {
+  background: var(--color-accent-glow-medium);
+}
+
+/* Loading & Error States */
+.lobby-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  padding: 3rem;
+}
+
+.lobby-spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid var(--color-card-border);
+  border-top-color: var(--color-accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.lobby-loading-text {
+  font-size: 1rem;
+  color: var(--color-text-light-dim);
+  font-weight: 600;
+}
+
+.lobby-error {
+  padding: 1rem 1.5rem;
+  background: rgba(220, 38, 38, 0.15);
+  border: 2px solid rgba(220, 38, 38, 0.4);
+  border-radius: 12px;
+  color: #FCA5A5;
+  text-align: center;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.2);
+}
+
+.lobby-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: 3rem;
+  text-align: center;
+}
+
+.lobby-empty-icon {
+  font-size: 4rem;
+  opacity: 0.6;
+}
+
+.lobby-empty-text {
+  font-size: 1rem;
+  color: var(--color-text-light-dim);
+  font-weight: 600;
+  line-height: 1.6;
+}
+
+/* Initial Setup Modal */
+.lobby-initial-setup {
+  min-height: 100vh;
+  background: radial-gradient(ellipse at center, var(--color-primary-glow) 0%, transparent 70%),
+  linear-gradient(135deg, var(--color-primary-dark) 0%, var(--color-primary) 50%, var(--color-primary-dark) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  font-family: "bebas-neue-pro-semiexpanded", "Comic Sans MS", "Comic Neue", cursive, sans-serif;
+}
+
+.lobby-initial-setup-content {
+  background: linear-gradient(135deg, var(--color-primary-dark), var(--color-primary));
+  border: 3px solid var(--color-accent-glow-strong);
+  border-radius: 24px;
+  padding: 2.5rem;
+  max-width: 550px;
+  width: 90%;
+  box-shadow: 0 20px 60px var(--color-shadow-dark),
+              0 0 80px var(--color-accent-glow-light),
+              inset 0 2px 0 var(--color-highlight-dim);
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  animation: slideUp 0.3s ease;
+}
+
+/* Responsive */
+@media (max-width: 968px) {
+  .lobby-container {
+    padding: 1.5rem 1rem;
+  }
+
+  .lobby-content {
+    align-items: stretch;
+  }
+
+  .lobby-top-bar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .lobby-player-profile,
+  .btn-large {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .lobby-title {
+    font-size: 3rem;
+  }
+
+  .lobby-subtitle {
+    font-size: 1.1rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .lobby-title {
+    font-size: 2.5rem;
+  }
+
+  .lobby-section {
+    padding: 1.5rem;
+  }
+
+  .modal-content,
+  .lobby-initial-setup-content {
+    padding: 2rem;
+  }
+}
+

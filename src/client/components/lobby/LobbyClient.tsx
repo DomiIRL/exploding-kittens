@@ -1,7 +1,11 @@
 import {useState, useEffect, useMemo} from 'react';
 import {LobbyClient as BgioLobbyClient} from 'boardgame.io/client';
-import './Lobby.css';
+import {Modal} from '../common/Modal';
+import {MatchCard} from './MatchCard';
 import {MatchPlayer} from "../../utils/matchData";
+import '../common/Button.css';
+import '../common/Form.css';
+import './LobbyStyles.css';
 
 interface MatchSetupData {
   matchName: string;
@@ -34,7 +38,7 @@ export default function LobbyClient({gameServer, gameName, onJoinMatch}: LobbyCl
   const [playerName, setPlayerName] = useState(localStorage.getItem('playerName') || '');
   const [showNameModal, setShowNameModal] = useState(!playerName);
   const [tempPlayerName, setTempPlayerName] = useState(playerName);
-  const [matchName, setMatchName] = useState('');
+  const [matchName, setMatchName] = useState(`${playerName}'s Match`);
   const [numPlayers, setNumPlayers] = useState(2);
   const [deckType, setDeckType] = useState('original');
   const [openCards, setOpenCards] = useState(false);
@@ -118,6 +122,7 @@ export default function LobbyClient({gameServer, gameName, onJoinMatch}: LobbyCl
     localStorage.setItem('playerName', trimmedName);
     setPlayerName(trimmedName);
     setShowNameModal(false);
+    setMatchName(`${trimmedName}'s Match`);
   };
 
   const openNameModal = () => {
@@ -125,36 +130,15 @@ export default function LobbyClient({gameServer, gameName, onJoinMatch}: LobbyCl
     setShowNameModal(true);
   };
 
-  const getAvailableSlot = (match: LobbyMatch): number | null => {
-    const maxPlayers = match.setupData.maxPlayers;
-    for (let i = 0; i < maxPlayers; i++) {
-      if (!match.players[i].isConnected) {
-        return i;
-      }
-    }
-    return null;
-  };
+  const isInitialSetup = !playerName;
 
-  const isMatchFull = (match: LobbyMatch): boolean => {
-    return getAvailableSlot(match) === null;
-  };
-
-  const getJoinedPlayersCount = (match: LobbyMatch): number => {
-    return match.players.filter(p => p?.isConnected).length;
-  };
-
-  if (showNameModal) {
-    const isInitialSetup = !playerName;
+  if (showNameModal && isInitialSetup) {
     return (
-      <div className="player-name-modal">
-        <div className="player-name-content">
-          <h2 className="modal-title">
-            {isInitialSetup ? 'Welcome to Exploding Kittens! 🐱💣' : 'Change Your Name'}
-          </h2>
+      <div className="lobby-initial-setup">
+        <div className="lobby-initial-setup-content">
+          <h2 className="modal-title">Welcome to Exploding Kittens!</h2>
           <div className="form-group">
-            <label className="form-label">
-              {isInitialSetup ? 'Enter Your Name' : 'New Name'}
-            </label>
+            <label className="form-label">Enter Your Name</label>
             <input
               type="text"
               className="form-input"
@@ -165,24 +149,13 @@ export default function LobbyClient({gameServer, gameName, onJoinMatch}: LobbyCl
               autoFocus
             />
           </div>
-          <div style={{display: 'flex', gap: '0.5rem', marginTop: '1rem'}}>
-            {!isInitialSetup && (
-              <button
-                className="btn btn-secondary"
-                onClick={() => setShowNameModal(false)}
-                style={{flex: 1}}
-              >
-                Cancel
-              </button>
-            )}
-            <button
-              className="btn btn-primary"
-              onClick={savePlayerName}
-              style={{flex: 1}}
-            >
-              {isInitialSetup ? 'Continue' : 'Save'}
-            </button>
-          </div>
+          <button
+            className="btn btn-primary"
+            onClick={savePlayerName}
+            style={{width: '100%'}}
+          >
+            Continue
+          </button>
         </div>
       </div>
     );
@@ -197,13 +170,13 @@ export default function LobbyClient({gameServer, gameName, onJoinMatch}: LobbyCl
 
       <div className="lobby-content">
         <div className="lobby-top-bar">
-          <div className="player-profile">
-            <div className="player-profile-info">
-              <span className="player-profile-label">Playing as</span>
-              <span className="player-profile-name">👤 {playerName}</span>
+          <div className="lobby-player-profile">
+            <div className="lobby-player-info">
+              <span className="lobby-player-label">Playing as</span>
+              <span className="lobby-player-name">👤 {playerName}</span>
             </div>
             <button
-              className="btn-change-name"
+              className="lobby-edit-name-btn"
               onClick={openNameModal}
               title="Change your name"
             >
@@ -212,7 +185,7 @@ export default function LobbyClient({gameServer, gameName, onJoinMatch}: LobbyCl
           </div>
 
           <button
-            className="btn btn-create-match"
+            className="btn btn-primary btn-large"
             onClick={() => setShowCreateModal(true)}
           >
             💥 Create New Match
@@ -220,99 +193,44 @@ export default function LobbyClient({gameServer, gameName, onJoinMatch}: LobbyCl
         </div>
 
         {/* Available Matches Section */}
-        <div className="lobby-section matches-section">
-          <div className="section-header">
-            <h2 className="section-title">Available Matches</h2>
-            <button className="refresh-btn" onClick={fetchMatches} title="Refresh">
+        <div className="lobby-section lobby-section-matches">
+          <div className="lobby-section-header">
+            <h2 className="lobby-section-title">Available Matches</h2>
+            <button className="lobby-refresh-btn" onClick={fetchMatches} title="Refresh">
               🔄
             </button>
           </div>
 
           {error && (
-            <div className="error-message">
+            <div className="lobby-error">
               ⚠️ {error}
             </div>
           )}
 
           {loading ? (
-            <div className="loading-container">
-              <div className="spinner" />
-              <p className="loading-text">Loading matches...</p>
+            <div className="lobby-loading">
+              <div className="lobby-spinner" />
+              <p className="lobby-loading-text">Loading matches...</p>
             </div>
           ) : matches.length === 0 ? (
-            <div className="empty-state">
-              <div className="empty-state-icon">🎲</div>
-              <p className="empty-state-text">
+            <div className="lobby-empty-state">
+              <div className="lobby-empty-icon">🎲</div>
+              <p className="lobby-empty-text">
                 No matches available.<br />Create one to get started!
               </p>
             </div>
           ) : (
-            <div className="match-list">
-              {matches.map((match) => {
-                const maxPlayers = match.setupData.maxPlayers;
-                const joinedCount = getJoinedPlayersCount(match);
-                const isFull = isMatchFull(match);
-                const matchDisplayName = match.setupData?.matchName || match.matchID;
-
-                return (
-                  <div key={match.matchID} className="match-card">
-                    <div className="match-header">
-                      <div className="match-header-left">
-                        <span className={`match-status ${joinedCount < maxPlayers ? 'status-waiting' : 'status-playing'}`}>
-                          {joinedCount < maxPlayers ? 'Waiting' : 'Playing'}
-                        </span>
-                        <h3 className="match-name">{matchDisplayName}</h3>
-                        <div className="match-info-item">
-                          <span>👥</span>
-                          <span>{joinedCount} / {maxPlayers}</span>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="match-content">
-                      <div className="match-left-content">
-                        <div className="match-players">
-                          {Array.from({length: maxPlayers}).map((_, i) => (
-                            <div
-                              key={i}
-                              className={`player-badge ${match.players[i]?.isConnected ? 'joined' : ''}`}
-                            >
-                              {match.players[i]?.isConnected ? match.players[i]?.name || "Unknown" : `Empty Slot`}
-                            </div>
-                          ))}
-                        </div>
-
-                        <div className="match-rules">
-                          {match.setupData?.deckType && (
-                            <span className="rule-badge">🃏 {match.setupData.deckType === 'original' ? 'Original' : match.setupData.deckType}</span>
-                          )}
-                          {match.setupData?.openCards && (
-                            <span className="rule-badge">👁️ Open</span>
-                          )}
-                          {match.setupData?.spectatorsCardsHidden && (
-                            <span className="rule-badge">🚫 Cards Hidden</span>
-                          )}
-                        </div>
-                      </div>
-
-                      <div className="match-actions">
-                        {!isFull ? (
-                          <button
-                            className="btn btn-success btn-small"
-                            onClick={() => joinMatch(match.matchID)}
-                          >
-                            Join Match
-                          </button>
-                        ) : (
-                          <button className="btn btn-secondary btn-small" disabled>
-                            Match Full
-                          </button>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
+            <div className="lobby-match-list">
+              {matches.map((match) => (
+                <MatchCard
+                  key={match.matchID}
+                  matchID={match.matchID}
+                  matchName={match.setupData?.matchName || match.matchID}
+                  players={match.players}
+                  setupData={match.setupData}
+                  onJoin={joinMatch}
+                />
+              ))}
             </div>
           )}
         </div>
@@ -320,95 +238,120 @@ export default function LobbyClient({gameServer, gameName, onJoinMatch}: LobbyCl
 
       {/* Create Match Modal */}
       {showCreateModal && (
-        <div className="create-match-modal">
-          <div className="create-match-modal-content">
-            <button className="modal-close" onClick={() => setShowCreateModal(false)}>
-              ✕
-            </button>
-            <h2 className="modal-title">💥 Create New Match 💥</h2>
+        <Modal onClose={() => setShowCreateModal(false)} title="💥 Create New Match 💥">
+          <div className="form-group">
+            <label className="form-label">Match Name</label>
+            <input
+              type="text"
+              className="form-input"
+              value={matchName}
+              onChange={(e) => setMatchName(e.target.value)}
+              placeholder="Enter match name..."
+              autoFocus
+            />
+          </div>
 
-            <div className="create-match-form">
-              <div className="form-group">
-                <label className="form-label">Match Name</label>
+          <div className="form-group">
+            <label className="form-label">Number of Players</label>
+            <select
+              className="form-select"
+              value={numPlayers}
+              onChange={(e) => setNumPlayers(parseInt(e.target.value))}
+            >
+              <option value={2}>2 Players</option>
+              <option value={3}>3 Players</option>
+              <option value={4}>4 Players</option>
+              <option value={5}>5 Players</option>
+            </select>
+          </div>
+
+          <div className="form-group">
+            <label className="form-label">Deck</label>
+            <select
+              className="form-select"
+              value={deckType}
+              onChange={(e) => setDeckType(e.target.value)}
+            >
+              <option value="original">🃏 Original Version</option>
+            </select>
+          </div>
+
+          <div className="form-group">
+            <label className="form-label">Game Rules</label>
+            <div className="checkbox-group">
+              <label className="checkbox-label">
                 <input
-                  type="text"
-                  className="form-input"
-                  value={matchName}
-                  onChange={(e) => setMatchName(e.target.value)}
-                  placeholder="Enter match name..."
-                  autoFocus
+                  type="checkbox"
+                  checked={openCards}
+                  onChange={(e) => setOpenCards(e.target.checked)}
                 />
-              </div>
-
-              <div className="form-group">
-                <label className="form-label">Number of Players</label>
-                <select
-                  className="form-select"
-                  value={numPlayers}
-                  onChange={(e) => setNumPlayers(parseInt(e.target.value))}
-                >
-                  <option value={2}>2 Players</option>
-                  <option value={3}>3 Players</option>
-                  <option value={4}>4 Players</option>
-                  <option value={5}>5 Players</option>
-                </select>
-              </div>
-
-              <div className="form-group">
-                <label className="form-label">Deck</label>
-                <select
-                  className="form-select"
-                  value={deckType}
-                  onChange={(e) => setDeckType(e.target.value)}
-                >
-                  <option value="original">🃏 Original Version</option>
-                </select>
-              </div>
-
-              <div className="form-group">
-                <label className="form-label">Game Rules</label>
-                <div className="checkbox-group">
-                  <label className="checkbox-label">
-                    <input
-                      type="checkbox"
-                      checked={openCards}
-                      onChange={(e) => setOpenCards(e.target.checked)}
-                    />
-                    <span>Open Cards (all players can see each other's cards)</span>
-                  </label>
-                  <label className={`checkbox-label ${openCards ? 'disabled' : ''}`}>
-                    <input
-                      type="checkbox"
-                      checked={spectatorsCardsHidden}
-                      onChange={(e) => setSpectatorsCardsHidden(e.target.checked)}
-                      disabled={openCards}
-                    />
-                    <span>Hide Cards from Spectators (eliminated players cannot see cards)</span>
-                  </label>
-                </div>
-              </div>
-
-              <div style={{display: 'flex', gap: '0.5rem', marginTop: '1rem'}}>
-                <button
-                  className="btn btn-secondary"
-                  onClick={() => setShowCreateModal(false)}
-                  style={{flex: 1}}
-                  disabled={creating}
-                >
-                  Cancel
-                </button>
-                <button
-                  className="btn btn-primary"
-                  onClick={createMatch}
-                  disabled={creating || !matchName.trim()}
-                  style={{flex: 1}}
-                >
-                  {creating ? 'Creating...' : '🎮 Create & Join'}
-                </button>
-              </div>
+                <span>Open Cards (all players can see each other's cards)</span>
+              </label>
+              <label className={`checkbox-label ${openCards ? 'disabled' : ''}`}>
+                <input
+                  type="checkbox"
+                  checked={spectatorsCardsHidden}
+                  onChange={(e) => setSpectatorsCardsHidden(e.target.checked)}
+                  disabled={openCards}
+                />
+                <span>Hide Cards from Spectators (eliminated players cannot see cards)</span>
+              </label>
             </div>
           </div>
-        </div>
+
+          <div style={{display: 'flex', gap: '0.75rem'}}>
+            <button
+              className="btn btn-secondary"
+              onClick={() => setShowCreateModal(false)}
+              style={{flex: 1}}
+              disabled={creating}
+            >
+              Cancel
+            </button>
+            <button
+              className="btn btn-primary"
+              onClick={createMatch}
+              disabled={creating || !matchName.trim()}
+              style={{flex: 1}}
+            >
+              {creating ? 'Creating...' : '🎮 Create & Join'}
+            </button>
+          </div>
+        </Modal>
+      )}
+
+      {showNameModal && !isInitialSetup && (
+        <Modal onClose={() => setShowNameModal(false)} title="✏️ Change Your Name">
+          <div className="form-group">
+            <label className="form-label">New Name</label>
+            <input
+              type="text"
+              className="form-input"
+              value={tempPlayerName}
+              onChange={(e) => setTempPlayerName(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && savePlayerName()}
+              placeholder="Your name..."
+              autoFocus
+            />
+          </div>
+
+          <div style={{display: 'flex', gap: '0.75rem'}}>
+            <button
+              className="btn btn-secondary"
+              onClick={() => setShowNameModal(false)}
+              style={{flex: 1}}
+            >
+              Cancel
+            </button>
+            <button
+              className="btn btn-primary"
+              onClick={savePlayerName}
+              style={{flex: 1}}
+            >
+              Save
+            </button>
+          </div>
+        </Modal>
       )}
     </div>
   );
