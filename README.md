@@ -1,7 +1,7 @@
 # Exploding Kittens (Work in Progress)
 
-A personal version of the Exploding Kittens boardgame as a web app built with **TypeScript**, **React**, and **boardgame.io**.
-
+A fanmade webbased multiplayer version of the popular board game [Exploding Kittens](https://www.explodingkittens.com/).
+Consider buying the board game and support the creators of the game.
 This project is for educational purposes only. If requested I will gladly take it offline.
 
 ## 📦 Installation
