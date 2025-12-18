@@ -60,6 +60,7 @@ node dist/server/server/server.js
 ## 🎮 Current State
 
 <img width="1894" height="972" alt="image" src="https://github.com/user-attachments/assets/3323e5e1-513a-47ce-94b7-767bec6732a8" />
+<img width="1894" height="972" alt="image" src="https://github.com/user-attachments/assets/ea99c717-1863-4203-95d6-dd1245fcc90d" />
 
 ## 📜 License
 
