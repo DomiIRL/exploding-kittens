@@ -7,7 +7,6 @@ import {
   DEFUSE,
   EXPLODING_KITTEN,
   FAVOR,
-  NOPE,
   SEE_THE_FUTURE,
   SHUFFLE,
   SKIP,
@@ -46,7 +45,6 @@ export class OriginalDeck extends Deck {
 
     for (let i = 0; i < 5; i++) {
       pile.push(SEE_THE_FUTURE.createCard(i));
-      pile.push(NOPE.createCard(i));
     }
 
     return pile;
