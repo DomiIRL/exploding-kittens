@@ -1,8 +1,7 @@
-import type {FnContext} from 'boardgame.io';
-import type {GameState, PluginAPIs} from '../models';
+import {FnContext} from '../models';
 
 const findNextAlivePlayer = (
-  ctx: FnContext<GameState, PluginAPIs>['ctx'],
+  ctx: FnContext['ctx'],
   players: Record<string, any>,
   startPos: number
 ): number | undefined => {
@@ -24,8 +23,8 @@ const findNextAlivePlayer = (
   return undefined;
 };
 
-export const skipDeadPlayers = {
-  first: ({ctx, player}: FnContext<GameState, PluginAPIs>): number => {
+export const turnOrder = {
+  first: ({ctx, player}: FnContext): number => {
     const nextAlive = findNextAlivePlayer(ctx, player.state, 0);
     // Fallback to first player if no one is alive (shouldn't happen)
     return nextAlive ?? 0;
@@ -35,7 +34,7 @@ export const skipDeadPlayers = {
    * Get the next alive player, considering turnsRemaining counter
    * Note: We only read G.turnsRemaining here, the decrement happens in turn.onEnd
    */
-  next: ({G, ctx, player}: FnContext<GameState, PluginAPIs>): number | undefined => {
+  next: ({G, ctx, player}: FnContext): number | undefined => {
     // If there are still turns remaining (> 1 because we check before decrement), stay with the current player
     if (G.turnsRemaining > 1) {
       return ctx.playOrderPos;
@@ -44,5 +43,13 @@ export const skipDeadPlayers = {
 
     // Move to the next alive player
     return findNextAlivePlayer(ctx, player.state, ctx.playOrderPos + 1);
+  },
+
+  /**
+   * Shuffle the play order at the start of the play phase
+   */
+  playOrder: ({ ctx, random }: FnContext): string[] => {
+    const ids = Array.from({ length: ctx.numPlayers }, (_, i) => String(i));
+    return random.Shuffle(ids);
   },
 };

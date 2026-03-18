@@ -7,7 +7,7 @@ import {playCard, playNowCard, resolvePendingCard} from "./moves/play-card-move"
 import {stealCard} from "./moves/steal-card-move";
 import {requestCard, giveCard} from "./moves/favor-card-move";
 import {closeFutureView} from "./moves/see-future-move";
-import {skipDeadPlayers} from "./utils/turn-order";
+import {turnOrder} from "./utils/turn-order";
 import {OriginalDeck} from './entities/decks/original-deck';
 import {dealHands} from './setup/player-setup';
 
@@ -92,7 +92,7 @@ export const ExplodingKittens: Game<GameState, PluginAPIs> = {
     play: {
       turn: {
         minMoves: 1,
-        order: skipDeadPlayers,
+        order: turnOrder,
         onEnd: ({G}: any) => {
           // Decrement the turns remaining counter
           G.turnsRemaining = G.turnsRemaining - 1;
