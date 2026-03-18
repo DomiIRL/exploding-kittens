@@ -1,0 +1,35 @@
+.pending-stack-container {
+  position: relative;
+}
+
+.status-badge {
+  position: absolute;
+  top: 105%;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: calc(var(--scale) * 0.4) calc(var(--scale) * 1.5);
+  border-radius: calc(var(--scale) * 1);
+  font-weight: 800;
+  font-size: calc(var(--scale) * 1.5);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+  white-space: nowrap;
+  border: calc(var(--scale) * 0.2) solid white;
+  z-index: 10;
+}
+
+.status-badge.noped {
+  background-color: var(--color-primary);
+  color: white;
+  animation: pulse-badge 1s infinite alternate;
+}
+
+.status-badge.active {
+  background-color: var(--color-accent);
+  color: var(--color-text-dark);
+}
+
+@keyframes pulse-badge {
+  from { transform: translateX(-50%) scale(1); }
+  to { transform: translateX(-50%) scale(1.1); }
+}
+

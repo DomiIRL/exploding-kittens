@@ -57,6 +57,7 @@ export class NopeCard extends CardType {
     const windowDurationMs = Math.max(0, pendingCardPlay.expiresAtMs - pendingCardPlay.startedAtMs);
 
     pendingCardPlay.lastNopeBy = playerID;
+    pendingCardPlay.nopeCount = (pendingCardPlay.nopeCount || 0) + 1;
     pendingCardPlay.startedAtMs = nowMs;
     pendingCardPlay.expiresAtMs = nowMs + windowDurationMs;
     pendingCardPlay.isNoped = !pendingCardPlay.isNoped;
@@ -66,4 +67,3 @@ export class NopeCard extends CardType {
     return 6;
   }
 }
-

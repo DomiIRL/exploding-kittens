@@ -24,14 +24,15 @@ export class FavorCard extends CardType {
   onPlayed(context: FnContext, _card: Card) {
     const { events, player, ctx } = context;
 
-    const aliveOpponents = Object.keys(player.state).filter((playerId) => {
-      return playerId !== ctx.currentPlayer && player.state[playerId].isAlive;
+    const candidates = Object.keys(player.state).filter((playerId) => {
+      const p = player.state[playerId];
+      return playerId !== ctx.currentPlayer && p.isAlive && p.hand.length > 0;
     });
 
-    if (aliveOpponents.length === 1) {
-      // Automatically choose the only opponent
-      requestCard(context, aliveOpponents[0]);
-    } else {
+    if (candidates.length === 1) {
+      // Automatically choose the only valid opponent
+      requestCard(context, candidates[0]);
+    } else if (candidates.length > 1) {
       // Set stage to choose a player to request a card from
       events.setActivePlayers({
         currentPlayer: 'choosePlayerToRequestFrom',

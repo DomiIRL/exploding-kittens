@@ -8,6 +8,7 @@ export interface ClientGameState {
 export interface GameRules {
   spectatorsCardsHidden: boolean;
   openCards: boolean;
+  nopeTimerMs: number;
 }
 
 export interface PendingCardPlay {
@@ -16,6 +17,7 @@ export interface PendingCardPlay {
   startedAtMs: number;
   expiresAtMs: number;
   lastNopeBy: PlayerID | null;
+  nopeCount: number;
   isNoped: boolean;
 }
 

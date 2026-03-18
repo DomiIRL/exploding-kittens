@@ -15,6 +15,24 @@
   0 0 0 calc(var(--scale) * 1.2) var(--color-accent);
 }
 
+.table-timer-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: conic-gradient(
+          from 0deg,
+          color-mix(in srgb, var(--color-surface-medium) 10%, transparent) var(--timer-deg),
+          transparent var(--timer-deg)
+  );
+  opacity: var(--timer-opacity);
+  pointer-events: none;
+  z-index: -1;
+  transition: opacity 0.3s ease;
+}
+
 .table-center {
   position: absolute;
   top: 50%;
@@ -32,6 +50,8 @@
   border-radius: 50%;
   box-shadow: inset 0 4px 12px var(--color-shadow-dark),
   inset 0 -2px 8px rgba(255, 255, 255, 0.05);
+
+  /* Ensure context for relative overlay if needed, though abspos works inside abspos */
 }
 
 .center-stack {
@@ -40,6 +60,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  z-index: 10;
 }
 
 .card-piles {
@@ -65,22 +86,6 @@
   pointer-events: none;
   z-index: 1;
   animation: fade 0.2s ease-in;
-}
-
-.reaction-window-indicator {
-  position: absolute;
-  top: calc(100% + var(--scale) * 1.1);
-  left: 50%;
-  transform: translateX(-50%);
-  white-space: nowrap;
-  padding: calc(var(--scale) * 0.6) calc(var(--scale) * 1.6);
-  font-size: calc(var(--scale) * 1.8);
-  font-weight: 700;
-  color: var(--color-accent);
-  background: rgba(0, 0, 0, 0.55);
-  border: calc(var(--scale) * 0.2) solid var(--color-accent-dark);
-  border-radius: calc(var(--scale) * 1.2);
-  text-shadow: 0 0 calc(var(--scale) * 0.6) var(--color-shadow-dark);
 }
 
 @keyframes fade {

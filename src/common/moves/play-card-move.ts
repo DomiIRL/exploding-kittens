@@ -91,8 +91,9 @@ export const playCard = (context: FnContext, cardIndex: number) => {
     card: {...cardToPlay},
     playedBy: actingPlayerID,
     startedAtMs,
-    expiresAtMs: startedAtMs + NOW_CARD_RESPONSE_WINDOW_MS,
+    expiresAtMs: startedAtMs + G.gameRules.nopeTimerMs,
     lastNopeBy: null,
+    nopeCount: 0,
     isNoped: false,
   };
 

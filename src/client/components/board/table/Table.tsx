@@ -2,6 +2,7 @@ import back from '/assets/cards/back/0.jpg';
 import './Table.css';
 import {useEffect, useState} from "react";
 import {GameContext} from "../../../types/component-props";
+import PendingPlayStack from './PendingPlayStack';
 
 interface TableProps {
   gameContext: GameContext;
@@ -14,7 +15,7 @@ export default function Table({gameContext}: TableProps) {
   const [lastDrawPileLength, setLastDrawPileLength] = useState(G.client.drawPileLength);
   const [lastDiscardPileLength, setLastDiscardPileLength] = useState(G.discardPile.length);
   const [isHoveringDrawPile, setIsHoveringDrawPile] = useState(false);
-  const [reactionTimeLeftMs, setReactionTimeLeftMs] = useState(0);
+
 
   const discardCard = G.discardPile[G.discardPile.length - 1];
   const discardImage = discardCard ? `/assets/cards/${discardCard.name}/${discardCard.index}.png` : "None";
@@ -38,43 +39,57 @@ export default function Table({gameContext}: TableProps) {
     setLastDiscardPileLength(G.discardPile.length);
   }, [G.discardPile.length, lastDiscardPileLength, G.discardPile]);
 
-  useEffect(() => {
-    if (!G.pendingCardPlay) {
-      setReactionTimeLeftMs(0);
-      return;
-    }
-
-    const updateTimer = () => {
-      const remainingMs = Math.max(0, G.pendingCardPlay!.expiresAtMs - Date.now());
-      setReactionTimeLeftMs(remainingMs);
-    };
-
-    updateTimer();
-    const intervalId = window.setInterval(updateTimer, 100);
-    return () => window.clearInterval(intervalId);
-  }, [G.pendingCardPlay?.expiresAtMs]);
-
-  const reactionTimeLeftSeconds = Math.max(0, (reactionTimeLeftMs / 1000)).toFixed(1);
-  const nopeStatusText = (G.pendingCardPlay && G.pendingCardPlay.isNoped)
-    ? 'Noped'
-    : 'Not Noped';
-
   const handleDrawClick = () => {
     if (!isDrawing) {
       moves.drawCard();
     }
   };
 
+  // Timer calculation
+  const [timeLeftMs, setTimeLeftMs] = useState(0);
+  useEffect(() => {
+    if (!G.pendingCardPlay) {
+      setTimeLeftMs(0);
+      return;
+    }
+    const update = () => setTimeLeftMs(Math.max(0, G.pendingCardPlay!.expiresAtMs - Date.now()));
+    update();
+    const i = setInterval(update, 50);
+    return () => clearInterval(i);
+  }, [G.pendingCardPlay?.expiresAtMs, G.pendingCardPlay?.startedAtMs]);
+
+  // Calculate generic progress 0-1
+  const windowDuration = G.pendingCardPlay ? (G.pendingCardPlay.expiresAtMs - G.pendingCardPlay.startedAtMs) : 3000;
+  const progressRatio = G.pendingCardPlay ? (timeLeftMs / windowDuration) : 0;
+  const degrees = progressRatio * 360;
+
   return (
     <div className="table">
-      <div className="table-center">
+      <div 
+        className={`table-center ${G.pendingCardPlay ? 'has-pending-play' : ''}`}
+        style={{
+          '--timer-deg': `${degrees}deg`,
+          '--timer-opacity': G.pendingCardPlay ? 1 : 0
+        } as any}
+      >
+        <div className="table-timer-overlay" />
         <div className="center-stack">
           <div className="card-piles">
-            <div
-              className={`pile discard-pile ${!discardCard ? 'empty' : ''}`}
-              style={{backgroundImage: discardCard ? `url(${discardImage})` : 'none'}}
-              data-animation-id="discard-pile"
-            />
+            {!G.pendingCardPlay && (
+              <div
+                className={`pile discard-pile ${!discardCard ? 'empty' : ''}`}
+                style={{backgroundImage: discardCard ? `url(${discardImage})` : 'none'}}
+                data-animation-id="discard-pile"
+              />
+            )}
+            
+            {G.pendingCardPlay && (
+               /* Replaces discard pile */
+               <PendingPlayStack 
+                 pendingPlay={G.pendingCardPlay!} 
+               />
+            )}
+
             <div
               className={`pile draw-pile ${isDrawing ? 'drawing' : ''} ${isShuffling ? 'shuffling' : ''}`}
               style={{backgroundImage: `url(${back})`}}
@@ -90,14 +105,8 @@ export default function Table({gameContext}: TableProps) {
               )}
             </div>
           </div>
-          {G.pendingCardPlay && (
-            <div className="reaction-window-indicator">
-              Nope Timer {reactionTimeLeftSeconds}s -&gt; {nopeStatusText}
-            </div>
-          )}
         </div>
       </div>
     </div>
   );
 }
-

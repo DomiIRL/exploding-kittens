@@ -42,14 +42,15 @@ export class CatCard extends CardType {
   onPlayed(context: FnContext, _card: Card) {
     const { events, player, ctx } = context;
 
-    const aliveOpponents = Object.keys(player.state).filter((playerId) => {
-      return playerId !== ctx.currentPlayer && player.state[playerId].isAlive;
+    const candidates = Object.keys(player.state).filter((playerId) => {
+      const p = player.state[playerId];
+      return playerId !== ctx.currentPlayer && p.isAlive && p.hand.length > 0;
     });
 
-    if (aliveOpponents.length === 1) {
-      // Automatically choose the only opponent
-      stealCard(context, aliveOpponents[0]);
-    } else {
+    if (candidates.length === 1) {
+      // Automatically choose the only valid opponent
+      stealCard(context, candidates[0]);
+    } else if (candidates.length > 1) {
       // Set stage to choose a player to steal from
       events.setActivePlayers({
         currentPlayer: 'choosePlayerToStealFrom',
