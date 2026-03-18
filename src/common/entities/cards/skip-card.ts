@@ -12,10 +12,6 @@ export class SkipCard extends CardType {
     events.endTurn();
   }
 
-  cleanupPendingState(_context: FnContext) {
-    // Skip ends the turn, so we don't clear stages to avoid interfering with endTurn
-  }
-
   sortOrder(): number {
     return 2;
   }
