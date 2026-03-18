@@ -1,51 +1,53 @@
-import type {Card, FnContext, Player} from "../models";
+import {FnContext} from "../models";
 import {EXPLODING_KITTEN, DEFUSE} from "../constants/card-types";
+import {GameLogic} from "../wrappers/game-logic";
 
 export const drawCard = (context: FnContext) => {
-  const { G, player, events, random } = context;
-  const cardToDraw = G.drawPile.shift();
+  const { events, random } = context;
+  const game = new GameLogic(context);
+  const player = game.actingPlayer;
+
+  if (!player.isAlive) {
+    throw new Error('Dead player cannot draw cards');
+  }
+
+  const cardToDraw = game.drawCardFromPile();
   if (!cardToDraw) {
     throw new Error('No card to draw');
   }
 
-  const playerData: Player = player.get();
-  let alive: boolean = playerData.isAlive;
+  // Handle Exploding Kitten
+  if (cardToDraw.name === EXPLODING_KITTEN.name) {
+    // Check for Defuse
+    const defuseCard = player.removeCard(DEFUSE.name);
+    
+    if (defuseCard) {
+      // Player had a Defuse!
+      // 1. Play Defuse to discard
+      game.discardCard(defuseCard);
 
-  if (!alive) {
-    throw new Error('Dead player cannot draw cards');
-  }
-  let newHand: Card[] = playerData.hand.map((card: any) => ({...card}));
-  const discardPile = G.discardPile;
-
-  // Handle drawing an exploding kitten
-  let dead = cardToDraw.name === EXPLODING_KITTEN.name
-  if (dead) {
-    const defuseIndex = playerData.hand.findIndex((card: Card) => card.name === DEFUSE.name);
-    if (defuseIndex !== -1) {
-      const defuseCard = playerData.hand[defuseIndex];
-      // put the exploding kitten randomly back in the draw pile
-      const randomPosition = Math.floor(random.Number() * (G.drawPile.length + 1));
-      G.drawPile.splice(randomPosition, 0, cardToDraw);
-      discardPile.push(defuseCard);
-      newHand.splice(defuseIndex, 1);
-      dead = false;
+      // 2. Put Exploding Kitten back into draw pile at random position
+      const insertIndex = Math.floor(random.Number() * (game.drawPileSize + 1));
+      game.insertCardIntoDrawPile(cardToDraw, insertIndex);
+      
+      // Player is safe, turn ends
+      events.endTurn();
+      return;
     }
+
+    // No Defuse - Player Explodes!
+    game.discardCard(cardToDraw);
+    
+    // Discard all cards from hand
+    const handCards = player.removeAllCardsFromHand(); 
+    handCards.forEach(c => game.discardCard(c));
+    
+    player.eliminate();
+    events.endTurn();
+    return;
   }
 
-  if (dead) {
-    alive = false;
-    newHand = []
-    // push all hand cards to discard pile
-    discardPile.push(...playerData.hand, cardToDraw);
-  } else if (cardToDraw.name !== EXPLODING_KITTEN.name) {
-    newHand.push({...cardToDraw});
-  }
-
-  player.set({
-    ...playerData,
-    hand: newHand,
-    isAlive: alive
-  });
-
+  // Safe card
+  player.addCard(cardToDraw);
   events.endTurn();
-}
+};

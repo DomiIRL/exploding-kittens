@@ -1,6 +1,7 @@
 import {CardType} from '../card-type';
 import {Card, FnContext} from "../../models";
 import {validateNope} from '../../utils/action-validation';
+import {GameLogic} from '../../wrappers/game-logic';
 
 export class NopeCard extends CardType {
 
@@ -18,14 +19,10 @@ export class NopeCard extends CardType {
   }
 
   onPlayed(context: FnContext, _card: Card): void {
-    const {G, playerID} = context;
+    const game = new GameLogic(context);
+    const pendingCardPlay = game.pendingCardPlay;
+    const player = game.actingPlayer;
 
-    if (!playerID) {
-      console.error("No playerID in context");
-      return;
-    }
-
-    const pendingCardPlay = G.pendingCardPlay;
     if (!pendingCardPlay) {
       console.log("No pending card play to nope");
       return;
@@ -34,7 +31,7 @@ export class NopeCard extends CardType {
     const nowMs = Date.now();
     const windowDurationMs = Math.max(0, pendingCardPlay.expiresAtMs - pendingCardPlay.startedAtMs);
 
-    pendingCardPlay.lastNopeBy = playerID;
+    pendingCardPlay.lastNopeBy = player.id;
     pendingCardPlay.nopeCount = (pendingCardPlay.nopeCount || 0) + 1;
     pendingCardPlay.startedAtMs = nowMs;
     pendingCardPlay.expiresAtMs = nowMs + windowDurationMs;

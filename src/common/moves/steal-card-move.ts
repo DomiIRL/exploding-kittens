@@ -1,18 +1,19 @@
-import type {FnContext} from "../models";
-import type {PlayerID} from "boardgame.io";
-import {validateTargetPlayer, transferCard} from "./card-transfer-utils";
+import {FnContext} from "../models";
+import {PlayerID} from "boardgame.io";
+import {GameLogic} from "../wrappers/game-logic";
 
 export const stealCard = (context: FnContext, targetPlayerId: PlayerID) => {
-  const {ctx, events, random} = context;
+  const {events, random} = context;
+  const game = new GameLogic(context);
 
   // Validate target player
-  const targetPlayerData = validateTargetPlayer(context, targetPlayerId);
+  const targetPlayer = game.validateTarget(targetPlayerId);
 
-  // Pick a random card from target player
-  const randomIndex = random.Die(targetPlayerData.hand.length) - 1;
+  // Pick a random card index from target player's hand
+  const randomIndex = Math.floor(random.Number() * targetPlayer.getCardCount());
 
   // Transfer the card from target to current player
-  transferCard(context, targetPlayerId, ctx.currentPlayer, randomIndex);
+  targetPlayer.giveCard(randomIndex, game.currentPlayer);
 
   events.endStage();
 };
