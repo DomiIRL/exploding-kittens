@@ -44,7 +44,7 @@ export function MatchCard({matchID, matchName, players, setupData, onJoin}: Matc
                 title={players[i]?.isConnected ? (players[i]?.name || "Player") : "Empty Slot"}
               >
                <span className="player-badge-name">
-                 {players[i]?.isConnected ? players[i]?.name || "Unknown" : `Empty`}
+                 {players[i]?.isConnected ? players[i]?.name || "Unknown" : `Empty Seat`}
                </span>
               </div>
             ))}

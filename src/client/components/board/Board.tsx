@@ -10,10 +10,15 @@ import Table from './table/Table';
 import PlayerList from './player-list/PlayerList';
 import OverlayManager from './overlay-manager/OverlayManager';
 import LobbyOverlay from './lobby-overlay/LobbyOverlay';
+import GameStatusList from './game-status/GameStatusList';
 import {useEffect} from 'react';
+import { useMatchDetails } from '../../context/MatchDetailsContext';
 
 interface BoardPropsWithPlugins extends BoardProps<GameState> {
   plugins: BoardPlugins;
+  matchData?: any;
+  matchName?: string;
+  numPlayers?: number;
 }
 
 /**
@@ -25,8 +30,13 @@ export default function ExplodingKittensBoard({
   moves,
   plugins,
   playerID,
-  matchData
+  matchID,
+  matchData,
+  matchName,
+  numPlayers
 }: BoardPropsWithPlugins) {
+  const { matchDetails } = useMatchDetails();
+  
   const allPlayers = plugins.player.data.players;
 
   // Bundle game context
@@ -35,7 +45,7 @@ export default function ExplodingKittensBoard({
     G,
     moves,
     playerID,
-    matchData
+    matchData: matchDetails?.players
   };
 
   // Derive game state properties
@@ -150,6 +160,14 @@ export default function ExplodingKittensBoard({
           gameContext={gameContext}
         />
       </div>
+
+      <GameStatusList
+        matchID={matchData?.matchID || matchID}
+        matchName={matchName || matchDetails?.matchName || 'Game'} // Prefer prop, then context
+        numPlayers={numPlayers || ctx.numPlayers}
+        gameContext={gameContext}
+        playerState={playerState}
+      />
 
       <AnimationLayer />
 

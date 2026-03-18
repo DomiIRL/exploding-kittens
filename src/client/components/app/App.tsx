@@ -7,6 +7,7 @@ import ExplodingKittensBoard from "../board/Board";
 import LobbyClient from '../lobby/LobbyClient';
 import GameView from '../game-view/GameView';
 import {preloadCardImages} from '../../utils/preloadImages';
+import { MatchDetailsProvider } from '../../context/MatchDetailsContext';
 
 const SERVER_URL = import.meta.env.VITE_API_URL || 'http://localhost:51399';
 const GAME_NAME = 'Exploding-Kittens';
@@ -89,7 +90,7 @@ export default class App extends Component<{}, AppState> {
       if (playerID && credentials) {
         // Wait for React to process the state change and unmount the component
         // This ensures Socket.IO disconnects before we call the API
-        await new Promise(resolve => setTimeout(resolve, 200));
+        await new Promise(resolve => setTimeout(resolve, 1000));
 
         // Now leave the match via the lobby API
         // By this time, the client has been unmounted and Socket.IO has disconnected
@@ -138,19 +139,23 @@ export default class App extends Component<{}, AppState> {
     });
 
     return (
-      <GameView
-        matchID={matchID}
-        matchName={matchName}
-        numPlayers={numPlayers}
-        onLeave={this.handleLeaveMatch}
-      >
-        <ExplodingKittensClient
-          key={matchID}
+      <MatchDetailsProvider matchID={matchID}>
+        <GameView
           matchID={matchID}
-          playerID={playerID || undefined}
-          credentials={credentials || undefined}
-        />
-      </GameView>
+          matchName={matchName}
+          numPlayers={numPlayers}
+          onLeave={this.handleLeaveMatch}
+        >
+          <ExplodingKittensClient
+            key={matchID}
+            matchID={matchID}
+            playerID={playerID || undefined}
+            credentials={credentials || undefined}
+            matchName={matchName}
+            numPlayers={numPlayers}
+          />
+        </GameView>
+      </MatchDetailsProvider>
     );
   }
 }

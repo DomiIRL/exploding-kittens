@@ -9,7 +9,7 @@ interface GameViewProps {
   children: React.ReactNode;
 }
 
-export default function GameView({matchName, numPlayers, onLeave, children}: GameViewProps) {
+export default function GameView({onLeave, children}: GameViewProps) {
   const [showLeaveModal, setShowLeaveModal] = useState(false);
 
   const handleLeaveClick = () => {
@@ -31,18 +31,6 @@ export default function GameView({matchName, numPlayers, onLeave, children}: Gam
         <span>←</span>
         <span>Leave Match</span>
       </button>
-
-      <div className="game-info-badge">
-        <div className="game-info-item">
-          <span>{matchName}</span>
-        </div>
-        {numPlayers && (
-          <div className="game-info-item">
-            <span>👥</span>
-            <span>{numPlayers} players</span>
-          </div>
-        )}
-      </div>
 
       {children}
 
@@ -68,4 +56,3 @@ export default function GameView({matchName, numPlayers, onLeave, children}: Gam
     </div>
   );
 }
-
