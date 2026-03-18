@@ -15,13 +15,10 @@ interface PlayerCardsProps {
 export default function PlayerCards({
   playerState,
   moves,
-  playerID,
   isChoosingCardToGive,
   isInNowCardStage,
-  animationCallbacks,
   interactionHandlers
 }: PlayerCardsProps) {
-  const {triggerCardMovement} = animationCallbacks;
   const {onCardGive} = interactionHandlers;
   const {isSelfSpectator, isSelf, isTurn, handCount, hand} = playerState;
   const fanSpread = isSelfSpectator || isSelf ? Math.min(handCount * 6, 60) : Math.min(handCount * 4, 40);
@@ -50,8 +47,6 @@ export default function PlayerCards({
             offsetY={offsetY}
             moves={moves}
             isClickable={isClickable}
-            triggerCardMovement={triggerCardMovement}
-            playerID={playerID}
             isChoosingCardToGive={isChoosingCardToGive}
             isInNowCardStage={isInNowCardStage}
             onCardGive={onCardGive}

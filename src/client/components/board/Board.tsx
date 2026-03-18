@@ -77,7 +77,7 @@ export default function ExplodingKittensBoard({
   };
 
   // Handle card animations
-  const {AnimationLayer, triggerCardMovement} = useCardAnimations(G);
+  const {AnimationLayer, triggerCardMovement} = useCardAnimations(G, allPlayers, playerID);
 
   // Handle explosion/defuse events
   const explosion = useExplosionEvents(G, allPlayers, playerID, matchData);

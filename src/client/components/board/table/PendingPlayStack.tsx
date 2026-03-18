@@ -20,6 +20,7 @@ export default function PendingPlayStack({pendingPlay}: PendingPlayStackProps) {
         style={{
           backgroundImage: `url(${cardImage})`,
         }}
+        data-animation-id="discard-pile"
       />
       {/*Only show when at least one nope card been played*/}
       {pendingPlay.nopeCount > 0 && (

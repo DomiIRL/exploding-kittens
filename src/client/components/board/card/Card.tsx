@@ -2,7 +2,6 @@ import './Card.css';
 import back from '/assets/cards/back/0.jpg';
 import {CSSProperties, useEffect, useRef, useState} from 'react';
 import {createPortal} from 'react-dom';
-import {Card as CardType} from "../../../../common";
 import {CardWithServerIndex} from "../../../model/PlayerState";
 
 interface CardProps {
@@ -14,8 +13,6 @@ interface CardProps {
   offsetY: number;
   moves?: any;
   isClickable?: boolean;
-  triggerCardMovement: (card: CardType | null, fromId: string, toId: string) => void;
-  playerID: string;
   isChoosingCardToGive?: boolean;
   isInNowCardStage?: boolean;
   onCardGive?: (cardIndex: number) => void;
@@ -30,8 +27,6 @@ export default function Card({
                                offsetY,
                                moves,
                                isClickable,
-                               triggerCardMovement,
-                               playerID,
                                isChoosingCardToGive = false,
                                isInNowCardStage = false,
                                onCardGive,
@@ -84,10 +79,8 @@ export default function Card({
           moves.playCard(serverIndex);
         }
 
-        // Only trigger animation if move didn't throw an error
-        // Cast to base Card type for animation (serverIndex not needed for animation)
-        const baseCard: CardType = { name: card.name, index: card.index };
-        triggerCardMovement(baseCard, `player-${playerID}`, 'discard-pile');
+        // Animation is now handled by useCardAnimations reacting to state changes
+        // This ensures animation only plays if the move was valid and server accepted it
       } catch (error) {
         console.error('Unexpected error playing card:', error);
       }
