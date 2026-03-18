@@ -27,7 +27,7 @@ export class OriginalDeck extends Deck {
   }
 
   startingHandForcedCards(index: number): Card[] {
-    return [DEFUSE.createCard(index), NOPE.createCard(0)];
+    return [DEFUSE.createCard(index)];
   }
 
   buildBaseDeck(): Card[] {

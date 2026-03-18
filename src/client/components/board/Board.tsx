@@ -160,7 +160,6 @@ export default function ExplodingKittensBoard({
           isSelf: explosion.isSelf,
           onComplete: explosion.clearEvent
         }}
-        turnsRemaining={G.turnsRemaining - 1}
         winnerID={G.winner}
         onCloseFutureView={handleCloseFutureView}
       />

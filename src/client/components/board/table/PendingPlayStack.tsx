@@ -7,7 +7,6 @@ interface PendingPlayStackProps {
 }
 
 export default function PendingPlayStack({pendingPlay}: PendingPlayStackProps) {
-  // Use the first card (the target) or fallback if empty (shouldn't happen)
   const targetCard = pendingPlay.card;
   const isNoped = pendingPlay.isNoped;
 

@@ -15,6 +15,7 @@ interface PlayerAreaProps {
   interactionHandlers: PlayerInteractionHandlers;
   animationCallbacks: AnimationCallbacks;
   matchData?: MatchPlayer[];
+  isWaitingOn?: boolean;
 }
 
 export default function Player({
@@ -27,14 +28,15 @@ export default function Player({
   isInNowCardStage = false,
   interactionHandlers,
   animationCallbacks,
-  matchData
+  matchData,
+  isWaitingOn = false
 }: PlayerAreaProps) {
   const {cardPosition, infoPosition} = position;
   const {onPlayerSelect} = interactionHandlers;
   const cardRotation = cardPosition.angle - 90;
   const playerName = getPlayerName(playerID, matchData);
 
-  const extraClasses = `${playerState.isSelf ? 'hand-interactable self' : ''} ${playerState.isTurn ? 'turn' : ''} ${isSelectable ? 'selectable' : ''}`
+  const extraClasses = `${playerState.isSelf ? 'hand-interactable self' : ''} ${playerState.isTurn ? 'turn' : ''} ${isSelectable ? 'selectable' : ''} ${isWaitingOn ? 'waiting-on' : ''}`
 
   const handleClick = () => {
     if (isSelectable && onPlayerSelect) {

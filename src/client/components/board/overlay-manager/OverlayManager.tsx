@@ -3,7 +3,6 @@ import DeadOverlay from '../dead-overlay/DeadOverlay';
 import PlayerSelectionOverlay from '../player-selection-overlay/PlayerSelectionOverlay';
 import ExplosionOverlay from '../explosion-overlay/ExplosionOverlay';
 import SeeTheFutureOverlay from '../see-future-overlay/SeeTheFutureOverlay';
-import TurnsOverlay from '../turns-overlay/TurnsOverlay';
 import {
   GameContext,
   PlayerStateBundle,
@@ -16,7 +15,6 @@ interface OverlayManagerProps {
   playerState: PlayerStateBundle;
   overlayState: OverlayStateBundle;
   explosionEvent: ExplosionEventBundle;
-  turnsRemaining: number;
   winnerID: string | null;
   onCloseFutureView: () => void;
 }
@@ -29,12 +27,11 @@ export default function OverlayManager({
   playerState,
   overlayState,
   explosionEvent,
-  turnsRemaining,
   winnerID,
   onCloseFutureView,
 }: OverlayManagerProps) {
   const {ctx, G, playerID, matchData} = gameContext;
-  const {isSelfDead, isSelfTurn} = playerState;
+  const {isSelfDead} = playerState;
   const {isSelectingPlayer, isChoosingCardToGive, isViewingFuture, isGameOver} = overlayState;
   // Determine the overlay message based on the current stage
   let selectionMessage = "Select a player to steal a card from";
@@ -61,7 +58,6 @@ export default function OverlayManager({
       {isViewingFuture && (
         <SeeTheFutureOverlay cards={futureCards} onClose={onCloseFutureView} />
       )}
-      <TurnsOverlay turnsRemaining={turnsRemaining} isCurrentPlayer={isSelfTurn} />
       {isSelfDead && !isGameOver && <DeadOverlay />}
       {isGameOver && winnerID && (
         <WinnerOverlay winnerID={winnerID} playerID={playerID} matchData={matchData} />
@@ -69,4 +65,3 @@ export default function OverlayManager({
     </>
   );
 }
-

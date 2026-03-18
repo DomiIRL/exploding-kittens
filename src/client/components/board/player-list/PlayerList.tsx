@@ -61,6 +61,7 @@ export default function PlayerList({
           && playerRenderState.isAlive
           && playerRenderState.handCount > 0;
 
+        const isWaitingOn = gameContext.ctx.activePlayers?.[player] === 'chooseCardToGive';
         const isSelfChoosingCard = isChoosingCardToGive
           && player === playerID;
 
@@ -76,6 +77,7 @@ export default function PlayerList({
             isSelectable={isSelectable}
             isChoosingCardToGive={isSelfChoosingCard}
             isInNowCardStage={isSelfInNowCardStage}
+            isWaitingOn={isWaitingOn}
             interactionHandlers={interactionHandlers}
             animationCallbacks={animationCallbacks}
             moves={moves}

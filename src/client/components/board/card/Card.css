@@ -1,7 +1,7 @@
 .card-base, .card, .pile, .card-preview {
   aspect-ratio: 6 / 8.4;
   background: linear-gradient(135deg, var(--color-surface-card) 0%, var(--color-surface-card-dark) 100%) no-repeat center;
-  background-size: 102%;
+  background-size: 103%;
 }
 
 .card, .pile {
@@ -23,7 +23,7 @@
 }
 
 .pile {
-  width: calc(var(--scale) * 9);
+  width: calc(var(--scale) * 10);
   transition: transform 0.2s ease;
 }
 

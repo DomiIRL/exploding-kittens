@@ -21,6 +21,12 @@
   animation: pulse 2s ease-in-out infinite;
 }
 
+.waiting-on .player-info {
+  /* Pulsate like turn, but keep original background */
+  border: calc(var(--scale) * 0.4) solid var(--color-accent-dark);
+  animation: pulse 2s ease-in-out infinite;
+}
+
 .selectable .player-info {
   cursor: pointer;
   transition: all 0.2s ease;
@@ -52,7 +58,7 @@
   }
 }
 
-.player-cards-container {
+giv.player-cards-container {
   position: absolute;
 }
 

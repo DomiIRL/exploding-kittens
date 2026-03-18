@@ -3,13 +3,14 @@ import './Table.css';
 import {useEffect, useState, useRef} from "react";
 import {GameContext} from "../../../types/component-props";
 import PendingPlayStack from './PendingPlayStack';
+import TurnBadge from '../turn-badge/TurnBadge';
 
 interface TableProps {
   gameContext: GameContext;
 }
 
 export default function Table({gameContext}: TableProps) {
-  const {G, moves} = gameContext;
+  const {G, moves, ctx} = gameContext;
   const [isDrawing, setIsDrawing] = useState(false);
   const [isShuffling, setIsShuffling] = useState(false);
   const [lastDrawPileLength, setLastDrawPileLength] = useState(G.client.drawPileLength);
@@ -90,6 +91,9 @@ export default function Table({gameContext}: TableProps) {
   const progressRatio = G.pendingCardPlay ? (timeLeftMs / windowDuration) : 0;
   const degrees = progressRatio * 360;
 
+  const turnsRemaining = (G.turnsRemaining || 1) - 1;
+  const isCurrentPlayer = ctx.currentPlayer === (gameContext.playerID || '');
+
   return (
     <div className="table">
       <div 
@@ -101,6 +105,9 @@ export default function Table({gameContext}: TableProps) {
       >
         <div className="table-timer-overlay" />
         <div className="center-stack">
+          {/* Turns remaining badge (for attack) */}
+          <TurnBadge turnsRemaining={turnsRemaining} isCurrentPlayer={isCurrentPlayer} />
+
           <div className="card-piles">
             {!G.pendingCardPlay && (
               <div
