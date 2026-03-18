@@ -19,6 +19,10 @@ export class CardType {
     return false;
   }
 
+  cleanupPendingState(context: FnContext) {
+    context.events.setActivePlayers({value: {}});
+  }
+
   afterPlay(_context: FnContext, _card: Card): void {}
 
   onPlayed(_context: FnContext, _card: Card): void {}
