@@ -18,7 +18,7 @@ export default function LobbyOverlay({matchData, numPlayers, onStartGame}: Lobby
   return (
     <div className="game-lobby-overlay">
       <div className="game-lobby-content">
-        <h2 className="game-lobby-title">🎮 Waiting for Players</h2>
+        <h2 className="game-lobby-title">Waiting for Players</h2>
         <p className="game-lobby-subtitle">
           The game will start when all players have joined
         </p>
