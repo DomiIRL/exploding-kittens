@@ -57,8 +57,8 @@ export function MatchCard({matchID, matchName, players, setupData, onJoin}: Matc
             {setupData?.openCards && (
               <span className="rule-badge">👁️ Open Cards</span>
             )}
-            {setupData?.spectatorsCardsHidden && (
-              <span className="rule-badge">🚫 Hidden Spec.</span>
+            {setupData && !setupData.spectatorsCardsHidden && !setupData.openCards && (
+              <span className="rule-badge">👁️ Specs. See</span>
             )}
           </div>
         </div>

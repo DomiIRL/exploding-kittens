@@ -86,11 +86,11 @@ export function CreateMatchModal({
           <label className={`checkbox-label ${openCards ? 'disabled' : ''}`}>
             <input
               type="checkbox"
-              checked={spectatorsCardsHidden}
-              onChange={(e) => onSpectatorsCardsHiddenChange(e.target.checked)}
+              checked={!spectatorsCardsHidden}
+              onChange={(e) => onSpectatorsCardsHiddenChange(!e.target.checked)}
               disabled={openCards}
             />
-            <span>Hide Cards from Spectators (eliminated players cannot see cards)</span>
+            <span>Allow Spectators and Dead Players to see cards</span>
           </label>
         </div>
       </div>
@@ -116,4 +116,3 @@ export function CreateMatchModal({
     </Modal>
   );
 }
-

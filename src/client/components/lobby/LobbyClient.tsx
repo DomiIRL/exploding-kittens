@@ -29,7 +29,7 @@ export default function LobbyClient({ gameServer, gameName, onJoinMatch }: Lobby
   const [numPlayers, setNumPlayers] = useState(2);
   const [deckType, setDeckType] = useState('original');
   const [openCards, setOpenCards] = useState(false);
-  const [spectatorsCardsHidden, setSpectatorsCardsHidden] = useState(false);
+  const [spectatorsCardsHidden, setSpectatorsCardsHidden] = useState(true);
   const [creating, setCreating] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false);
 
