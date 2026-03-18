@@ -1,5 +1,5 @@
 import {FnContext} from "../models";
-import {cardTypeRegistry} from "../constants/card-types";
+import {cardTypeRegistry, NOPE} from "../constants/card-types";
 import {GameLogic} from "../wrappers/game-logic";
 
 
@@ -33,15 +33,14 @@ export const playCard = (context: FnContext, cardIndex: number) => {
   }
 
   game.discardCard(cardToPlay);
+  cardType.afterPlay(context, cardToPlay);
 
   if (cardType.isNowCard(context, cardToPlay)) {
     // Immediate resolution for Now cards (like Nope)
     cardType.onPlayed(context, cardToPlay);
     return;
   }
-  
-  cardType.afterPlay(context, cardToPlay);
-  
+
   // For normal action cards, setup pending state
   const actingPlayerID = player.id;
   const startedAtMs = Date.now();
@@ -55,6 +54,17 @@ export const playCard = (context: FnContext, cardIndex: number) => {
     nopeCount: 0,
     isNoped: false,
   };
+
+  // Skip wait if playing with open cards and no one else can Nope
+  if (game.gameRules.openCards) {
+    const otherPlayers = game.allPlayers.filter(p => p.id !== actingPlayerID && p.isAlive);
+    const canSomeoneNope = otherPlayers.some(p => p.hasCard(NOPE.name));
+    
+    if (!canSomeoneNope) {
+       // Expire immediately to allow client to animate the play before resolution
+       game.pendingCardPlay!.expiresAtMs = startedAtMs;
+    }
+  }
 
   events.setActivePlayers({
     currentPlayer: 'awaitingNowCards',
@@ -91,6 +101,22 @@ export const playNowCard = (context: FnContext, cardIndex: number) => {
 
   game.discardCard(cardToPlay);
   cardType.onPlayed(context, cardToPlay);
+
+  // Optimization: If open cards are enabled and no one else can Nope back, resolve immediately
+  if (game.gameRules.openCards) {
+    const pending = game.pendingCardPlay;
+    if (pending) {
+       const lastNopeBy = pending.lastNopeBy;
+       // Anyone EXCEPT the last noper can potentially nope back
+       const potentialNopers = game.allPlayers.filter(p => p.id !== lastNopeBy && p.isAlive);
+       const canAnyoneNope = potentialNopers.some(p => p.hasCard(NOPE.name));
+
+       if (!canAnyoneNope) {
+         // Expire immediately
+         pending.expiresAtMs = Date.now();
+       }
+    }
+  }
 };
 
 export const resolvePendingCard = (context: FnContext) => {

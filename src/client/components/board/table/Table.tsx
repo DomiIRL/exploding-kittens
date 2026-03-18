@@ -9,7 +9,6 @@ import TurnBadge from '../turn-badge/TurnBadge';
 // Import CSS for card preview to be modular
 import '../card/Card.css';
 import HoverCardPreview from '../card/HoverCardPreview';
-import { createPortal } from 'react-dom';
 
 interface TableProps {
   gameContext: GameContext;
@@ -130,16 +129,7 @@ export default function Table({gameContext, playerHand = []}: TableProps) {
           {/* Turns remaining badge (for attack) */}
           <TurnBadge turnsRemaining={turnsRemaining} isCurrentPlayer={isCurrentPlayer} />
 
-          {/* Nope Button */}
-          {canNope && createPortal(
-             <button 
-               className="nope-button"
-               onClick={handlePlayNope}
-             >
-               {G.pendingCardPlay?.isNoped ? 'Un-Nope!' : 'NOPE!'}
-             </button>,
-             document.body
-          )}
+          {/* Nope Button moved to PendingPlayStack */}
 
           <div className="card-piles">
             {!G.pendingCardPlay && (
@@ -163,7 +153,9 @@ export default function Table({gameContext, playerHand = []}: TableProps) {
             {G.pendingCardPlay && (
                /* Replaces discard pile */
                <PendingPlayStack 
-                 pendingPlay={G.pendingCardPlay!} 
+                 pendingPlay={G.pendingCardPlay!}
+                 canNope={canNope}
+                 onNope={handlePlayNope}
                />
             )}
 

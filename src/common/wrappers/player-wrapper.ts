@@ -1,5 +1,5 @@
-import {Player} from '../models/player.model';
-import {Card} from '../models/card.model';
+import {Player} from '../models';
+import {Card} from '../models';
 
 export class PlayerWrapper {
   constructor(

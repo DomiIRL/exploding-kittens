@@ -1,10 +1,10 @@
-import {FnContext} from '../models/context.model';
+import {FnContext} from '../models';
 import {PlayerWrapper} from './player-wrapper';
 import {DeckLogic} from './deck-logic';
 import {GameStateLogic} from './game-state-logic';
 import {PlayerLogic} from './player-logic';
-import {Card} from '../models/card.model';
-import {PendingCardPlay, GameRules} from '../models/game-state.model';
+import {Card} from '../models';
+import {PendingCardPlay, GameRules} from '../models';
 
 export class GameLogic {
   public readonly deck: DeckLogic;

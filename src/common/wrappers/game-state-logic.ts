@@ -1,5 +1,5 @@
-import {FnContext} from '../models/context.model';
-import {PendingCardPlay, GameRules} from '../models/game-state.model';
+import {FnContext} from '../models';
+import {PendingCardPlay, GameRules} from '../models';
 
 export class GameStateLogic {
   constructor(private context: FnContext) {}

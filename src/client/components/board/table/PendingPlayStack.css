@@ -4,7 +4,7 @@
 
 .status-badge {
   position: absolute;
-  top: 105%;
+  bottom: 110%; /* Show above card */
   left: 50%;
   transform: translateX(-50%);
   padding: calc(var(--scale) * 0.4) calc(var(--scale) * 1.5);
@@ -15,6 +15,45 @@
   white-space: nowrap;
   border: calc(var(--scale) * 0.2) solid white;
   z-index: 10;
+}
+
+.nope-button-inline {
+  position: absolute;
+  top: 110%; /* Show below card */
+  left: 0;
+  width: 100%;
+
+  background-color: var(--color-primary);
+  color: white;
+  border: none;
+  border-radius: calc(var(--scale) * 0.5);
+  padding: calc(var(--scale) * 0.5);
+  font-size: calc(var(--scale) * 1.2);
+  font-weight: bold;
+  cursor: pointer;
+  z-index: 20;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+  animation: pulse-button-inline 1s infinite alternate;
+  white-space: nowrap;
+
+  /* Text overflow handling just in case */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: center;
+}
+
+.nope-button-inline:hover {
+  filter: brightness(1.2);
+  transform: scale(1.05);
+}
+
+.nope-button-inline:active {
+  transform: scale(0.95);
+}
+
+@keyframes pulse-button-inline {
+  from { box-shadow: 0 0 5px var(--color-primary); }
+  to { box-shadow: 0 0 15px var(--color-primary), 0 0 2px white; }
 }
 
 .status-badge.noped {

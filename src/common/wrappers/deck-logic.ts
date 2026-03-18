@@ -1,5 +1,5 @@
-import {FnContext} from '../models/context.model';
-import {Card} from '../models/card.model';
+import {FnContext} from '../models';
+import {Card} from '../models';
 
 export class DeckLogic {
   constructor(private context: FnContext) {}

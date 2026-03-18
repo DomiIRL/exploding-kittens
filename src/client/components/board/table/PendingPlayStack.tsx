@@ -6,9 +6,11 @@ import HoverCardPreview from '../card/HoverCardPreview';
 
 interface PendingPlayStackProps {
   pendingPlay: PendingCardPlay;
+  canNope: boolean;
+  onNope: () => void;
 }
 
-export default function PendingPlayStack({pendingPlay}: PendingPlayStackProps) {
+export default function PendingPlayStack({pendingPlay, canNope, onNope}: PendingPlayStackProps) {
   const targetCard = pendingPlay.card;
   const isNoped = pendingPlay.isNoped;
   const [isHovered, setIsHovered] = useState(false);
@@ -40,6 +42,16 @@ export default function PendingPlayStack({pendingPlay}: PendingPlayStackProps) {
         <div className={`status-badge ${isNoped ? 'noped' : 'active'}`}>
           {isNoped ? 'Noped' : 'Un-Noped'}
         </div>
+      )}
+
+      {/* Nope Button */}
+      {canNope && (
+        <button 
+          className="nope-button-inline"
+          onClick={onNope}
+        >
+          {isNoped ? 'Un-Nope!' : 'NOPE!'}
+        </button>
       )}
     </div>
   );

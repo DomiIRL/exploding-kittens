@@ -1,4 +1,4 @@
-import {FnContext} from '../models/context.model';
+import {FnContext} from '../models';
 import {PlayerWrapper} from './player-wrapper';
 
 export class PlayerLogic {

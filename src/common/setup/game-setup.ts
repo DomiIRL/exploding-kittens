@@ -19,7 +19,7 @@ export const setupGame = (_context: any, setupData?: SetupData): GameState => {
     gameRules: {
       spectatorsCardsHidden: setupData?.spectatorsCardsHidden ?? false,
       openCards: setupData?.openCards ?? false,
-      nopeTimerMs: 4000,
+      nopeTimerMs: 3000,
     },
     deckType: setupData?.deckType ?? 'original',
     client: {
