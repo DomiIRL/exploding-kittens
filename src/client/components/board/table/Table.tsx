@@ -2,24 +2,58 @@ import back from '/assets/cards/back/0.jpg';
 import './Table.css';
 import {useEffect, useState, useRef} from "react";
 import {GameContext} from "../../../types/component-props";
+import {Card} from '../../../../common';
 import PendingPlayStack from './PendingPlayStack';
 import TurnBadge from '../turn-badge/TurnBadge';
 
+// Import CSS for card preview to be modular
+import '../card/Card.css';
+import HoverCardPreview from '../card/HoverCardPreview';
+import { createPortal } from 'react-dom';
+
 interface TableProps {
   gameContext: GameContext;
+  playerHand?: Card[];
 }
 
-export default function Table({gameContext}: TableProps) {
+export default function Table({gameContext, playerHand = []}: TableProps) {
   const {G, moves, ctx} = gameContext;
   const [isDrawing, setIsDrawing] = useState(false);
   const [isShuffling, setIsShuffling] = useState(false);
   const [lastDrawPileLength, setLastDrawPileLength] = useState(G.client.drawPileLength);
   const [lastDiscardPileLength, setLastDiscardPileLength] = useState(G.discardPile.length);
   const [isHoveringDrawPile, setIsHoveringDrawPile] = useState(false);
+  const [isHoveringDiscardPile, setIsHoveringDiscardPile] = useState(false);
+  const discardPileRef = useRef<HTMLDivElement>(null);
 
 
   const discardCard = G.discardPile[G.discardPile.length - 1];
   const discardImage = discardCard ? `/assets/cards/${discardCard.name}/${discardCard.index}.png` : "None";
+
+  // Check for Nope card in hand
+  const nopeCardIndex = playerHand.findIndex(c => c.name === 'nope');
+  
+  const canNope = (() => {
+    if (!G.pendingCardPlay || nopeCardIndex === -1) return false;
+    
+    const pending = G.pendingCardPlay;
+    const playerID = gameContext.playerID;
+    
+    if (!playerID) return false;
+
+    // Player cannot nope their own card play or their own nope card
+    if ((!pending.isNoped && pending.playedBy === playerID) || pending.lastNopeBy === playerID) {
+      return false;
+    }
+    
+    return true;
+  })();
+
+  const handlePlayNope = () => {
+    if (nopeCardIndex !== -1 && moves.playNowCard) {
+       moves.playNowCard(nopeCardIndex);
+    }
+  };
 
   // Detect when a card is drawn
   useEffect(() => {
@@ -94,10 +128,12 @@ export default function Table({gameContext}: TableProps) {
   const turnsRemaining = (G.turnsRemaining || 1) - 1;
   const isCurrentPlayer = ctx.currentPlayer === (gameContext.playerID || '');
 
+  const isNoped = G.pendingCardPlay?.isNoped ?? false;
+
   return (
     <div className="table">
       <div 
-        className={`table-center ${G.pendingCardPlay ? 'has-pending-play' : ''}`}
+        className={`table-center ${G.pendingCardPlay ? 'has-pending-play' : ''} ${isNoped ? 'is-noped' : ''}`}
         style={{
           '--timer-deg': `${degrees}deg`,
           '--timer-opacity': G.pendingCardPlay ? 1 : 0
@@ -108,13 +144,34 @@ export default function Table({gameContext}: TableProps) {
           {/* Turns remaining badge (for attack) */}
           <TurnBadge turnsRemaining={turnsRemaining} isCurrentPlayer={isCurrentPlayer} />
 
+          {/* Nope Button */}
+          {canNope && createPortal(
+             <button 
+               className="nope-button"
+               onClick={handlePlayNope}
+             >
+               {G.pendingCardPlay?.isNoped ? 'Un-Nope!' : 'NOPE!'}
+             </button>,
+             document.body
+          )}
+
           <div className="card-piles">
             {!G.pendingCardPlay && (
-              <div
-                className={`pile discard-pile ${!discardCard ? 'empty' : ''}`}
-                style={{backgroundImage: discardCard ? `url(${discardImage})` : 'none'}}
-                data-animation-id="discard-pile"
-              />
+              <>
+                <div
+                  ref={discardPileRef}
+                  className={`pile discard-pile ${!discardCard ? 'empty' : ''}`}
+                  style={{backgroundImage: discardCard ? `url(${discardImage})` : 'none'}}
+                  data-animation-id="discard-pile"
+                  onMouseEnter={() => setIsHoveringDiscardPile(true)}
+                  onMouseLeave={() => setIsHoveringDiscardPile(false)}
+                />
+                <HoverCardPreview 
+                  cardImage={discardImage}
+                  anchorRef={discardPileRef}
+                  isVisible={isHoveringDiscardPile && !!discardCard}
+                />
+              </>
             )}
             
             {G.pendingCardPlay && (

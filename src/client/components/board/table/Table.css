@@ -27,13 +27,23 @@
           color-mix(in srgb, var(--color-surface-medium) 10%, transparent) var(--timer-deg),
           transparent var(--timer-deg)
   );
-  opacity: var(--timer-opacity);
   pointer-events: none;
   z-index: -1;
   transition: opacity 0.3s ease;
 }
 
+.table-center.is-noped .table-timer-overlay {
+  background: conic-gradient(
+    from 0deg,
+    transparent calc(360deg - var(--timer-deg)),
+    color-mix(in srgb, var(--color-surface-medium) 10%, transparent) calc(360deg - var(--timer-deg))
+  );
+}
+
 .table-center {
+  --timer-deg: 0deg;
+  --timer-opacity: 0;
+
   position: absolute;
   top: 50%;
   left: 50%;
@@ -97,4 +107,37 @@
     opacity: 1;
     scale: 1;
   }
+}
+
+.nope-button {
+  position: fixed;
+  bottom: 29%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: var(--color-primary);
+  color: white;
+  border: none;
+  border-radius: calc(var(--scale) * 1);
+  padding: calc(var(--scale) * 1) calc(var(--scale) * 2);
+  font-size: calc(var(--scale) * 1.5);
+  font-weight: bold;
+  cursor: pointer;
+  z-index: 100;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+  animation: pulse-button 1s infinite alternate;
+  white-space: nowrap;
+}
+
+.nope-button:hover {
+  filter: brightness(1.2);
+  transform: translateX(-50%) scale(1.05);
+}
+
+.nope-button:active {
+  transform: translateX(-50%) scale(0.95);
+}
+
+@keyframes pulse-button {
+  from { box-shadow: 0 0 10px var(--color-primary); }
+  to { box-shadow: 0 0 20px var(--color-primary), 0 0 5px white; }
 }

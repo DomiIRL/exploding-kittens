@@ -40,6 +40,9 @@ export default function ExplodingKittensBoard({
 
   // Derive game state properties
   const gameState = useGameState(ctx, G, allPlayers, playerID);
+  
+  const selfPlayer = gameState.selfPlayerId !== null && allPlayers[gameState.selfPlayerId] ? allPlayers[gameState.selfPlayerId] : null;
+  const selfHand = selfPlayer ? selfPlayer.hand : [];
 
   useEffect(() => {
     if (!gameState.isAwaitingNowCardResolution || !G.pendingCardPlay || !moves.resolvePendingCard) {
@@ -132,7 +135,7 @@ export default function ExplodingKittensBoard({
   return (
     <div className="w-full h-full flex flex-col items-center justify-center bg-blue-200">
       <div className={`board-container ${playerState.isSelfSpectator ? 'hand-interactable' : ''} ${playerState.isSelfDead ? 'dimmed' : ''} ${isInLobby ? 'pointer-events-none' : ''}`}>
-        <Table gameContext={gameContext} />
+        <Table gameContext={gameContext} playerHand={selfHand} />
 
         <PlayerList
           alivePlayersSorted={gameState.alivePlayersSorted}
