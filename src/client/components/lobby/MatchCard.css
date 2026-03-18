@@ -123,6 +123,7 @@
   display: flex;
   gap: 0.5rem;
   flex-wrap: wrap;
+  align-items: center;
 }
 
 .rule-badge {
@@ -134,6 +135,10 @@
   color: var(--color-accent);
   font-weight: 600;
   white-space: nowrap;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  box-sizing: border-box;
 }
 
 .match-card-actions {

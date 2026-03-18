@@ -12,7 +12,7 @@ import './LobbyStyles.css';
 interface LobbyClientProps {
   gameServer: string;
   gameName: string;
-  onJoinMatch: (matchID: string, playerID: string, credentials: string) => void;
+  onJoinMatch: (matchID: string, playerID: string | null, credentials: string | null) => void;
 }
 
 export default function LobbyClient({ gameServer, gameName, onJoinMatch }: LobbyClientProps) {
@@ -84,7 +84,13 @@ export default function LobbyClient({ gameServer, gameName, onJoinMatch }: Lobby
     }
   };
 
-  const joinMatch = async (matchID: string) => {
+  const joinMatch = async (matchID: string, asSpectator: boolean = false) => {
+    if (asSpectator) {
+      console.log(`Spectating match ${matchID}`);
+      onJoinMatch(matchID, null, null);
+      return;
+    }
+
     console.log(`Joining match ${matchID}`);
     await lobbyClient.joinMatch(gameName, matchID, {
       playerName

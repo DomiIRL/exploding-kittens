@@ -14,13 +14,12 @@ interface MatchCardProps {
   matchName: string;
   players: Array<MatchPlayer>;
   setupData: MatchSetupData;
-  onJoin: (matchID: string) => void;
+  onJoin: (matchID: string, asSpectator?: boolean) => void;
 }
 
 export function MatchCard({matchID, matchName, players, setupData, onJoin}: MatchCardProps) {
   const maxPlayers = setupData.maxPlayers;
   const joinedCount = players.filter(p => p?.isConnected).length;
-  const isFull = players.every(p => p?.isConnected);
 
   return (
     <div className="match-card">
@@ -42,8 +41,11 @@ export function MatchCard({matchID, matchName, players, setupData, onJoin}: Matc
               <div
                 key={i}
                 className={`player-badge ${players[i]?.isConnected ? 'player-badge-joined' : ''}`}
+                title={players[i]?.isConnected ? (players[i]?.name || "Player") : "Empty Slot"}
               >
-                {players[i]?.isConnected ? players[i]?.name || "Unknown" : `Empty Slot`}
+               <span className="player-badge-name">
+                 {players[i]?.isConnected ? players[i]?.name || "Unknown" : `Empty`}
+               </span>
               </div>
             ))}
           </div>
@@ -53,30 +55,32 @@ export function MatchCard({matchID, matchName, players, setupData, onJoin}: Matc
               <span className="rule-badge">🃏 {setupData.deckType === 'original' ? 'Original' : setupData.deckType}</span>
             )}
             {setupData?.openCards && (
-              <span className="rule-badge">👁️ Open</span>
+              <span className="rule-badge">👁️ Open Cards</span>
             )}
             {setupData?.spectatorsCardsHidden && (
-              <span className="rule-badge">🚫 Cards Hidden</span>
+              <span className="rule-badge">🚫 Hidden Spec.</span>
             )}
           </div>
         </div>
 
         <div className="match-card-actions">
-          {!isFull ? (
+          {joinedCount < maxPlayers && (
             <button
               className="btn btn-success btn-small"
-              onClick={() => onJoin(matchID)}
+              onClick={() => onJoin(matchID, false)}
             >
-              Join Match
-            </button>
-          ) : (
-            <button className="btn btn-secondary btn-small" disabled>
-              Match Full
+              Join
             </button>
           )}
+          
+          <button
+              className="btn btn-secondary btn-small"
+              onClick={() => onJoin(matchID, true)}
+            >
+              Spectate
+          </button>
         </div>
       </div>
     </div>
   );
 }
-

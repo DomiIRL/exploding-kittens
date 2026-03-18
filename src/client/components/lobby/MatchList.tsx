@@ -22,10 +22,22 @@ interface MatchListProps {
   loading: boolean;
   error: string | null;
   onRefresh: () => void;
-  onJoinMatch: (matchID: string) => void;
+  onJoinMatch: (matchID: string, asSpectator?: boolean) => void;
 }
 
 export function MatchList({ matches, loading, error, onRefresh, onJoinMatch }: MatchListProps) {
+  // Sort matches
+  const sortedMatches = [...matches].sort((a, b) => {
+    const joinedA = a.players.filter(p => p?.isConnected).length;
+    const joinedB = b.players.filter(p => p?.isConnected).length;
+    const isWaitingA = joinedA < a.setupData.maxPlayers;
+    const isWaitingB = joinedB < b.setupData.maxPlayers;
+
+    if (isWaitingA && !isWaitingB) return -1;
+    if (!isWaitingA && isWaitingB) return 1;
+    return 0;
+  });
+
   return (
     <div className="lobby-section lobby-section-matches">
       <div className="lobby-section-header">
@@ -46,7 +58,7 @@ export function MatchList({ matches, loading, error, onRefresh, onJoinMatch }: M
           <div className="lobby-spinner" />
           <p className="lobby-loading-text">Loading matches...</p>
         </div>
-      ) : matches.length === 0 ? (
+      ) : sortedMatches.length === 0 ? (
         <div className="lobby-empty-state">
           <div className="lobby-empty-icon">🎲</div>
           <p className="lobby-empty-text">
@@ -55,7 +67,7 @@ export function MatchList({ matches, loading, error, onRefresh, onJoinMatch }: M
         </div>
       ) : (
         <div className="lobby-match-list">
-          {matches.map((match) => (
+          {sortedMatches.map((match) => (
             <MatchCard
               key={match.matchID}
               matchID={match.matchID}
@@ -72,4 +84,3 @@ export function MatchList({ matches, loading, error, onRefresh, onJoinMatch }: M
 }
 
 export type { LobbyMatch, MatchSetupData };
-

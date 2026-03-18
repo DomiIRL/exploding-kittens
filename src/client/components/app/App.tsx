@@ -42,7 +42,7 @@ export default class App extends Component<{}, AppState> {
     });
   }
 
-  handleJoinMatch = (matchID: string, playerID: string, credentials: string) => {
+  handleJoinMatch = (matchID: string, playerID: string | null, credentials: string | null) => {
     this.lobbyClient.getMatch(GAME_NAME, matchID)
       .then(data => {
         const matchName = data.setupData.matchName;
@@ -57,7 +57,8 @@ export default class App extends Component<{}, AppState> {
           numPlayers
         });
       })
-      .catch(() => {
+      .catch((err) => {
+        console.error("Error fetching match details:", err);
         this.setState({
           inMatch: true,
           matchID,
@@ -68,11 +69,9 @@ export default class App extends Component<{}, AppState> {
   };
 
   handleLeaveMatch = async () => {
-    if (this.state.matchID && this.state.playerID && this.state.credentials) {
-      const matchID = this.state.matchID;
-      const playerID = this.state.playerID;
-      const credentials = this.state.credentials;
+    const { matchID, playerID, credentials } = this.state;
 
+    if (matchID) {
       console.log('Leaving match...');
 
       this.setState({
@@ -86,20 +85,23 @@ export default class App extends Component<{}, AppState> {
 
       console.log('Returned to lobby');
 
-      // Wait for React to process the state change and unmount the component
-      // This ensures Socket.IO disconnects before we call the API
-      await new Promise(resolve => setTimeout(resolve, 200));
+      // Only attempt to leave on server if we were a registered player
+      if (playerID && credentials) {
+        // Wait for React to process the state change and unmount the component
+        // This ensures Socket.IO disconnects before we call the API
+        await new Promise(resolve => setTimeout(resolve, 200));
 
-      // Now leave the match via the lobby API
-      // By this time, the client has been unmounted and Socket.IO has disconnected
-      try {
-        await this.lobbyClient.leaveMatch(GAME_NAME, matchID, {
-          playerID: playerID,
-          credentials: credentials
-        });
-        console.log('Successfully left match via API');
-      } catch (err) {
-        console.error('Error calling leaveMatch API:', err);
+        // Now leave the match via the lobby API
+        // By this time, the client has been unmounted and Socket.IO has disconnected
+        try {
+          await this.lobbyClient.leaveMatch(GAME_NAME, matchID, {
+            playerID: playerID,
+            credentials: credentials
+          });
+          console.log('Successfully left match via API');
+        } catch (err) {
+          console.error('Error calling leaveMatch API:', err);
+        }
       }
 
       console.log('Successfully left match');
@@ -121,7 +123,7 @@ export default class App extends Component<{}, AppState> {
 
     console.log('Mounting game view for match', matchID, 'with player', playerID);
 
-    if (!matchID || !playerID || !credentials) {
+    if (!matchID) {
       return <div>Error: Invalid match data</div>;
     }
 
@@ -145,8 +147,8 @@ export default class App extends Component<{}, AppState> {
         <ExplodingKittensClient
           key={matchID}
           matchID={matchID}
-          playerID={playerID}
-          credentials={credentials}
+          playerID={playerID || undefined}
+          credentials={credentials || undefined}
         />
       </GameView>
     );
