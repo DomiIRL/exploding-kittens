@@ -44,6 +44,10 @@ export default class App extends Component<{}, AppState> {
   }
 
   handleJoinMatch = (matchID: string, playerID: string | null, credentials: string | null) => {
+    // Update URL with matchID
+    const newPath = `/${matchID}`;
+    window.history.pushState({}, '', newPath);
+
     this.lobbyClient.getMatch(GAME_NAME, matchID)
       .then(data => {
         const matchName = data.setupData.matchName;
@@ -74,6 +78,9 @@ export default class App extends Component<{}, AppState> {
 
     if (matchID) {
       console.log('Leaving match...');
+
+      // Clear matchID from URL, return to root
+      window.history.pushState({}, '', '/');
 
       this.setState({
         inMatch: false,

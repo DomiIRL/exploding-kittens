@@ -11,6 +11,10 @@ export default function LobbyOverlay({matchData, numPlayers, onStartGame}: Lobby
   const filledSlots = matchData?.filter(p => p.isConnected).length || 0;
   const allPlayersFilled = filledSlots === numPlayers;
 
+  const copyLink = () => {
+    navigator.clipboard.writeText(window.location.href);
+  };
+
   return (
     <div className="game-lobby-overlay">
       <div className="game-lobby-content">
@@ -18,6 +22,15 @@ export default function LobbyOverlay({matchData, numPlayers, onStartGame}: Lobby
         <p className="game-lobby-subtitle">
           The game will start when all players have joined
         </p>
+
+        <div className="game-lobby-invite">
+             <span className="invite-label">Invite Link:</span>
+             <div className="invite-link-container">
+               <input type="text" readOnly value={window.location.href} className="invite-link-input" />
+               <button className="invite-copy-btn" onClick={copyLink}>Copy</button>
+             </div>
+        </div>
+
         <div className="game-lobby-progress">
           <div className="game-lobby-progress-bar">
             <div
@@ -63,4 +76,3 @@ export default function LobbyOverlay({matchData, numPlayers, onStartGame}: Lobby
     </div>
   );
 }
-

@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { LobbyClient as BgioLobbyClient } from 'boardgame.io/client';
 import { LobbyHeader } from './LobbyHeader';
 import { LobbyTopBar } from './LobbyTopBar';
@@ -17,6 +17,7 @@ interface LobbyClientProps {
 
 export default function LobbyClient({ gameServer, gameName, onJoinMatch }: LobbyClientProps) {
   const lobbyClient = useMemo(() => new BgioLobbyClient({ server: gameServer }), [gameServer]);
+  const autoJoinAttempted = useRef(false);
 
   const [matches, setMatches] = useState<LobbyMatch[]>([]);
   const [loading, setLoading] = useState(true);
@@ -39,6 +40,55 @@ export default function LobbyClient({ gameServer, gameName, onJoinMatch }: Lobby
       return () => clearInterval(interval);
     }
   }, [playerName, lobbyClient]);
+
+  // Handle auto-join from URL
+  useEffect(() => {
+    // Check path for matchID (e.g., "/matchID")
+    const pathMatchID = window.location.pathname.substring(1); // Remove leading slash
+
+    if (pathMatchID && playerName && !autoJoinAttempted.current) {
+      // Validate matchID format if needed (e.g., length check)
+      if (pathMatchID.length > 0) {
+        autoJoinAttempted.current = true;
+        handleAutoJoin(pathMatchID);
+      }
+    }
+  }, [playerName, lobbyClient]); // Depend on lobbyClient to ensure it's ready
+
+  const handleAutoJoin = async (matchID: string) => {
+    setLoading(true);
+    try {
+      console.log('Attempting auto-join for match:', matchID);
+      const match = await lobbyClient.getMatch(gameName, matchID);
+      
+      // Count occupied seats (players with names)
+      const occupiedSeats = match.players.filter((p: any) => p.name).length;
+      const maxPlayers = match.setupData?.maxPlayers || match.players.length;
+      const isFull = occupiedSeats >= maxPlayers;
+
+      if (isFull) {
+         console.log('Match full, joining as spectator...');
+         await joinMatch(matchID, true);
+      } else {
+         console.log('joining match...');
+         await joinMatch(matchID, false);
+      }
+    } catch (err: any) {
+      console.error("Auto-join failed:", err);
+      // Fallback: simpler error handling
+      if (err.message && err.message.includes('full')) {
+          try {
+            await joinMatch(matchID, true);
+          } catch (e) {
+            setError(`Could not join match: ${err.message}`);
+          }
+      } else {
+         setError(`Failed to join match from link: ${err.message || 'Unknown error'}`);
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const fetchMatches = async () => {
     try {

@@ -196,6 +196,64 @@
               inset 0 2px 0 var(--color-highlight-medium);
 }
 
+/* Game Lobby Invite Section */
+.game-lobby-invite {
+  margin: 1rem 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.invite-label {
+  font-size: 0.9rem;
+  color: var(--color-text-light-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 700;
+}
+
+.invite-link-container {
+  display: flex;
+  gap: 0.5rem;
+  width: 100%;
+  max-width: 400px;
+}
+
+.invite-link-input {
+  flex: 1;
+  background: var(--color-overlay-bg-strong);
+  border: 1px solid var(--color-border-medium);
+  border-radius: 8px;
+  padding: 0.5rem 0.75rem;
+  color: var(--color-text-light);
+  font-family: monospace;
+  font-size: 0.9rem;
+  outline: none;
+}
+
+.invite-copy-btn {
+  background: var(--color-accent);
+  color: var(--color-text-dark);
+  border: none;
+  font-weight: 700;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+}
+
+.invite-copy-btn:hover {
+  background: var(--color-accent-light);
+  transform: translateY(-1px);
+}
+
+.invite-copy-btn:active {
+  transform: translateY(0);
+}
+
 /* Responsive */
 @media (max-width: 640px) {
   .game-lobby-content {
@@ -215,4 +273,3 @@
     padding: 1rem 2rem;
   }
 }
-
