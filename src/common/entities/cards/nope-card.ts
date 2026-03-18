@@ -1,5 +1,6 @@
 import {CardType} from '../card-type';
 import {Card, FnContext} from "../../models";
+import {validateNope} from '../../utils/action-validation';
 
 export class NopeCard extends CardType {
 
@@ -13,30 +14,7 @@ export class NopeCard extends CardType {
 
   canBePlayed(context: FnContext, _card: Card): boolean {
     const {G, playerID} = context;
-    const pendingCardPlay = G.pendingCardPlay;
-
-    if (!playerID) {
-      console.error("No playerID in context");
-      return false;
-    }
-
-    if (!pendingCardPlay) {
-      console.log("No pending card play to nope");
-      return false;
-    }
-
-    if ((!pendingCardPlay.isNoped && pendingCardPlay.playedBy === playerID) || pendingCardPlay.lastNopeBy === playerID) {
-      console.log("Player cannot nope their own card play or their nope card");
-      return false;
-    }
-
-    if (Date.now() > pendingCardPlay.expiresAtMs) {
-      console.log("Pending card play has already expired");
-      return false;
-    }
-
-    return true;
-
+    return validateNope(G, playerID);
   }
 
   onPlayed(context: FnContext, _card: Card): void {

@@ -2,7 +2,7 @@ import back from '/assets/cards/back/0.jpg';
 import './Table.css';
 import {useEffect, useState, useRef} from "react";
 import {GameContext} from "../../../types/component-props";
-import {Card} from '../../../../common';
+import {Card, canPlayerNope} from '../../../../common';
 import PendingPlayStack from './PendingPlayStack';
 import TurnBadge from '../turn-badge/TurnBadge';
 
@@ -33,21 +33,7 @@ export default function Table({gameContext, playerHand = []}: TableProps) {
   // Check for Nope card in hand
   const nopeCardIndex = playerHand.findIndex(c => c.name === 'nope');
   
-  const canNope = (() => {
-    if (!G.pendingCardPlay || nopeCardIndex === -1) return false;
-    
-    const pending = G.pendingCardPlay;
-    const playerID = gameContext.playerID;
-    
-    if (!playerID) return false;
-
-    // Player cannot nope their own card play or their own nope card
-    if ((!pending.isNoped && pending.playedBy === playerID) || pending.lastNopeBy === playerID) {
-      return false;
-    }
-    
-    return true;
-  })();
+  const canNope = canPlayerNope(G, gameContext.playerID, playerHand);
 
   const handlePlayNope = () => {
     if (nopeCardIndex !== -1 && moves.playNowCard) {
