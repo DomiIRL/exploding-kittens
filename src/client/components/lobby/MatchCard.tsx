@@ -5,7 +5,7 @@ interface MatchSetupData {
   matchName: string;
   maxPlayers: number;
   openCards: boolean;
-  spectatorsCardsHidden?: boolean;
+  spectatorsSeeCards?: boolean;
   deckType?: string;
 }
 
@@ -57,7 +57,7 @@ export function MatchCard({matchID, matchName, players, setupData, onJoin}: Matc
             {setupData?.openCards && (
               <span className="rule-badge">👁️ Open Cards</span>
             )}
-            {setupData && !setupData.spectatorsCardsHidden && !setupData.openCards && (
+            {setupData && setupData.spectatorsSeeCards && !setupData.openCards && (
               <span className="rule-badge">👁️ Specs. See</span>
             )}
           </div>

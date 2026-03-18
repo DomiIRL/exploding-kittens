@@ -29,7 +29,7 @@ export default function LobbyClient({ gameServer, gameName, onJoinMatch }: Lobby
   const [numPlayers, setNumPlayers] = useState(2);
   const [deckType, setDeckType] = useState('original');
   const [openCards, setOpenCards] = useState(false);
-  const [spectatorsCardsHidden, setSpectatorsCardsHidden] = useState(true);
+  const [spectatorsSeeCards, setSpectatorsSeeCards] = useState(false);
   const [creating, setCreating] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false);
 
@@ -57,10 +57,20 @@ export default function LobbyClient({ gameServer, gameName, onJoinMatch }: Lobby
 
   const handleAutoJoin = async (matchID: string) => {
     setLoading(true);
+    let match;
+    
+    // First try to find the match
     try {
       console.log('Attempting auto-join for match:', matchID);
-      const match = await lobbyClient.getMatch(gameName, matchID);
-      
+      match = await lobbyClient.getMatch(gameName, matchID);
+    } catch (error) {
+      console.log('Match not found or invalid, redirecting to root');
+      window.history.replaceState({}, '', '/');
+      setLoading(false);
+      return;
+    }
+
+    try {
       // Count occupied seats (players with names)
       const occupiedSeats = match.players.filter((p: any) => p.name).length;
       const maxPlayers = match.setupData?.maxPlayers || match.players.length;
@@ -79,8 +89,8 @@ export default function LobbyClient({ gameServer, gameName, onJoinMatch }: Lobby
       if (err.message && err.message.includes('full')) {
           try {
             await joinMatch(matchID, true);
-          } catch (e) {
-            setError(`Could not join match: ${err.message}`);
+          } catch (e: any) {
+            setError(`Could not join match: ${e.message}`);
           }
       } else {
          setError(`Failed to join match from link: ${err.message || 'Unknown error'}`);
@@ -119,7 +129,7 @@ export default function LobbyClient({ gameServer, gameName, onJoinMatch }: Lobby
           maxPlayers: numPlayers,
           deckType: deckType,
           openCards: openCards,
-          spectatorsCardsHidden: openCards ? false : spectatorsCardsHidden
+          spectatorsSeeCards: openCards ? true : spectatorsSeeCards
         }
       });
 
@@ -208,13 +218,13 @@ export default function LobbyClient({ gameServer, gameName, onJoinMatch }: Lobby
           numPlayers={numPlayers}
           deckType={deckType}
           openCards={openCards}
-          spectatorsCardsHidden={spectatorsCardsHidden}
+          spectatorsSeeCards={spectatorsSeeCards}
           creating={creating}
           onMatchNameChange={setMatchName}
           onNumPlayersChange={setNumPlayers}
           onDeckTypeChange={setDeckType}
           onOpenCardsChange={setOpenCards}
-          onSpectatorsCardsHiddenChange={setSpectatorsCardsHidden}
+          onSpectatorsSeeCardsChange={setSpectatorsSeeCards}
           onCreateMatch={createMatch}
           onClose={() => setShowCreateModal(false)}
         />

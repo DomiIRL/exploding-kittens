@@ -4,7 +4,7 @@ interface SetupData {
   matchName?: string;
   maxPlayers?: number;
   openCards?: boolean;
-  spectatorsCardsHidden?: boolean;
+  spectatorsSeeCards?: boolean;
   deckType?: string;
 }
 
@@ -17,7 +17,7 @@ export const setupGame = (_context: any, setupData?: SetupData): GameState => {
     pendingCardPlay: null,
     turnsRemaining: 1,
     gameRules: {
-      spectatorsCardsHidden: setupData?.spectatorsCardsHidden ?? false,
+      spectatorsSeeCards: setupData?.spectatorsSeeCards ?? false,
       openCards: setupData?.openCards ?? false,
       nopeTimerMs: 3000,
     },

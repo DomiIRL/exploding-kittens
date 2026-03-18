@@ -7,13 +7,13 @@ interface CreateMatchModalProps {
   numPlayers: number;
   deckType: string;
   openCards: boolean;
-  spectatorsCardsHidden: boolean;
+  spectatorsSeeCards: boolean;
   creating: boolean;
   onMatchNameChange: (name: string) => void;
   onNumPlayersChange: (num: number) => void;
   onDeckTypeChange: (type: string) => void;
   onOpenCardsChange: (checked: boolean) => void;
-  onSpectatorsCardsHiddenChange: (checked: boolean) => void;
+  onSpectatorsSeeCardsChange: (checked: boolean) => void;
   onCreateMatch: () => void;
   onClose: () => void;
 }
@@ -23,13 +23,13 @@ export function CreateMatchModal({
   numPlayers,
   deckType,
   openCards,
-  spectatorsCardsHidden,
+  spectatorsSeeCards,
   creating,
   onMatchNameChange,
   onNumPlayersChange,
   onDeckTypeChange,
   onOpenCardsChange,
-  onSpectatorsCardsHiddenChange,
+  onSpectatorsSeeCardsChange,
   onCreateMatch,
   onClose,
 }: CreateMatchModalProps) {
@@ -86,8 +86,8 @@ export function CreateMatchModal({
           <label className={`checkbox-label ${openCards ? 'disabled' : ''}`}>
             <input
               type="checkbox"
-              checked={!spectatorsCardsHidden}
-              onChange={(e) => onSpectatorsCardsHiddenChange(!e.target.checked)}
+              checked={spectatorsSeeCards}
+              onChange={(e) => onSpectatorsSeeCardsChange(e.target.checked)}
               disabled={openCards}
             />
             <span>Allow Spectators and Dead Players to see cards</span>

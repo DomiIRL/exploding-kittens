@@ -6,7 +6,7 @@ interface MatchSetupData {
   matchName: string;
   maxPlayers: number;
   openCards: boolean;
-  spectatorsCardsHidden?: boolean;
+  spectatorsSeeCards?: boolean;
   deckType?: string;
 }
 

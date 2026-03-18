@@ -38,7 +38,7 @@ export const useGameState = (
 
   const isSelfSpectator = useMemo(() => {
     return isSpectator ||
-      (isSelfDead && !G.gameRules.spectatorsCardsHidden) ||
+      (isSelfDead && G.gameRules.spectatorsSeeCards) ||
       G.gameRules.openCards;
   }, [isSpectator, isSelfDead, G.gameRules]);
 
@@ -103,4 +103,3 @@ export const useGameState = (
     alivePlayersSorted,
   };
 };
-

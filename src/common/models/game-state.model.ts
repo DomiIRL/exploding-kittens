@@ -6,7 +6,7 @@ export interface ClientGameState {
 }
 
 export interface GameRules {
-  spectatorsCardsHidden: boolean;
+  spectatorsSeeCards: boolean;
   openCards: boolean;
   nopeTimerMs: number;
 }
