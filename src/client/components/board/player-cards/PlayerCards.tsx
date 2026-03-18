@@ -7,6 +7,7 @@ interface PlayerCardsProps {
   moves?: any;
   playerID: string;
   isChoosingCardToGive: boolean;
+  isInNowCardStage: boolean;
   animationCallbacks: AnimationCallbacks;
   interactionHandlers: PlayerInteractionHandlers;
 }
@@ -16,6 +17,7 @@ export default function PlayerCards({
   moves,
   playerID,
   isChoosingCardToGive,
+  isInNowCardStage,
   animationCallbacks,
   interactionHandlers
 }: PlayerCardsProps) {
@@ -26,7 +28,7 @@ export default function PlayerCards({
   const angleStep = handCount > 1 ? fanSpread / (handCount - 1) : 0;
   const baseOffset = handCount > 1 ? -fanSpread / 2 : 0;
   const spreadDistance = isSelf ? 15 : isSelfSpectator ? 10 : 5;
-  const isClickable = (isSelf && isTurn) || isChoosingCardToGive;
+  const isClickable = (isSelf && (isTurn || isInNowCardStage)) || isChoosingCardToGive;
 
   return (
     <div className="player-cards">
@@ -51,6 +53,7 @@ export default function PlayerCards({
             triggerCardMovement={triggerCardMovement}
             playerID={playerID}
             isChoosingCardToGive={isChoosingCardToGive}
+            isInNowCardStage={isInNowCardStage}
             onCardGive={onCardGive}
           />
         );

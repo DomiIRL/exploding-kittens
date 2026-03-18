@@ -17,6 +17,7 @@ interface CardProps {
   triggerCardMovement: (card: CardType | null, fromId: string, toId: string) => void;
   playerID: string;
   isChoosingCardToGive?: boolean;
+  isInNowCardStage?: boolean;
   onCardGive?: (cardIndex: number) => void;
 }
 
@@ -32,6 +33,7 @@ export default function Card({
                                triggerCardMovement,
                                playerID,
                                isChoosingCardToGive = false,
+                               isInNowCardStage = false,
                                onCardGive,
                              }: CardProps) {
   const [isHovered, setIsHovered] = useState(false);
@@ -73,11 +75,14 @@ export default function Card({
       return;
     }
 
-    // Otherwise, play the card normally
+    // Otherwise, play the card (normal turn or now-card reaction stage)
     if (isClickable && moves) {
       try {
-        // Try to execute move first using server index
-        moves.playCard(serverIndex);
+        if (isInNowCardStage && moves.playNowCard) {
+          moves.playNowCard(serverIndex);
+        } else {
+          moves.playCard(serverIndex);
+        }
 
         // Only trigger animation if move didn't throw an error
         // Cast to base Card type for animation (serverIndex not needed for animation)

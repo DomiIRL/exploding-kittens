@@ -15,6 +15,12 @@ export class CardType {
     return true;
   }
 
+  isNowCard(_context: FnContext, _card: Card): boolean {
+    return false;
+  }
+
+  afterPlay(_context: FnContext, _card: Card): void {}
+
   onPlayed(_context: FnContext, _card: Card): void {}
 
   /**

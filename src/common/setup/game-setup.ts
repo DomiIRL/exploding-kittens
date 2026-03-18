@@ -14,6 +14,7 @@ export const setupGame = (_context: any, setupData?: SetupData): GameState => {
     winner: null,
     drawPile: [],
     discardPile: [],
+    pendingCardPlay: null,
     turnsRemaining: 1,
     gameRules: {
       spectatorsCardsHidden: setupData?.spectatorsCardsHidden ?? false,

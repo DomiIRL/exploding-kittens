@@ -10,10 +10,20 @@ export interface GameRules {
   openCards: boolean;
 }
 
+export interface PendingCardPlay {
+  card: Card;
+  playedBy: PlayerID;
+  startedAtMs: number;
+  expiresAtMs: number;
+  lastNopeBy: PlayerID | null;
+  isNoped: boolean;
+}
+
 export interface GameState {
   winner: PlayerID | null;
   drawPile: Card[];
   discardPile: Card[];
+  pendingCardPlay: PendingCardPlay | null;
   turnsRemaining: number;
   gameRules: GameRules;
   deckType: string;

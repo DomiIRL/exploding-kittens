@@ -11,7 +11,9 @@ export class CatCard extends CardType {
    * Cat cards can only be played in pairs
    */
   canBePlayed(context: FnContext, card: Card): boolean {
-    const playerData = context.player.get();
+    const { player, ctx } = context;
+
+    const playerData = player.get();
 
     // Count how many cat cards with the same index the player has
     const matchingCards = playerData.hand.filter(
@@ -19,38 +21,56 @@ export class CatCard extends CardType {
     );
 
     // Need at least 2 matching cat cards to play
-    return matchingCards.length >= 2;
+    if (matchingCards.length < 2) {
+      return false;
+    }
+
+    // Check if there is at least one other player with cards
+    return Object.keys(player.state).some((playerId) => {
+      if (playerId === ctx.currentPlayer) {
+        return false; // Can't target yourself
+      }
+      const targetPlayerData = player.state[playerId];
+      return targetPlayerData.isAlive && targetPlayerData.hand.length > 0;
+    });
   }
 
   /**
-   * When played, remove a second matching cat card and prompt player to choose a target
+   * Prompt player to choose a target after pair cost is already consumed.
    */
-  onPlayed(context: FnContext, card: Card) {
-    const { G, player, events } = context;
-    const playerData = context.player.get();
-
-    // Find and remove the second matching cat card from hand
-    const secondCardIndex = playerData.hand.findIndex(
-      (c: Card) =>
-        c.name === card.name &&
-        c.index === card.index
-    );
-
-    if (secondCardIndex !== -1) {
-      const newHand = playerData.hand.filter((_: Card, idx: number) => idx !== secondCardIndex);
-      player.set({
-        ...playerData,
-        hand: newHand,
-      });
-
-      // Add the second card to discard pile
-      G.discardPile.push(playerData.hand[secondCardIndex]);
-    }
+  onPlayed(context: FnContext, _card: Card) {
+    const { events } = context;
 
     // Set stage to choose a player to steal from
     events.setActivePlayers({
       currentPlayer: 'choosePlayerToStealFrom',
     });
+  }
+
+  /**
+   * Immediately consume the second matching cat card after the first is played.
+   */
+  afterPlay(context: FnContext, card: Card) {
+    const {G, player} = context;
+    const playerData = player.get();
+
+    const secondCardIndex = playerData.hand.findIndex(
+      (c: Card) => c.name === card.name && c.index === card.index
+    );
+
+    if (secondCardIndex === -1) {
+      return;
+    }
+
+    const secondCard = playerData.hand[secondCardIndex];
+    const newHand = playerData.hand.filter((_: Card, index: number) => index !== secondCardIndex);
+
+    player.set({
+      ...playerData,
+      hand: newHand,
+    });
+
+    G.discardPile.push(secondCard);
   }
 
   sortOrder(): number {

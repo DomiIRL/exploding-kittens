@@ -3,7 +3,7 @@ import {createPlayerPlugin} from './plugins/player-plugin';
 import {setupGame} from './setup/game-setup';
 import type {Card, FnContext, GameState, PluginAPIs} from './models';
 import {drawCard} from "./moves/draw-move";
-import {playCard} from "./moves/play-card-move";
+import {playCard, playNowCard, resolvePendingCard} from "./moves/play-card-move";
 import {stealCard} from "./moves/steal-card-move";
 import {requestCard, giveCard} from "./moves/favor-card-move";
 import {closeFutureView} from "./moves/see-future-move";
@@ -129,6 +129,26 @@ export const ExplodingKittens: Game<GameState, PluginAPIs> = {
               closeFutureView: closeFutureView,
             },
           },
+          respondWithNowCard: {
+            moves: {
+              playNowCard: {
+                move: playNowCard,
+                client: false,
+              },
+            },
+          },
+          awaitingNowCards: {
+            moves: {
+              playNowCard: {
+                move: playNowCard,
+                client: false,
+              },
+              resolvePendingCard: {
+                move: resolvePendingCard,
+                client: false,
+              },
+            },
+          },
         },
       },
       moves: {
@@ -139,7 +159,7 @@ export const ExplodingKittens: Game<GameState, PluginAPIs> = {
         playCard: {
           move: playCard,
           client: false
-        },
+        }
       },
       endIf: ({player}) => {
         const alivePlayers = Object.entries(player.state).filter(

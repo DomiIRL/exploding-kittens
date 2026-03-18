@@ -12,6 +12,8 @@ interface GameStateData {
   isSelectingPlayer: boolean;
   isChoosingCardToGive: boolean;
   isViewingFuture: boolean;
+  isInNowCardStage: boolean;
+  isAwaitingNowCardResolution: boolean;
   alivePlayers: string[];
   alivePlayersSorted: string[];
 }
@@ -63,6 +65,20 @@ export const useGameState = (
       ctx.activePlayers?.[playerID || ''] === 'viewingFuture';
   }, [isSpectator, selfPlayerId, ctx.activePlayers, playerID]);
 
+  const selfStage = ctx.activePlayers?.[playerID || ''];
+
+  const isInNowCardStage = useMemo(() => {
+    return !isSpectator &&
+      selfPlayerId !== null &&
+      (selfStage === 'respondWithNowCard' || selfStage === 'awaitingNowCards');
+  }, [isSpectator, selfPlayerId, selfStage]);
+
+  const isAwaitingNowCardResolution = useMemo(() => {
+    return !isSpectator &&
+      selfPlayerId !== null &&
+      selfStage === 'awaitingNowCards';
+  }, [isSpectator, selfPlayerId, selfStage]);
+
   const alivePlayers = useMemo(() => {
     return Object.keys(ctx.playOrder).filter(player => allPlayers[player]?.isAlive);
   }, [ctx.playOrder, allPlayers]);
@@ -81,6 +97,8 @@ export const useGameState = (
     isSelectingPlayer,
     isChoosingCardToGive,
     isViewingFuture,
+    isInNowCardStage,
+    isAwaitingNowCardResolution,
     alivePlayers,
     alivePlayersSorted,
   };

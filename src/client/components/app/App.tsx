@@ -8,7 +8,7 @@ import LobbyClient from '../lobby/LobbyClient';
 import GameView from '../game-view/GameView';
 import {preloadCardImages} from '../../utils/preloadImages';
 
-const SERVER_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+const SERVER_URL = import.meta.env.VITE_API_URL || 'http://localhost:51399';
 const GAME_NAME = 'Exploding-Kittens';
 
 console.log('🔗 API URL:', SERVER_URL);

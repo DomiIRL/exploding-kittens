@@ -10,6 +10,7 @@ import Table from './table/Table';
 import PlayerList from './player-list/PlayerList';
 import OverlayManager from './overlay-manager/OverlayManager';
 import LobbyOverlay from './lobby-overlay/LobbyOverlay';
+import {useEffect} from 'react';
 
 interface BoardPropsWithPlugins extends BoardProps<GameState> {
   plugins: BoardPlugins;
@@ -39,6 +40,23 @@ export default function ExplodingKittensBoard({
 
   // Derive game state properties
   const gameState = useGameState(ctx, G, allPlayers, playerID);
+
+  useEffect(() => {
+    if (!gameState.isAwaitingNowCardResolution || !G.pendingCardPlay || !moves.resolvePendingCard) {
+      return;
+    }
+
+    const remainingMs = Math.max(0, G.pendingCardPlay.expiresAtMs - Date.now());
+    const timeoutId = window.setTimeout(() => {
+      moves.resolvePendingCard();
+    }, remainingMs);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [
+    gameState.isAwaitingNowCardResolution,
+    G.pendingCardPlay?.expiresAtMs,
+    moves,
+  ]);
 
   // Bundle player state
   const playerState: PlayerStateBundle = {
@@ -120,6 +138,7 @@ export default function ExplodingKittensBoard({
           alivePlayersSorted={gameState.alivePlayersSorted}
           playerState={playerState}
           overlayState={overlayState}
+          isInNowCardStage={gameState.isInNowCardStage}
           animationCallbacks={{triggerCardMovement}}
           interactionHandlers={{
             onPlayerSelect: handlePlayerSelect,

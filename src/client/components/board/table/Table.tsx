@@ -14,6 +14,7 @@ export default function Table({gameContext}: TableProps) {
   const [lastDrawPileLength, setLastDrawPileLength] = useState(G.client.drawPileLength);
   const [lastDiscardPileLength, setLastDiscardPileLength] = useState(G.discardPile.length);
   const [isHoveringDrawPile, setIsHoveringDrawPile] = useState(false);
+  const [reactionTimeLeftMs, setReactionTimeLeftMs] = useState(0);
 
   const discardCard = G.discardPile[G.discardPile.length - 1];
   const discardImage = discardCard ? `/assets/cards/${discardCard.name}/${discardCard.index}.png` : "None";
@@ -37,6 +38,27 @@ export default function Table({gameContext}: TableProps) {
     setLastDiscardPileLength(G.discardPile.length);
   }, [G.discardPile.length, lastDiscardPileLength, G.discardPile]);
 
+  useEffect(() => {
+    if (!G.pendingCardPlay) {
+      setReactionTimeLeftMs(0);
+      return;
+    }
+
+    const updateTimer = () => {
+      const remainingMs = Math.max(0, G.pendingCardPlay!.expiresAtMs - Date.now());
+      setReactionTimeLeftMs(remainingMs);
+    };
+
+    updateTimer();
+    const intervalId = window.setInterval(updateTimer, 100);
+    return () => window.clearInterval(intervalId);
+  }, [G.pendingCardPlay?.expiresAtMs]);
+
+  const reactionTimeLeftSeconds = Math.max(0, (reactionTimeLeftMs / 1000)).toFixed(1);
+  const nopeStatusText = (G.pendingCardPlay && G.pendingCardPlay.isNoped)
+    ? 'Noped'
+    : 'Not Noped';
+
   const handleDrawClick = () => {
     if (!isDrawing) {
       moves.drawCard();
@@ -46,26 +68,33 @@ export default function Table({gameContext}: TableProps) {
   return (
     <div className="table">
       <div className="table-center">
-        <div className="card-piles">
-          <div
-            className={`pile discard-pile ${!discardCard ? 'empty' : ''}`}
-            style={{backgroundImage: discardCard ? `url(${discardImage})` : 'none'}}
-            data-animation-id="discard-pile"
-          />
-          <div
-            className={`pile draw-pile ${isDrawing ? 'drawing' : ''} ${isShuffling ? 'shuffling' : ''}`}
-            style={{backgroundImage: `url(${back})`}}
-            onClick={handleDrawClick}
-            onMouseEnter={() => setIsHoveringDrawPile(true)}
-            onMouseLeave={() => setIsHoveringDrawPile(false)}
-            data-animation-id="draw-pile"
-          >
-            {isHoveringDrawPile && G.client.drawPileLength > 0 && (
-              <div className="card-counter">
-                {G.client.drawPileLength}
-              </div>
-            )}
+        <div className="center-stack">
+          <div className="card-piles">
+            <div
+              className={`pile discard-pile ${!discardCard ? 'empty' : ''}`}
+              style={{backgroundImage: discardCard ? `url(${discardImage})` : 'none'}}
+              data-animation-id="discard-pile"
+            />
+            <div
+              className={`pile draw-pile ${isDrawing ? 'drawing' : ''} ${isShuffling ? 'shuffling' : ''}`}
+              style={{backgroundImage: `url(${back})`}}
+              onClick={handleDrawClick}
+              onMouseEnter={() => setIsHoveringDrawPile(true)}
+              onMouseLeave={() => setIsHoveringDrawPile(false)}
+              data-animation-id="draw-pile"
+            >
+              {isHoveringDrawPile && G.client.drawPileLength > 0 && (
+                <div className="card-counter">
+                  {G.client.drawPileLength}
+                </div>
+              )}
+            </div>
           </div>
+          {G.pendingCardPlay && (
+            <div className="reaction-window-indicator">
+              Nope Timer {reactionTimeLeftSeconds}s -&gt; {nopeStatusText}
+            </div>
+          )}
         </div>
       </div>
     </div>

@@ -26,7 +26,7 @@ Access at: http://localhost:5173
 npm run serve
 ```
 
-Server runs at: http://localhost:8000
+Server runs at: http://localhost:51399
 
 ### Watch Mode (Auto-restart on changes)
 

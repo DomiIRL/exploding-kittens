@@ -11,6 +11,7 @@ interface PlayerAreaProps {
   moves: any;
   isSelectable: boolean;
   isChoosingCardToGive: boolean;
+  isInNowCardStage: boolean;
   interactionHandlers: PlayerInteractionHandlers;
   animationCallbacks: AnimationCallbacks;
   matchData?: MatchPlayer[];
@@ -23,6 +24,7 @@ export default function Player({
   moves,
   isSelectable = false,
   isChoosingCardToGive = false,
+  isInNowCardStage = false,
   interactionHandlers,
   animationCallbacks,
   matchData
@@ -57,6 +59,7 @@ export default function Player({
           moves={moves}
           playerID={playerID}
           isChoosingCardToGive={isChoosingCardToGive}
+          isInNowCardStage={isInNowCardStage}
           animationCallbacks={animationCallbacks}
           interactionHandlers={interactionHandlers}
         />

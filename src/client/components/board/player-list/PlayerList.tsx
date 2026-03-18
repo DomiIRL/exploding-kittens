@@ -13,6 +13,7 @@ interface PlayerListProps {
   alivePlayersSorted: string[];
   playerState: PlayerStateBundle;
   overlayState: OverlayStateBundle;
+  isInNowCardStage: boolean;
   animationCallbacks: AnimationCallbacks;
   interactionHandlers: PlayerInteractionHandlers;
   gameContext: GameContext;
@@ -25,6 +26,7 @@ export default function PlayerList({
   alivePlayersSorted,
   playerState,
   overlayState,
+  isInNowCardStage,
   animationCallbacks,
   interactionHandlers,
   gameContext,
@@ -62,6 +64,9 @@ export default function PlayerList({
         const isSelfChoosingCard = isChoosingCardToGive
           && player === playerID;
 
+        const isSelfInNowCardStage = isInNowCardStage
+          && player === playerID;
+
         return (
           <Player
             key={player}
@@ -70,6 +75,7 @@ export default function PlayerList({
             position={{cardPosition, infoPosition}}
             isSelectable={isSelectable}
             isChoosingCardToGive={isSelfChoosingCard}
+            isInNowCardStage={isSelfInNowCardStage}
             interactionHandlers={interactionHandlers}
             animationCallbacks={animationCallbacks}
             moves={moves}

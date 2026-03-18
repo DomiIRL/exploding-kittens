@@ -1,7 +1,7 @@
 import {Origins, Server} from 'boardgame.io/dist/cjs/server.js';
 import {ExplodingKittens} from '../common';
 
-const port = parseInt(process.env.SERVER_PORT || '8000');
+const port = parseInt(process.env.SERVER_PORT || '51399');
 
 let origins: string | string[] | boolean | RegExp = Origins.LOCALHOST_IN_DEVELOPMENT;
 if (process.env.SERVER_ORIGINS) {
