@@ -1,5 +1,6 @@
 import {CardType} from '../card-type';
 import {Card, FnContext} from "../../models";
+import {stealCard} from '../../moves/steal-card-move';
 
 export class CatCard extends CardType {
 
@@ -39,12 +40,21 @@ export class CatCard extends CardType {
    * Prompt player to choose a target after pair cost is already consumed.
    */
   onPlayed(context: FnContext, _card: Card) {
-    const { events } = context;
+    const { events, player, ctx } = context;
 
-    // Set stage to choose a player to steal from
-    events.setActivePlayers({
-      currentPlayer: 'choosePlayerToStealFrom',
+    const aliveOpponents = Object.keys(player.state).filter((playerId) => {
+      return playerId !== ctx.currentPlayer && player.state[playerId].isAlive;
     });
+
+    if (aliveOpponents.length === 1) {
+      // Automatically choose the only opponent
+      stealCard(context, aliveOpponents[0]);
+    } else {
+      // Set stage to choose a player to steal from
+      events.setActivePlayers({
+        currentPlayer: 'choosePlayerToStealFrom',
+      });
+    }
   }
 
   /**
@@ -77,4 +87,3 @@ export class CatCard extends CardType {
     return 98;
   }
 }
-

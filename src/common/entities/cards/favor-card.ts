@@ -1,5 +1,6 @@
 import {CardType} from '../card-type';
 import {Card, FnContext} from "../../models";
+import {requestCard} from '../../moves/favor-card-move';
 
 export class FavorCard extends CardType {
 
@@ -21,12 +22,21 @@ export class FavorCard extends CardType {
   }
 
   onPlayed(context: FnContext, _card: Card) {
-    const { events } = context;
+    const { events, player, ctx } = context;
 
-    // Set stage to choose a player to request a card from
-    events.setActivePlayers({
-      currentPlayer: 'choosePlayerToRequestFrom',
+    const aliveOpponents = Object.keys(player.state).filter((playerId) => {
+      return playerId !== ctx.currentPlayer && player.state[playerId].isAlive;
     });
+
+    if (aliveOpponents.length === 1) {
+      // Automatically choose the only opponent
+      requestCard(context, aliveOpponents[0]);
+    } else {
+      // Set stage to choose a player to request a card from
+      events.setActivePlayers({
+        currentPlayer: 'choosePlayerToRequestFrom',
+      });
+    }
   }
 
   sortOrder(): number {
