@@ -95,11 +95,10 @@ export function CreateMatchModal({
         </div>
       </div>
 
-      <div style={{ display: 'flex', gap: '0.75rem' }}>
+      <div className="modal-actions">
         <button
           className="btn btn-secondary"
           onClick={onClose}
-          style={{ flex: 1 }}
           disabled={creating}
         >
           Cancel
@@ -108,7 +107,6 @@ export function CreateMatchModal({
           className="btn btn-primary"
           onClick={onCreateMatch}
           disabled={creating || !matchName.trim()}
-          style={{ flex: 1 }}
         >
           {creating ? 'Creating...' : '🎮 Create & Join'}
         </button>

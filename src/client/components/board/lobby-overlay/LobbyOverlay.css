@@ -1,11 +1,16 @@
 .game-lobby-overlay {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
   z-index: 11;
-  width: 90%;
-  max-width: 600px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  background-color: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(5px);
   animation: fadeIn 0.3s ease;
 }
 
@@ -25,9 +30,13 @@
   border: 3px solid var(--color-accent-glow-strong);
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  gap: 1.5rem;
   backdrop-filter: blur(15px);
   animation: slideUp 0.3s ease;
+  width: 100%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
 }
 
 @keyframes slideUp {
@@ -257,19 +266,30 @@
 /* Responsive */
 @media (max-width: 640px) {
   .game-lobby-content {
-    padding: 2rem;
+    padding: 1.5rem;
+    gap: 1rem;
+    border-radius: 16px;
   }
 
   .game-lobby-title {
-    font-size: 1.75rem;
+    font-size: 1.5rem;
   }
 
   .game-lobby-subtitle {
-    font-size: 1rem;
+    font-size: 0.9rem;
   }
 
   .game-lobby-start-btn {
-    font-size: 1.1rem;
-    padding: 1rem 2rem;
+    font-size: 1rem;
+    padding: 0.875rem 1.5rem;
+  }
+
+  .game-lobby-player-slot {
+    padding: 0.5rem 0.75rem;
+    gap: 0.5rem;
+  }
+
+  .game-lobby-player-icon {
+    font-size: 1.2rem;
   }
 }
