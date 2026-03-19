@@ -14,6 +14,7 @@ interface MatchDetailsContextType {
   loading: boolean;
   error: string | null;
   refreshMatchDetails: () => Promise<void>;
+  setPollingInterval: (interval: number) => void;
 }
 
 const MatchDetailsContext = createContext<MatchDetailsContextType | undefined>(undefined);
@@ -30,6 +31,7 @@ export function MatchDetailsProvider({ matchID, children }: MatchDetailsProvider
   const [matchDetails, setMatchDetails] = useState<MatchDetails | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [pollingInterval, setPollingInterval] = useState<number>(3000);
 
   const fetchMatchDetails = async () => {
     if (!matchID) {
@@ -64,11 +66,11 @@ export function MatchDetailsProvider({ matchID, children }: MatchDetailsProvider
   useEffect(() => {
     fetchMatchDetails(); // Initial fetch
     
-    // Poll every 3 seconds to update status
-    const interval = setInterval(fetchMatchDetails, 500);
+    // Poll based on interval
+    const interval = setInterval(fetchMatchDetails, pollingInterval);
     
     return () => clearInterval(interval);
-  }, [matchID]);
+  }, [matchID, pollingInterval]);
 
   useEffect(() => {
     const timeout = setTimeout(fetchMatchDetails, 100);
@@ -80,7 +82,8 @@ export function MatchDetailsProvider({ matchID, children }: MatchDetailsProvider
       matchDetails, 
       loading, 
       error, 
-      refreshMatchDetails: fetchMatchDetails 
+      refreshMatchDetails: fetchMatchDetails,
+      setPollingInterval
     }}>
       {children}
     </MatchDetailsContext.Provider>

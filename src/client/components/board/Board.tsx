@@ -31,7 +31,13 @@ export default function ExplodingKittensBoard({
   chatMessages,
   sendChatMessage
 }: BoardPropsWithPlugins) {
-  const { matchDetails } = useMatchDetails();
+  const { matchDetails, setPollingInterval } = useMatchDetails();
+
+  const isInLobby = ctx.phase === 'lobby';
+
+  useEffect(() => {
+    setPollingInterval(isInLobby ? 500 : 3000);
+  }, [isInLobby, setPollingInterval]);
 
   const allPlayers = plugins.player.data.players;
 
@@ -96,7 +102,6 @@ export default function ExplodingKittensBoard({
   // Handle explosion/defuse events
   const explosion = useExplosionEvents(G, allPlayers, playerID, matchDetails?.players);
 
-
   /**
    * Handle player selection for stealing/requesting a card
    */
@@ -129,10 +134,6 @@ export default function ExplodingKittensBoard({
       moves.closeFutureView();
     }
   };
-
-  // Check if we're in lobby phase
-  const isInLobby = ctx.phase === 'lobby';
-
 
   /**
    * Handle starting the game from lobby
@@ -184,6 +185,7 @@ export default function ExplodingKittensBoard({
         <LobbyOverlay
           matchData={matchDetails?.players}
           numPlayers={matchDetails?.numPlayers || 4}
+          playerID={playerID}
           onStartGame={handleStartGame}
         />
       )}
