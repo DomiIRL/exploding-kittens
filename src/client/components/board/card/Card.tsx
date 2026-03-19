@@ -97,7 +97,7 @@ export default function Card({
       <HoverCardPreview 
         cardImage={cardImage} 
         anchorRef={cardRef} 
-        isVisible={(isSelected || (isSelected ?? false)) && !!card}
+        isVisible={(isMobile ? isSelected : isHovered) && !!card}
         actionLabel={isChoosingCardToGive ? "Give This Card" : "Play Card"}
         canPlay={isClickable}
         onAction={() => {
