@@ -9,6 +9,7 @@ import TurnBadge from '../turn-badge/TurnBadge';
 // Import CSS for card preview to be modular
 import '../card/Card.css';
 import HoverCardPreview from '../card/HoverCardPreview';
+import {useResponsive} from "../../../context/ResponsiveContext.tsx";
 
 interface TableProps {
   gameContext: GameContext;
@@ -16,15 +17,17 @@ interface TableProps {
 }
 
 export default function Table({gameContext, playerHand = []}: TableProps) {
+
+  const { isMobile } = useResponsive();
+
   const {G, moves, ctx} = gameContext;
   const [isDrawing, setIsDrawing] = useState(false);
   const [isShuffling, setIsShuffling] = useState(false);
   const [lastDrawPileLength, setLastDrawPileLength] = useState(G.client.drawPileLength);
   const [lastDiscardPileLength, setLastDiscardPileLength] = useState(G.discardPile.length);
   const [isHoveringDrawPile, setIsHoveringDrawPile] = useState(false);
-  const [isHoveringDiscardPile, setIsHoveringDiscardPile] = useState(false);
+  const [isDiscardPileSelected, setIsDiscardPileSelected] = useState(false);
   const discardPileRef = useRef<HTMLDivElement>(null);
-
 
   const discardCard = G.discardPile[G.discardPile.length - 1];
   const discardImage = discardCard ? `/assets/cards/${discardCard.name}/${discardCard.index}.png` : "None";
@@ -139,13 +142,21 @@ export default function Table({gameContext, playerHand = []}: TableProps) {
                   className={`pile discard-pile ${!discardCard ? 'empty' : ''}`}
                   style={{backgroundImage: discardCard ? `url(${discardImage})` : 'none'}}
                   data-animation-id="discard-pile"
-                  onMouseEnter={() => setIsHoveringDiscardPile(true)}
-                  onMouseLeave={() => setIsHoveringDiscardPile(false)}
+                  onMouseEnter={() => {
+                    if (!isMobile) setIsDiscardPileSelected(true);
+                  }}
+                  onMouseLeave={() => {
+                    if (!isMobile) setIsDiscardPileSelected(false);
+                  }}
+                  onClick={() => {
+                    if (isMobile) setIsDiscardPileSelected(true);
+                  }}
                 />
                 <HoverCardPreview 
                   cardImage={discardImage}
                   anchorRef={discardPileRef}
-                  isVisible={isHoveringDiscardPile && !!discardCard}
+                  isVisible={isDiscardPileSelected && !!discardCard}
+                  onClose={() => setIsDiscardPileSelected(false)}
                 />
               </>
             )}

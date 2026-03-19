@@ -1,6 +1,7 @@
 import {createPortal} from 'react-dom';
 import {useEffect, useState, CSSProperties, RefObject} from 'react';
 import './Card.css';
+import {useResponsive} from "../../../context/ResponsiveContext.tsx";
 
 interface HoverCardPreviewProps {
   // Common props
@@ -22,12 +23,13 @@ export default function HoverCardPreview({
   cardImage, 
   anchorRef, 
   isVisible,
-  isMobile = false,
   canPlay = false,
   actionLabel = "Play Card",
   onAction,
   onClose
 }: HoverCardPreviewProps) {
+  const { isMobile } = useResponsive();
+
   const [showOnLeft, setShowOnLeft] = useState(false);
 
   useEffect(() => {

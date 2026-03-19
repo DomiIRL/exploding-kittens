@@ -3,6 +3,7 @@ import back from '/assets/cards/back/0.jpg';
 import {CSSProperties, useRef, useState} from 'react';
 import {CardWithServerIndex} from "../../../model/PlayerState";
 import HoverCardPreview from './HoverCardPreview';
+import {useResponsive} from "../../../context/ResponsiveContext.tsx";
 
 interface CardProps {
   card: CardWithServerIndex | null;
@@ -13,11 +14,9 @@ interface CardProps {
   offsetY: number;
   moves?: any;
   isClickable?: boolean;
-  isSelected?: boolean;
   isChoosingCardToGive?: boolean;
   isInNowCardStage?: boolean;
   onCardGive?: (cardIndex: number) => void;
-  onSelect?: (cardIndex: number) => void;
 }
 
 export default function Card({
@@ -29,26 +28,23 @@ export default function Card({
                                offsetY,
                                moves,
                                isClickable,
-                               isSelected,
                                isChoosingCardToGive = false,
                                isInNowCardStage = false,
                                onCardGive,
-                                onSelect,
                              }: CardProps) {
+
+  const { isMobile } = useResponsive();
+
   const [isHovered, setIsHovered] = useState(false);
+  const [isSelected, setIsSelected] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
 
   const cardImage = card ? `/assets/cards/${card.name}/${card.index}.png` : back;
 
-  const handleClick = () => {
+  const handleAction = () => {
     if (!card) return;
 
     const serverIndex = card.serverIndex ?? index;
-
-    if (onSelect) {
-      onSelect(serverIndex);
-      return;
-    }
 
     // If choosing a card to give (favor card flow)
     if (isChoosingCardToGive && onCardGive) {
@@ -71,13 +67,22 @@ export default function Card({
         console.error('Unexpected error playing card:', error);
       }
     }
+  }
+
+  const handleClick = () => {
+    if (isMobile) {
+      setIsSelected(true)
+      return;
+    }
+
+    handleAction();
   };
 
   return (
     <>
       <div
         ref={cardRef}
-        className={`card ${isClickable ? 'clickable' : ''} ${isSelected ? 'selected' : ''}`}
+        className={`card ${isClickable ? 'clickable' : ''} ${isHovered ? 'selected' : ''}`}
         style={{
           backgroundImage: `url(${cardImage})`,
           position: 'absolute',
@@ -92,7 +97,14 @@ export default function Card({
       <HoverCardPreview 
         cardImage={cardImage} 
         anchorRef={cardRef} 
-        isVisible={(isHovered || (isSelected ?? false)) && !!card} 
+        isVisible={(isSelected || (isSelected ?? false)) && !!card}
+        actionLabel={isChoosingCardToGive ? "Give This Card" : "Play Card"}
+        canPlay={isClickable}
+        onAction={() => {
+          setIsSelected(false);
+          handleAction();
+        }}
+        onClose={() => setIsSelected(false)}
       />
     </>
   );
