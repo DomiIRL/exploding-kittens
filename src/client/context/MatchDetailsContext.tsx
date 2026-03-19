@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { LobbyClient } from 'boardgame.io/client';
 import { MatchPlayer } from '../utils/matchData';
+import {GAME_NAME, SERVER_URL} from "../config.ts";
 export interface MatchDetails {
   matchID: string;
   players: MatchPlayer[];
@@ -18,9 +19,6 @@ interface MatchDetailsContextType {
 }
 
 const MatchDetailsContext = createContext<MatchDetailsContextType | undefined>(undefined);
-
-const SERVER_URL = import.meta.env.VITE_API_URL || 'http://localhost:51399';
-const GAME_NAME = 'Exploding-Kittens';
 
 interface MatchDetailsProviderProps {
   matchID: string;
