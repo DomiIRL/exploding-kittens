@@ -30,7 +30,7 @@ export default function PlayerCards({
   const fanSpread = isSelfSpectator || isSelf ? Math.min(handCount * 6, 60) : Math.min(handCount * 4, 40);
   const angleStep = handCount > 1 ? fanSpread / (handCount - 1) : 0;
   const baseOffset = handCount > 1 ? -fanSpread / 2 : 0;
-  const spreadDistance = isSelf ? 15 : isSelfSpectator ? 10 : 5;
+  const spreadDistance = isSelf ? 25 : isSelfSpectator ? 10 : 5;
   const canPlay = (isSelf && (isTurn || isInNowCardStage)) || isChoosingCardToGive;
   
   const { isMobile } = useResponsive();
