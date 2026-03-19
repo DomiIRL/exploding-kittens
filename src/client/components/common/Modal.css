@@ -12,7 +12,6 @@
   z-index: 90;
   backdrop-filter: blur(8px);
 }
-}
 
 @keyframes fadeIn {
   from { opacity: 0; }
