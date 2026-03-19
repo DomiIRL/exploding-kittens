@@ -1,9 +1,9 @@
 import { useState, useEffect, useRef } from 'react';
 import './Chat.css';
+import {useMatchDetails} from "../../context/MatchDetailsContext.tsx";
 
 interface ChatProps {
   playerID: string | null;
-  playerNames?: Record<string, string>;
   chatMessages?: Array<{
     id: string;
     sender: string;
@@ -14,7 +14,15 @@ interface ChatProps {
   onToggle?: () => void;
 }
 
-export const Chat = ({ playerID, playerNames = {}, chatMessages = [], sendChatMessage, isOpen: defaultOpen = false }: ChatProps) => {
+export const Chat = ({ playerID, chatMessages = [], sendChatMessage, isOpen: defaultOpen = false }: ChatProps) => {
+
+  const { matchDetails } = useMatchDetails();
+
+  const playerNames = matchDetails?.players.reduce((acc, p) => {
+    acc[p.id.toString()] = p.name || `Player ${p.id}`;
+    return acc;
+  }, {} as Record<string, string>) || {};
+
   const [isOpen, setIsOpen] = useState(defaultOpen);
   const [message, setMessage] = useState('');
   const [unreadCount, setUnreadCount] = useState(0);

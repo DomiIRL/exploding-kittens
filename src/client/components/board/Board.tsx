@@ -41,11 +41,6 @@ export default function ExplodingKittensBoard({
 
   const allPlayers = plugins.player.data.players;
 
-  const playerNames = matchDetails?.players.reduce((acc, p) => {
-    acc[p.id.toString()] = p.name || `Player ${p.id}`;
-    return acc;
-  }, {} as Record<string, string>) || {};
-
   // Bundle game context
   const gameContext: GameContext = {
     ctx,
@@ -195,8 +190,6 @@ export default function ExplodingKittensBoard({
 
       {isInLobby && (
         <LobbyOverlay
-          matchData={matchDetails?.players}
-          numPlayers={matchDetails?.numPlayers || 4}
           playerID={playerID}
           onStartGame={handleStartGame}
         />
@@ -209,7 +202,6 @@ export default function ExplodingKittensBoard({
       
       <Chat
         playerID={playerID}
-        playerNames={playerNames}
         chatMessages={chatMessages}
         sendChatMessage={sendChatMessage}
       />

@@ -1,15 +1,16 @@
 import './LobbyOverlay.css';
-import {MatchPlayer} from '../../../utils/matchData';
+import {useMatchDetails} from "../../../context/MatchDetailsContext.tsx";
 
 interface LobbyOverlayProps {
-  matchData?: MatchPlayer[];
-  numPlayers: number;
   playerID?: string | null;
   onStartGame?: () => void;
 }
 
-export default function LobbyOverlay({matchData, numPlayers, playerID, onStartGame}: LobbyOverlayProps) {
-  const filledSlots = matchData?.filter(p => p.isConnected).length || 0;
+export default function LobbyOverlay({playerID, onStartGame}: LobbyOverlayProps) {
+  const { matchDetails } = useMatchDetails();
+  const { players, numPlayers } = matchDetails || {players: [], numPlayers: 1};
+
+  const filledSlots = players?.filter(p => p.isConnected).length || 0;
   const allPlayersFilled = filledSlots === numPlayers;
 
   const copyLink = () => {
@@ -46,7 +47,7 @@ export default function LobbyOverlay({matchData, numPlayers, playerID, onStartGa
 
         <div className="game-lobby-players">
           {Array.from({length: numPlayers}).map((_, i) => {
-            const player = matchData?.[i];
+            const player = players?.[i];
             const hasJoined = player?.isConnected;
             const isSelf = player?.id.toString() === playerID;
 
