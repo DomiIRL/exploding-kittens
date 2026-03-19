@@ -12,8 +12,8 @@ import OverlayManager from './overlay-manager/OverlayManager';
 import LobbyOverlay from './lobby-overlay/LobbyOverlay';
 import GameStatusList from './game-status/GameStatusList';
 import {useEffect} from 'react';
-import { useMatchDetails } from '../../context/MatchDetailsContext';
 import {Chat} from '../chat/Chat';
+import {useMatchDetails} from "../../context/MatchDetailsContext.tsx";
 
 type BoardPropsWithPlugins = Omit<BoardProps<GameState>, 'plugins'> & {
   plugins: BoardPlugins;
@@ -32,7 +32,7 @@ export default function ExplodingKittensBoard({
   sendChatMessage
 }: BoardPropsWithPlugins) {
   const { matchDetails } = useMatchDetails();
-  
+
   const allPlayers = plugins.player.data.players;
 
   const playerNames = matchDetails?.players.reduce((acc, p) => {

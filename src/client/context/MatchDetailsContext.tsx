@@ -1,7 +1,7 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { LobbyClient } from 'boardgame.io/client';
 import { MatchPlayer } from '../utils/matchData';
-interface MatchDetails {
+export interface MatchDetails {
   matchID: string;
   players: MatchPlayer[];
   numPlayers: number;
@@ -65,10 +65,15 @@ export function MatchDetailsProvider({ matchID, children }: MatchDetailsProvider
     fetchMatchDetails(); // Initial fetch
     
     // Poll every 3 seconds to update status
-    const interval = setInterval(fetchMatchDetails, 3000);
+    const interval = setInterval(fetchMatchDetails, 500);
     
     return () => clearInterval(interval);
   }, [matchID]);
+
+  useEffect(() => {
+    const timeout = setTimeout(fetchMatchDetails, 100);
+    return () => clearTimeout(timeout);
+  }, [matchID, matchDetails?.matchName]);
 
   return (
     <MatchDetailsContext.Provider value={{ 

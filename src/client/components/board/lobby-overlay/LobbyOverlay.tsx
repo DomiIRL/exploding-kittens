@@ -4,10 +4,11 @@ import {MatchPlayer} from '../../../utils/matchData';
 interface LobbyOverlayProps {
   matchData?: MatchPlayer[];
   numPlayers: number;
+  playerID?: string | null;
   onStartGame?: () => void;
 }
 
-export default function LobbyOverlay({matchData, numPlayers, onStartGame}: LobbyOverlayProps) {
+export default function LobbyOverlay({matchData, numPlayers, playerID, onStartGame}: LobbyOverlayProps) {
   const filledSlots = matchData?.filter(p => p.isConnected).length || 0;
   const allPlayersFilled = filledSlots === numPlayers;
 
@@ -47,6 +48,7 @@ export default function LobbyOverlay({matchData, numPlayers, onStartGame}: Lobby
           {Array.from({length: numPlayers}).map((_, i) => {
             const player = matchData?.[i];
             const hasJoined = player?.isConnected;
+            const isSelf = player?.id.toString() === playerID;
 
             return (
               <div
@@ -57,7 +59,7 @@ export default function LobbyOverlay({matchData, numPlayers, onStartGame}: Lobby
                   {hasJoined ? '👤' : '⏳'}
                 </div>
                 <div className="game-lobby-player-name">
-                  {hasJoined ? player?.name || "Unknown" : `Waiting for Player`}
+                  {hasJoined ? (player?.name + (isSelf ? " (You)" : "")) || "Unknown" : `Waiting for Player`}
                 </div>
                 {hasJoined && (
                   <div className="game-lobby-player-status">✓ Ready</div>
