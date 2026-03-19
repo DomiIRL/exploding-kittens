@@ -1,5 +1,6 @@
 import {useState} from 'react';
 import './GameView.css';
+import { RulebookButton } from '../rulebook/Rulebook';
 
 interface GameViewProps {
   matchID: string;
@@ -27,6 +28,7 @@ export default function GameView({onLeave, children}: GameViewProps) {
 
   return (
     <div className="game-view-container">
+      <RulebookButton />
       <button className="leave-button" onClick={handleLeaveClick}>
         <span>←</span>
         <span>Leave Match</span>

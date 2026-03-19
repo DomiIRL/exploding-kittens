@@ -8,6 +8,7 @@ import { NameModal } from './NameModal';
 import { LobbyFooter } from './LobbyFooter';
 import { InitialSetup } from './InitialSetup';
 import './LobbyStyles.css';
+import { RulebookButton } from '../rulebook/Rulebook';
 
 interface LobbyClientProps {
   gameServer: string;
@@ -205,6 +206,7 @@ export default function LobbyClient({ gameServer, gameName, onJoinMatch }: Lobby
 
   return (
     <div className="lobby-container">
+      <RulebookButton />
       <LobbyHeader />
 
       <div className="lobby-content">

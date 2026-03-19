@@ -12,7 +12,7 @@ import {
   SKIP,
 } from '../../constants/card-types';
 
-const STARTING_HAND_SIZE = 7;
+const STARTING_HAND_SIZE = 4;
 const TOTAL_DEFUSE_CARDS = 6;
 const MAX_DECK_DEFUSE_CARDS = 2;
 const EXPLODING_KITTENS = 4;
