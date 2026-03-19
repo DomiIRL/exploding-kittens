@@ -1,6 +1,7 @@
 import { Modal } from '../common/Modal';
 import '../common/Button.css';
 import '../common/Form.css';
+import {useResponsive} from "../../context/ResponsiveContext.tsx";
 
 interface CreateMatchModalProps {
   matchName: string;
@@ -33,6 +34,8 @@ export function CreateMatchModal({
   onCreateMatch,
   onClose,
 }: CreateMatchModalProps) {
+  const { isMobile } = useResponsive();
+
   return (
     <Modal onClose={onClose} title="💥 Create New Match 💥">
       <div className="form-group">
@@ -43,6 +46,7 @@ export function CreateMatchModal({
           value={matchName}
           onChange={(e) => onMatchNameChange(e.target.value)}
           placeholder="Enter match name..."
+          autoFocus={!isMobile}
         />
       </div>
 
