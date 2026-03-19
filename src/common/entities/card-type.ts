@@ -7,6 +7,10 @@ export class CardType {
     this.name = name;
   }
 
+  inTesting(): boolean {
+    return false;
+  }
+
   createCard(index: number): Card {
     return {name: this.name, index};
   }

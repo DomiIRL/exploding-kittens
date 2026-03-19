@@ -1,5 +1,7 @@
 import type {Card, GameState, Player, Players} from '../models';
 import type {Deck} from '../entities/deck';
+import {cardTypeRegistry} from "../constants/card-types";
+import {CardType} from "../entities/card-type";
 
 export const createPlayerState = (): Player => ({
   hand: [],
@@ -73,6 +75,16 @@ export function dealHands(pile: Card[], players: Players, deck: Deck) {
   Object.values(players).forEach((player, index) => {
     player.hand = pile.splice(0, handSize);
     const forcedCards = deck.startingHandForcedCards(index);
+
+    // Add any cards that are in testing mode (e.g. for development or QA purposes)
+    cardTypeRegistry.getAll().forEach((card: CardType) => {
+      if (card.inTesting()) {
+        for (let i = 0; i < 3; i++) {
+          forcedCards.push(card.createCard(0));
+        }
+      }
+    });
+
     player.hand.push(...forcedCards);
   });
 }
