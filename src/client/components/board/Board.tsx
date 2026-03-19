@@ -62,18 +62,30 @@ export default function ExplodingKittensBoard({
   const selfHand = selfPlayer ? selfPlayer.hand : [];
 
   useEffect(() => {
-    if (!gameState.isAwaitingNowCardResolution || !G.pendingCardPlay || !moves.resolvePendingCard) {
+    if (!gameState.isInNowCardStage || !G.pendingCardPlay || !moves.resolvePendingCard) {
       return;
     }
 
-    const remainingMs = Math.max(0, G.pendingCardPlay.expiresAtMs - Date.now());
-    const timeoutId = window.setTimeout(() => {
-      moves.resolvePendingCard();
-    }, remainingMs);
+    const checkAndResolve = () => {
+      if (G.pendingCardPlay && Date.now() >= G.pendingCardPlay.expiresAtMs) {
+        moves.resolvePendingCard();
+      }
+    };
 
-    return () => window.clearTimeout(timeoutId);
+    const remainingMs = Math.max(0, G.pendingCardPlay.expiresAtMs - Date.now());
+    
+    // Primary trigger
+    const timeoutId = window.setTimeout(checkAndResolve, remainingMs);
+
+    // Fallback interval (poller) ensure resolution happens even if timeout is missed
+    const intervalId = window.setInterval(checkAndResolve, 100);
+
+    return () => {
+      window.clearTimeout(timeoutId);
+      window.clearInterval(intervalId);
+    };
   }, [
-    gameState.isAwaitingNowCardResolution,
+    gameState.isInNowCardStage,
     G.pendingCardPlay?.expiresAtMs,
     moves,
   ]);

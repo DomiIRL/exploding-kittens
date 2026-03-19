@@ -120,25 +120,28 @@ export const playNowCard = (context: FnContext, cardIndex: number) => {
 };
 
 export const resolvePendingCard = (context: FnContext) => {
-  const {ctx} = context;
   const game = new GameLogic(context);
   const pendingCardPlay = game.pendingCardPlay;
 
-  // Only current player can resolve their own pending card after timeline expires
-  if (!pendingCardPlay || game.actingPlayer.id !== ctx.currentPlayer) {
+  // Check if we have a pending card to resolve
+  if (!pendingCardPlay) {
     return;
   }
 
+  // Check if the timer has expired
+  // We allow ANY player to trigger resolution if the timer has expired
+  // This prevents the game from getting stuck if the current player disconnects
   if (Date.now() < pendingCardPlay.expiresAtMs) {
     return;
   }
 
+  game.pendingCardPlay = null;
+
   const cardType = cardTypeRegistry.get(pendingCardPlay.card.name);
   if (!cardType) {
+    context.events.setActivePlayers({value: {}});
     throw new Error('Unknown card type');
   }
-
-  game.pendingCardPlay = null;
 
   cardType.cleanupPendingState(context);
 
