@@ -43,7 +43,6 @@ export function CreateMatchModal({
           value={matchName}
           onChange={(e) => onMatchNameChange(e.target.value)}
           placeholder="Enter match name..."
-          autoFocus
         />
       </div>
 
