@@ -1,6 +1,8 @@
 import {GameContext, PlayerStateBundle} from '../../../types/component-props';
 import { useMatchDetails } from '../../../context/MatchDetailsContext';
+import { useState } from 'react';
 import './GameStatusList.css';
+import { useResponsive } from '../../../context/ResponsiveContext';
 
 interface GameStatusListProps {
   matchID?: string;
@@ -16,6 +18,9 @@ export default function GameStatusList({
   gameContext,
   playerState
 }: GameStatusListProps) {
+  const { isMobile } = useResponsive();
+  const [isCollapsed, setIsCollapsed] = useState(isMobile);
+
   const { matchDetails } = useMatchDetails();
   const {ctx} = gameContext;
   const {allPlayers, currentPlayer, isSelfSpectator} = playerState;
@@ -45,61 +50,79 @@ export default function GameStatusList({
     };
   });
 
-  return (
-    <div className="game-info-badge">
-      <div className="game-info-item">
-        <span>{matchName || matchDetails?.matchName || 'Match'}</span>
-      </div>
-      {(numPlayers || ctx.numPlayers) && (
-        <div className="game-info-item">
-          <span>👥</span>
-          <span>{numPlayers || ctx.numPlayers} players</span>
-        </div>
-      )}
+  const toggleCollapse = () => setIsCollapsed(!isCollapsed);
 
-      <div className="game-player-list">
-        <div className="list-section-title">Players</div>
-        {displayPlayers.map((p: any) => (
-          <div 
-            key={p.id} 
-            className={`player-list-item 
-              ${p.isCurrent ? 'active-turn' : ''} 
-              ${!p.isAlive && !p.isEmpty ? 'dead' : (p.isEmpty ? 'empty' : 'occupied')} 
-              ${!p.isConnected && !p.isEmpty ? 'disconnected' : ''}`
-            }
+  return (
+    <>
+      <div 
+        className={`game-info-badge ${isCollapsed ? 'collapsed' : ''}`}
+      >
+        <div className="game-info-header">
+          <button 
+            className="collapse-toggle-btn"
+            onClick={toggleCollapse}
+            aria-label={isCollapsed ? "Show Player List" : "Hide Player List"}
           >
-            <span 
-              className="player-status-dot" 
-              style={{
-                backgroundColor: p.isEmpty ? 'transparent' : 
-                                 (!p.isConnected ? '#cbd5e0' : 
-                                 (!p.isAlive ? '#ef4444' : '#4ade80')),
-                border: p.isEmpty ? '1px dashed #cbd5e0' : 'none'
-              }}
-              title={p.isEmpty ? "Empty Seat" : (!p.isConnected ? "Disconnected" : (!p.isAlive ? "Dead" : "Alive"))}
-            ></span>
+            {isCollapsed ? "▼" : "▲"}
+          </button>
+          
+          <div className="game-info-item">
+            <span>{matchName || matchDetails?.matchName || 'Match'}</span>
+          </div>
+          {(numPlayers || ctx.numPlayers) && (
+            <div className="game-info-item">
+              <span>👥</span>
+              <span>{numPlayers || ctx.numPlayers}</span>
+            </div>
+          )}
+        </div>
+
+        {!isCollapsed && (
+          <div className="game-player-list">
+            <div className="list-section-title">Players</div>
+            {displayPlayers.map((p: any) => (
+              <div 
+                key={p.id} 
+                className={`player-list-item 
+                  ${p.isCurrent ? 'active-turn' : ''} 
+                  ${!p.isAlive && !p.isEmpty ? 'dead' : (p.isEmpty ? 'empty' : 'occupied')} 
+                  ${!p.isConnected && !p.isEmpty ? 'disconnected' : ''}`
+                }
+              >
+                <span 
+                  className="player-status-dot" 
+                  style={{
+                    backgroundColor: p.isEmpty ? 'transparent' : 
+                                    (!p.isConnected ? '#cbd5e0' : 
+                                    (!p.isAlive ? '#ef4444' : '#4ade80')),
+                    border: p.isEmpty ? '1px dashed #cbd5e0' : 'none'
+                  }}
+                  title={p.isEmpty ? "Empty Seat" : (!p.isConnected ? "Disconnected" : (!p.isAlive ? "Dead" : "Alive"))}
+                ></span>
+                
+                <span className="player-name">
+                  {p.name} {p.isSelf ? '(You)' : ''}
+                </span>
+                
+                {!p.isAlive && !p.isEmpty && (
+                  <span className="dead-indicator">☠️</span>
+                )}
+                
+                {p.isCurrent && p.isAlive && !p.isEmpty && (
+                  <span className="turn-indicator">🎲</span>
+                )}
+              </div>
+            ))}
             
-            <span className="player-name">
-              {p.name} {p.isSelf ? '(You)' : ''}
-            </span>
-            
-            {!p.isAlive && !p.isEmpty && (
-              <span className="dead-indicator">☠️</span>
-            )}
-            
-            {p.isCurrent && p.isAlive && !p.isEmpty && (
-              <span className="turn-indicator">🎲</span>
+            {/* Spectators placeholder - can be implemented if G supports spectators list */}
+            {isSelfSpectator && (
+              <div className="spectator-indicator" style={{marginTop: '0.5rem', fontSize: '0.8rem', color: '#60a5fa'}}>
+                You are spectating
+              </div>
             )}
           </div>
-        ))}
-        
-        {/* Spectators placeholder - can be implemented if G supports spectators list */}
-        {isSelfSpectator && (
-           <div className="spectator-indicator" style={{marginTop: '0.5rem', fontSize: '0.8rem', color: '#60a5fa'}}>
-             You are spectating
-           </div>
         )}
       </div>
-    </div>
+    </>
   );
 }

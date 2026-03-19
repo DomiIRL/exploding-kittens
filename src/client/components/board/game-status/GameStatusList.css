@@ -2,7 +2,7 @@
     position: fixed;
     top: 1rem;
     right: 1rem;
-    z-index: 100;
+    z-index: 3000;
     padding: 0.75rem 1.25rem;
     background: rgba(255, 255, 255, 0.95);
     border: 2px solid #e2e8f0;
@@ -12,8 +12,58 @@
     flex-direction: column;
     gap: 0.5rem;
     backdrop-filter: blur(8px);
-    min-width: 200px;
+    width: max-content;
+    max-width: 90vw;
     font-family: 'Inter', system-ui, sans-serif;
+  }
+
+  .game-info-header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .game-info-badge.collapsed {
+    /* No special hiding styles needed, just let content size it */
+    min-width: unset;
+  }
+
+  .collapse-toggle-btn {
+    display: none; /* hidden on desktop */
+  }
+
+  .collapse-toggle-btn {
+    background: transparent;
+    border: none;
+    border-radius: 4px;
+    width: 1.5rem;
+    height: 1.5rem;
+    cursor: pointer;
+    font-size: 0.8rem;
+    color: var(--color-text-dark);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    padding: 0;
+    margin-right: -0.25rem;
+  }
+
+  .collapse-toggle-btn:hover {
+    background: rgba(0,0,0,0.05);
+  }
+
+  @media (max-width: 768px) {
+    .collapse-toggle-btn {
+      display: flex;
+    }
+
+    .game-info-badge {
+       right: 1rem;
+       top: 1rem;
+       padding: 0.5rem 0.75rem;
+    }
   }
 
   .game-info-item {
@@ -118,9 +168,7 @@
     .game-info-badge {
       font-size: 0.8rem;
       padding: 0.625rem 1rem;
-      top: 3.5rem; /* Move below the leave button on mobile if needed */
+      top: 3.5rem;
       right: 1rem;
     }
   }
-
-

@@ -1,6 +1,6 @@
 body {
   --scale: min(1vw, 1vh);
-  --table-size: min(90vw, 90vh);
+  --table-size: min(95vw, 90vh);
 
   /* Color System */
   /* Primary - Red theme colors */
@@ -42,6 +42,15 @@ body {
 
   /* Primary glow effects */
   --color-primary-glow: rgba(196, 30, 58, 0.3);
+
+  /* Vivid action colors */
+  --color-action: #ff4d4d;
+  --color-action-dark: #cc0000;
+  --color-action-glow: #ff0000;
+
+  @media (max-width: 768px) {
+    --scale: min(1.4vw, 1.4vh);
+  }
 
   /* Accent glow effects */
   --color-accent-glow-light: rgba(253, 185, 39, 0.4);

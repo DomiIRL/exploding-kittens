@@ -17,7 +17,7 @@ export const setupGame = (_context: any, setupData?: SetupData): GameState => {
     pendingCardPlay: null,
     turnsRemaining: 1,
     gameRules: {
-      spectatorsSeeCards: setupData?.spectatorsSeeCards ?? false,
+      spectatorsSeeCards: !setupData?.spectatorsSeeCards,
       openCards: setupData?.openCards ?? false,
       nopeTimerMs: 3000,
     },

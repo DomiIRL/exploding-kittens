@@ -4,13 +4,12 @@
   "version": "0.0.0",
   "scripts": {
     "dev": "vite",
-    "dev:server": "tsc -p src/server/tsconfig.json --watch",
     "build": "tsc && vite build",
-    "build:server": "tsc -p src/server/tsconfig.json",
     "preview": "vite preview",
     "lint": "eslint .",
     "server": "npm run build:server && node dist/server/server/server.js",
-    "serve:watch": "nodemon --watch src/server --watch src/common --ext ts --exec \"npm run serve\""
+    "server:dev": "nodemon --watch src/server --watch src/common --ext ts --exec \"npm run server\"",
+    "build:server": "tsc -p src/server/tsconfig.json"
   },
   "dependencies": {
     "boardgame.io": "^0.50.2",

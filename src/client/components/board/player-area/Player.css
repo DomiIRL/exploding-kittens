@@ -58,10 +58,6 @@
   }
 }
 
-giv.player-cards-container {
-  position: absolute;
-}
-
 .player-cards {
   position: absolute;
   display: flex;

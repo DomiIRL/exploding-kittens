@@ -145,20 +145,22 @@ export default function ExplodingKittensBoard({
   return (
     <div className="w-full h-full flex flex-col items-center justify-center bg-blue-200">
       <div className={`board-container ${playerState.isSelfSpectator ? 'hand-interactable' : ''} ${playerState.isSelfDead ? 'dimmed' : ''} ${isInLobby ? 'pointer-events-none' : ''}`}>
-        <Table gameContext={gameContext} playerHand={selfHand} />
+        <div className={"game-elements"}>
+          <Table gameContext={gameContext} playerHand={selfHand} />
 
-        <PlayerList
-          alivePlayersSorted={gameState.alivePlayersSorted}
-          playerState={playerState}
-          overlayState={overlayState}
-          isInNowCardStage={gameState.isInNowCardStage}
-          animationCallbacks={{triggerCardMovement}}
-          interactionHandlers={{
-            onPlayerSelect: handlePlayerSelect,
-            onCardGive: handleCardGive
-          }}
-          gameContext={gameContext}
-        />
+          <PlayerList
+            alivePlayersSorted={gameState.alivePlayersSorted}
+            playerState={playerState}
+            overlayState={overlayState}
+            isInNowCardStage={gameState.isInNowCardStage}
+            animationCallbacks={{triggerCardMovement}}
+            interactionHandlers={{
+              onPlayerSelect: handlePlayerSelect,
+              onCardGive: handleCardGive
+            }}
+            gameContext={gameContext}
+          />
+        </div>
       </div>
 
       <GameStatusList

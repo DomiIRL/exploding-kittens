@@ -8,6 +8,7 @@ import {
   AnimationCallbacks,
   PlayerInteractionHandlers
 } from '../../../types/component-props';
+import './PlayerList.css';
 
 interface PlayerListProps {
   alivePlayersSorted: string[];
@@ -34,22 +35,24 @@ export default function PlayerList({
   const {allPlayers, selfPlayerId, isSelfDead, isSelfSpectator, currentPlayer} = playerState;
   const {isSelectingPlayer, isChoosingCardToGive} = overlayState;
   const {playerID, moves, matchData} = gameContext;
+
   return (
-    <>
+    <div className="player-list">
       {alivePlayersSorted.map((player) => {
-        const {cardPosition, infoPosition} = calculatePlayerPositions(
+        const playerNumber = parseInt(player);
+        const playerInfo = allPlayers[player];
+        const isSelf = selfPlayerId !== null && playerNumber === selfPlayerId;
+
+        let {cardPosition, infoPosition} = calculatePlayerPositions(
           player,
           alivePlayersSorted,
           selfPlayerId,
           isSelfDead
         );
 
-        const playerNumber = parseInt(player);
-        const playerInfo = allPlayers[player];
-
         const playerRenderState = new PlayerState(
           isSelfSpectator,
-          selfPlayerId !== null && playerNumber === selfPlayerId,
+          isSelf,
           playerInfo.isAlive,
           playerNumber === currentPlayer,
           playerInfo.client.handCount,
@@ -85,6 +88,6 @@ export default function PlayerList({
           />
         );
       })}
-    </>
+    </div>
   );
 }

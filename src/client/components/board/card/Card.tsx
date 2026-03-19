@@ -13,9 +13,11 @@ interface CardProps {
   offsetY: number;
   moves?: any;
   isClickable?: boolean;
+  isSelected?: boolean;
   isChoosingCardToGive?: boolean;
   isInNowCardStage?: boolean;
   onCardGive?: (cardIndex: number) => void;
+  onSelect?: (cardIndex: number) => void;
 }
 
 export default function Card({
@@ -27,9 +29,11 @@ export default function Card({
                                offsetY,
                                moves,
                                isClickable,
+                               isSelected,
                                isChoosingCardToGive = false,
                                isInNowCardStage = false,
                                onCardGive,
+                                onSelect,
                              }: CardProps) {
   const [isHovered, setIsHovered] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
@@ -40,6 +44,11 @@ export default function Card({
     if (!card) return;
 
     const serverIndex = card.serverIndex ?? index;
+
+    if (onSelect) {
+      onSelect(serverIndex);
+      return;
+    }
 
     // If choosing a card to give (favor card flow)
     if (isChoosingCardToGive && onCardGive) {
@@ -68,7 +77,7 @@ export default function Card({
     <>
       <div
         ref={cardRef}
-        className={`card ${isClickable ? 'clickable' : ''}`}
+        className={`card ${isClickable ? 'clickable' : ''} ${isSelected ? 'selected' : ''}`}
         style={{
           backgroundImage: `url(${cardImage})`,
           position: 'absolute',
@@ -83,7 +92,7 @@ export default function Card({
       <HoverCardPreview 
         cardImage={cardImage} 
         anchorRef={cardRef} 
-        isVisible={isHovered && !!card} 
+        isVisible={(isHovered || (isSelected ?? false)) && !!card} 
       />
     </>
   );

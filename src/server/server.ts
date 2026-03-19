@@ -4,8 +4,18 @@ import {ExplodingKittens} from '../common';
 const port = parseInt(process.env.SERVER_PORT || '51399');
 
 let origins: string | string[] | boolean | RegExp = Origins.LOCALHOST_IN_DEVELOPMENT;
-if (process.env.SERVER_ORIGINS) {
-  origins = process.env.SERVER_ORIGINS.split(',');
+
+if (process.env.NODE_ENV === 'production') {
+  if (process.env.SERVER_ORIGINS) {
+    if (process.env.SERVER_ORIGINS === '*') {
+      origins = true;
+    } else {
+      origins = process.env.SERVER_ORIGINS.split(',');
+    }
+  }
+} else {
+  // Always allow all origins in development
+  origins = true;
 }
 
 const server = Server({

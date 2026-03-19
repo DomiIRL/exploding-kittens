@@ -41,6 +41,17 @@ export default function LobbyClient({ gameServer, gameName, onJoinMatch }: Lobby
     }
   }, [playerName, lobbyClient]);
 
+  // Validate match existence immediately on load
+  useEffect(() => {
+    const pathMatchID = window.location.pathname.substring(1);
+    if (pathMatchID && !autoJoinAttempted.current) {
+      lobbyClient.getMatch(gameName, pathMatchID).catch(() => {
+        console.log('Match not found on load, redirecting to root');
+        window.history.replaceState({}, '', '/');
+      });
+    }
+  }, [lobbyClient, gameName]);
+
   // Handle auto-join from URL
   useEffect(() => {
     // Check path for matchID (e.g., "/matchID")
@@ -53,7 +64,7 @@ export default function LobbyClient({ gameServer, gameName, onJoinMatch }: Lobby
         handleAutoJoin(pathMatchID);
       }
     }
-  }, [playerName, lobbyClient]); // Depend on lobbyClient to ensure it's ready
+  }, [playerName, lobbyClient]);
 
   const handleAutoJoin = async (matchID: string) => {
     setLoading(true);

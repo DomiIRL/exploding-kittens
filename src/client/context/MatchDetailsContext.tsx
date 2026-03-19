@@ -1,7 +1,6 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { LobbyClient } from 'boardgame.io/client';
 import { MatchPlayer } from '../utils/matchData';
-
 interface MatchDetails {
   matchID: string;
   players: MatchPlayer[];
