@@ -13,12 +13,10 @@ import LobbyOverlay from './lobby-overlay/LobbyOverlay';
 import GameStatusList from './game-status/GameStatusList';
 import {useEffect} from 'react';
 import { useMatchDetails } from '../../context/MatchDetailsContext';
+import {Chat} from '../chat/Chat';
 
-interface BoardPropsWithPlugins extends BoardProps<GameState> {
+type BoardPropsWithPlugins = Omit<BoardProps<GameState>, 'plugins'> & {
   plugins: BoardPlugins;
-  matchData?: any;
-  matchName?: string;
-  numPlayers?: number;
 }
 
 /**
@@ -30,14 +28,17 @@ export default function ExplodingKittensBoard({
   moves,
   plugins,
   playerID,
-  matchID,
-  matchData,
-  matchName,
-  numPlayers
+  chatMessages,
+  sendChatMessage
 }: BoardPropsWithPlugins) {
   const { matchDetails } = useMatchDetails();
   
   const allPlayers = plugins.player.data.players;
+
+  const playerNames = matchDetails?.players.reduce((acc, p) => {
+    acc[p.id.toString()] = p.name || `Player ${p.id}`;
+    return acc;
+  }, {} as Record<string, string>) || {};
 
   // Bundle game context
   const gameContext: GameContext = {
@@ -93,7 +94,7 @@ export default function ExplodingKittensBoard({
   const {AnimationLayer, triggerCardMovement} = useCardAnimations(G, allPlayers, playerID);
 
   // Handle explosion/defuse events
-  const explosion = useExplosionEvents(G, allPlayers, playerID, matchData);
+  const explosion = useExplosionEvents(G, allPlayers, playerID, matchDetails?.players);
 
 
   /**
@@ -144,6 +145,8 @@ export default function ExplodingKittensBoard({
 
   return (
     <div className="w-full h-full flex flex-col items-center justify-center bg-blue-200">
+      <AnimationLayer />
+
       <div className={`board-container ${playerState.isSelfSpectator ? 'hand-interactable' : ''} ${playerState.isSelfDead ? 'dimmed' : ''} ${isInLobby ? 'pointer-events-none' : ''}`}>
         <div className={"game-elements"}>
           <Table gameContext={gameContext} playerHand={selfHand} />
@@ -163,16 +166,6 @@ export default function ExplodingKittensBoard({
         </div>
       </div>
 
-      <GameStatusList
-        matchID={matchData?.matchID || matchID}
-        matchName={matchName || matchDetails?.matchName || 'Game'} // Prefer prop, then context
-        numPlayers={numPlayers || ctx.numPlayers}
-        gameContext={gameContext}
-        playerState={playerState}
-      />
-
-      <AnimationLayer />
-
       <OverlayManager
         gameContext={gameContext}
         playerState={playerState}
@@ -183,17 +176,29 @@ export default function ExplodingKittensBoard({
           isSelf: explosion.isSelf,
           onComplete: explosion.clearEvent
         }}
-        winnerID={G.winner}
+        winnerID={ctx.gameover?.winner}
         onCloseFutureView={handleCloseFutureView}
       />
 
       {isInLobby && (
         <LobbyOverlay
-          matchData={matchData}
-          numPlayers={ctx.numPlayers}
+          matchData={matchDetails?.players}
+          numPlayers={matchDetails?.numPlayers || 4}
           onStartGame={handleStartGame}
         />
       )}
+
+      <GameStatusList
+        gameContext={gameContext}
+        playerState={playerState}
+      />
+      
+      <Chat
+        playerID={playerID}
+        playerNames={playerNames}
+        chatMessages={chatMessages}
+        sendChatMessage={sendChatMessage}
+      />
     </div>
   );
 }

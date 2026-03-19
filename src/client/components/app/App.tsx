@@ -156,8 +156,6 @@ export default class App extends Component<{}, AppState> {
             matchID={matchID}
             playerID={playerID || undefined}
             credentials={credentials || undefined}
-            matchName={matchName}
-            numPlayers={numPlayers}
           />
         </GameView>
       </MatchDetailsProvider>
