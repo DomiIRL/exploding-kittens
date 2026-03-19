@@ -22,6 +22,10 @@ export class AttackCard extends CardType {
     events.endTurn({ next: nextPlayerIndex + "" });
   }
 
+  cleanupPendingState(_context: FnContext) {
+    // Attack ends the turn, so we don't clear stages to avoid interfering with endTurn
+  }
+
   sortOrder(): number {
     return 1;
   }

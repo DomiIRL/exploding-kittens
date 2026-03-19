@@ -139,7 +139,8 @@ export const resolvePendingCard = (context: FnContext) => {
   }
 
   game.pendingCardPlay = null;
-  context.events.setActivePlayers({value: {}}); // Clear stages
+
+  cardType.cleanupPendingState(context);
 
   if (!pendingCardPlay.isNoped) {
     cardType.onPlayed(context, pendingCardPlay.card);
