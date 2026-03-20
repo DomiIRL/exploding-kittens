@@ -14,20 +14,21 @@
   justify-content: center;
   align-items: center;
   gap: calc(var(--scale) * 0.5);
-  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
   border: calc(var(--scale) * 0.2) solid var(--color-accent);
   border-radius: calc(var(--scale) * 1);
   padding: calc(var(--scale) * 0.4) calc(var(--scale) * 1);
-  box-shadow: 0 4px 12px var(--color-shadow-dark),
-              0 0 10px var(--color-accent-glow-medium);
-  white-space: nowrap;
-}
 
-.turn-badge.is-self .turn-badge-content {
+  white-space: nowrap;
   background: linear-gradient(135deg, var(--color-accent) 0%, var(--color-accent-dark) 100%);
   border-color: var(--color-accent-light);
   box-shadow: 0 4px 12px var(--color-shadow-dark),
-              0 0 15px var(--color-accent-glow-strong);
+  0 0 15px var(--color-accent-glow-strong);
+}
+
+.turn-badge.is-self .turn-badge-content {
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+  box-shadow: 0 4px 12px var(--color-shadow-dark),
+  0 0 10px var(--color-accent-glow-medium);
 }
 
 .turn-badge-icon {
