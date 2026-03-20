@@ -4,7 +4,6 @@ import {GameLogic} from "../wrappers/game-logic";
 
 
 export const playCard = (context: FnContext, cardIndex: number) => {
-  const {events} = context;
   const game = new GameLogic(context);
   const player = game.actingPlayer;
   const hand = player.hand;
@@ -49,7 +48,7 @@ export const playCard = (context: FnContext, cardIndex: number) => {
     card: {...cardToPlay},
     playedBy: actingPlayerID,
     startedAtMs,
-    expiresAtMs: startedAtMs + game.gameRules.nopeTimerMs,
+    expiresAtMs: startedAtMs + game.gameRules.pendingTimerMs,
     lastNopeBy: null,
     nopeCount: 0,
     isNoped: false,
@@ -66,12 +65,7 @@ export const playCard = (context: FnContext, cardIndex: number) => {
     }
   }
 
-  events.setActivePlayers({
-    currentPlayer: 'awaitingNowCards',
-    others: {
-      stage: 'respondWithNowCard',
-    },
-  });
+  cardType.setupPendingState(context);
 };
 
 export const playNowCard = (context: FnContext, cardIndex: number) => {

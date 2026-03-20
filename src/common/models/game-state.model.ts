@@ -8,7 +8,7 @@ export interface ClientGameState {
 export interface GameRules {
   spectatorsSeeCards: boolean;
   openCards: boolean;
-  nopeTimerMs: number;
+  pendingTimerMs: number;
 }
 
 export interface PendingCardPlay {

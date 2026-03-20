@@ -23,6 +23,16 @@ export class CardType {
     return false;
   }
 
+
+  setupPendingState(context: FnContext) {
+    context.events.setActivePlayers({
+      currentPlayer: 'awaitingNowCards',
+      others: {
+        stage: 'respondWithNowCard',
+      },
+    });
+  }
+
   cleanupPendingState(context: FnContext) {
     context.events.setActivePlayers({value: {}});
   }

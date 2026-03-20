@@ -9,6 +9,7 @@ import GameView from '../game-view/GameView';
 import {preloadCardImages} from '../../utils/preloadImages';
 import { MatchDetailsProvider } from '../../context/MatchDetailsContext';
 import { SERVER_URL, GAME_NAME } from '../../config';
+import './App.css';
 
 console.log('🔗 API URL:', SERVER_URL);
 
