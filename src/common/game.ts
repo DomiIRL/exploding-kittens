@@ -91,7 +91,6 @@ export const ExplodingKittens: Game<GameState, PluginAPIs> = {
     },
     play: {
       turn: {
-        minMoves: 1,
         order: turnOrder,
         onEnd: ({G}: any) => {
           // Decrement the turns remaining counter

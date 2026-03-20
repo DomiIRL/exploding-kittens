@@ -184,7 +184,7 @@ export default function ExplodingKittensBoard({
           isSelf: explosion.isSelf,
           onComplete: explosion.clearEvent
         }}
-        winnerID={ctx.gameover?.winner}
+        winnerID={G.winner}
         onCloseFutureView={handleCloseFutureView}
       />
 
