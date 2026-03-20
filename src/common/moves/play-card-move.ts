@@ -139,8 +139,7 @@ export const resolvePendingCard = (context: FnContext) => {
 
   const cardType = cardTypeRegistry.get(pendingCardPlay.card.name);
   if (!cardType) {
-    context.events.setActivePlayers({value: {}});
-    throw new Error('Unknown card type');
+    return;
   }
 
   cardType.cleanupPendingState(context);
