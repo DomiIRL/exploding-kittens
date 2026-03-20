@@ -2,7 +2,6 @@ import './Board.css';
 import {BoardProps} from 'boardgame.io/react';
 import {GameState} from '../../../common';
 import {useCardAnimations} from '../../hooks/useCardAnimations';
-import {useExplosionEvents} from '../../hooks/useExplosionEvents';
 import {useGameState} from '../../hooks/useGameState';
 import {BoardPlugins} from '../../models/client.model';
 import {GameContext, PlayerStateBundle, OverlayStateBundle} from '../../types/component-props';
@@ -106,9 +105,6 @@ export default function ExplodingKittensBoard({
   // Handle card animations
   const {AnimationLayer, triggerCardMovement} = useCardAnimations(G, allPlayers, playerID);
 
-  // Handle explosion/defuse events
-  const explosion = useExplosionEvents(G, allPlayers, playerID, matchDetails?.players);
-
   /**
    * Handle player selection for stealing/requesting a card
    */
@@ -178,12 +174,6 @@ export default function ExplodingKittensBoard({
         gameContext={gameContext}
         playerState={playerState}
         overlayState={overlayState}
-        explosionEvent={{
-          event: explosion.event,
-          playerName: explosion.playerName,
-          isSelf: explosion.isSelf,
-          onComplete: explosion.clearEvent
-        }}
         winnerID={G.winner}
         onCloseFutureView={handleCloseFutureView}
       />

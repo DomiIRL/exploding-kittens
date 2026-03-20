@@ -1,20 +1,17 @@
 import WinnerOverlay from '../winner-overlay/WinnerOverlay';
 import DeadOverlay from '../dead-overlay/DeadOverlay';
 import PlayerSelectionOverlay from '../player-selection-overlay/PlayerSelectionOverlay';
-import ExplosionOverlay from '../explosion-overlay/ExplosionOverlay';
 import SeeTheFutureOverlay from '../see-future-overlay/SeeTheFutureOverlay';
 import {
   GameContext,
   PlayerStateBundle,
   OverlayStateBundle,
-  ExplosionEventBundle
 } from '../../../types/component-props';
 
 interface OverlayManagerProps {
   gameContext: GameContext;
   playerState: PlayerStateBundle;
   overlayState: OverlayStateBundle;
-  explosionEvent: ExplosionEventBundle;
   winnerID: string | null;
   onCloseFutureView: () => void;
 }
@@ -26,7 +23,6 @@ export default function OverlayManager({
   gameContext,
   playerState,
   overlayState,
-  explosionEvent,
   winnerID,
   onCloseFutureView,
 }: OverlayManagerProps) {
@@ -47,12 +43,6 @@ export default function OverlayManager({
 
   return (
     <>
-      <ExplosionOverlay
-        event={explosionEvent.event}
-        playerName={explosionEvent.playerName}
-        isSelf={explosionEvent.isSelf}
-        onComplete={explosionEvent.onComplete}
-      />
       {isSelectingPlayer && <PlayerSelectionOverlay message={selectionMessage} />}
       {isChoosingCardToGive && <PlayerSelectionOverlay message="You were chosen to gift a card. Pick one." />}
       {isViewingFuture && (

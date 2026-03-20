@@ -35,12 +35,12 @@ export const drawCard = (context: FnContext) => {
       return;
     }
 
-    // No Defuse - Player Explodes!
-    game.discardCard(cardToDraw);
-    
     // Discard all cards from hand
     const handCards = player.removeAllCardsFromHand(); 
     handCards.forEach(c => game.discardCard(c));
+
+    // No Defuse - Player Explodes!
+    game.discardCard(cardToDraw);
     
     player.eliminate();
     events.endTurn();
