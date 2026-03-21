@@ -4,7 +4,7 @@ import {CatCard} from '../entities/card-types/cat-card';
 import {ExplodingKittenCard} from '../entities/card-types/exploding-kitten-card';
 import {SkipCard} from "../entities/card-types/skip-card";
 import {ShuffleCard} from "../entities/card-types/shuffle-card";
-import {Registry} from "../registry/registry";
+import {Registry} from "./registry";
 import {AttackCard} from "../entities/card-types/attack-card";
 import {NopeCard} from "../entities/card-types/nope-card";
 import {SeeTheFutureCard} from "../entities/card-types/see-the-future-card";

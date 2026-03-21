@@ -1,7 +1,8 @@
 import {ICard, IPlayer} from '../models';
 import {TheGame} from "./game";
 import {Card} from "./card";
-import {EXPLODING_KITTEN, DEFUSE} from "../constants/card-types";
+import {EXPLODING_KITTEN, DEFUSE} from "../registries/card-registry";
+import {DEFUSE_EXPLODING_KITTEN} from "../constants/stages";
 
 export class Player {
   constructor(
@@ -138,21 +139,20 @@ export class Player {
        throw new Error(`Invalid card index: ${cardIndex}`);
     }
 
-    const cardData = this.hand[cardIndex];
-    const card = new Card(this.game, cardData);
+    const card = this.hand[cardIndex];
     
     if (!card.type.canBePlayed(this.game, card)) {
        throw new Error(`Card cannot be played: ${card.name}`);
     }
 
     // Remove card from hand
-    const playedCardData = this.removeCardAt(cardIndex);
-    if (!playedCardData) return; // Should not happen
+    const playedCard = this.removeCardAt(cardIndex);
+    if (!playedCard) return; // Should not happen
 
-    this.game.piles.discardCard(playedCardData);
+    this.game.piles.discardCard(playedCard);
     card.afterPlay();
 
-    if (card.isNowCard()) {
+    if (card.type.isNowCard()) {
        card.play();
        return;
     }
@@ -160,7 +160,7 @@ export class Player {
     // Setup pending state
     const startedAtMs = Date.now();
     this.game.pendingCardPlay = {
-        card: {...playedCardData},
+        card: {...playedCard.data},
         playedBy: this.id,
         startedAtMs, 
         expiresAtMs: startedAtMs + (this.game.gameRules.pendingTimerMs || 5000),
@@ -183,7 +183,7 @@ export class Player {
       if (cardData.name === EXPLODING_KITTEN.name) {
           const hasDefuse = this.hasCard(DEFUSE.name);
           if (hasDefuse) {
-              this.game.turnManager.setStage('defuseExplodingKitten');
+              this.game.turnManager.setStage(DEFUSE_EXPLODING_KITTEN);
           } else {
               this.eliminate();
               this.game.turnManager.endTurn();

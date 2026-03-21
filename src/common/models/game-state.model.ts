@@ -33,6 +33,5 @@ export interface IGameState {
   turnsRemaining: number;
   gameRules: IGameRules;
   deckType: string;
-  client: IClientGameState;
-  lobbyReady: boolean;
+  client: IClientGameState; // todo: remove
 }

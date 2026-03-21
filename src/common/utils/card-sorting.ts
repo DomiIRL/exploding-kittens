@@ -1,5 +1,5 @@
 import type {ICard} from '../models';
-import {cardTypeRegistry} from '../constants/card-types';
+import {cardTypeRegistry} from '../registries/card-registry';
 
 /**
  * Sorts card-types by card type sort order and card index

@@ -11,26 +11,55 @@ import {useEffect} from 'react';
 import {Chat} from '../chat/Chat';
 import {useMatchDetails} from "../../context/MatchDetailsContext.tsx";
 import {IClientContext} from "../../types/client-context.ts";
+import type { BoardProps } from 'boardgame.io/react';
+import {IContext, IGameState} from "../../../common";
+import {TheGameClient} from "../../entities/game-client.ts";
+import {GameProvider} from "../../context/GameContext.tsx";
 
-/**
- * Main game board component
- */
-export default function ExplodingKittensBoard({
-  ctx,
-  G,
-  moves,
-  plugins,
-  playerID,
-  chatMessages,
-  sendChatMessage
-}: IClientContext) {
+export default function ExplodingKittensBoard(props: BoardProps<IGameState> & { plugins: any }) {
+
+  const context: IContext = {
+    G: props.G,
+    ctx: props.ctx,
+    playerID: props.playerID || undefined,
+    matchID: props.matchID,
+    events: props.events as IContext['events'],
+    random: props.plugins.random,
+    player: props.plugins.player,
+  };
+
+  const game = new TheGameClient(
+    context,
+    props.moves,
+    props.matchID,
+    props.playerID || null,
+    props.matchData,
+    props.sendChatMessage,
+    props.chatMessages,
+    props.isMultiplayer
+  );
+
+  // Create clientContext from BoardProps
+  const clientContext: IClientContext = {
+    ...props,
+    plugins: props.plugins,
+    player: props.plugins?.player?.data || {},
+  };
+
+  const {
+    ctx,
+    G,
+    moves,
+    plugins,
+    playerID,
+    chatMessages,
+    sendChatMessage
+  } = clientContext;
   const { matchDetails, setPollingInterval } = useMatchDetails();
 
-  const isInLobby = ctx.phase === 'lobby';
-
   useEffect(() => {
-    setPollingInterval(isInLobby ? 500 : 3000);
-  }, [isInLobby, setPollingInterval]);
+    setPollingInterval(game.isLobbyPhase() ? 500 : 3000);
+  }, [game.isLobbyPhase(), setPollingInterval]);
 
   const allPlayers = plugins.player.data.players;
 
@@ -45,7 +74,7 @@ export default function ExplodingKittensBoard({
 
   // Derive game state properties
   const gameState = useGameState(ctx, G, allPlayers, playerID ?? null);
-  
+
   const selfPlayer = gameState.selfPlayerId !== null && allPlayers[gameState.selfPlayerId] ? allPlayers[gameState.selfPlayerId] : null;
   const selfHand = selfPlayer ? selfPlayer.hand : [];
 
@@ -61,7 +90,7 @@ export default function ExplodingKittensBoard({
     };
 
     const remainingMs = Math.max(0, G.pendingCardPlay.expiresAtMs - Date.now());
-    
+
     // Primary trigger
     const timeoutId = window.setTimeout(checkAndResolve, remainingMs);
 
@@ -143,52 +172,54 @@ export default function ExplodingKittensBoard({
 
   return (
     <>
-      <AnimationLayer />
+      <GameProvider game={game}>
+        <AnimationLayer />
 
-      <div className={`board-container ${playerState.isSelfSpectator ? 'hand-interactable' : ''} ${playerState.isSelfDead ? 'dimmed' : ''} ${isInLobby ? 'pointer-events-none' : ''}`}>
-        <div className={"game-elements"}>
-          <Table gameContext={gameContext} playerHand={selfHand} />
+        <div className={`board-container ${playerState.isSelfSpectator ? 'hand-interactable' : ''} ${playerState.isSelfDead ? 'dimmed' : ''} ${game.isLobbyPhase() ? 'pointer-events-none' : ''}`}>
+          <div className={"game-elements"}>
+            <Table gameContext={gameContext} playerHand={selfHand} />
 
-          <PlayerList
-            alivePlayersSorted={gameState.alivePlayersSorted}
-            playerState={playerState}
-            overlayState={overlayState}
-            isInNowCardStage={gameState.isInNowCardStage}
-            animationCallbacks={{triggerCardMovement}}
-            interactionHandlers={{
-              onPlayerSelect: handlePlayerSelect,
-              onCardGive: handleCardGive
-            }}
-            gameContext={gameContext}
-          />
+            <PlayerList
+              alivePlayersSorted={gameState.alivePlayersSorted}
+              playerState={playerState}
+              overlayState={overlayState}
+              isInNowCardStage={gameState.isInNowCardStage}
+              animationCallbacks={{triggerCardMovement}}
+              interactionHandlers={{
+                onPlayerSelect: handlePlayerSelect,
+                onCardGive: handleCardGive
+              }}
+              gameContext={gameContext}
+            />
+          </div>
         </div>
-      </div>
 
-      <OverlayManager
-        gameContext={gameContext}
-        playerState={playerState}
-        overlayState={overlayState}
-        winnerID={G.winner}
-        onCloseFutureView={handleCloseFutureView}
-      />
-
-      {isInLobby && (
-        <LobbyOverlay
-          playerID={playerID}
-          onStartGame={handleStartGame}
+        <OverlayManager
+          gameContext={gameContext}
+          playerState={playerState}
+          overlayState={overlayState}
+          winnerID={G.winner}
+          onCloseFutureView={handleCloseFutureView}
         />
-      )}
 
-      <GameStatusList
-        gameContext={gameContext}
-        playerState={playerState}
-      />
-      
-      <Chat
-        playerID={playerID ?? null}
-        chatMessages={chatMessages}
-        sendChatMessage={sendChatMessage}
-      />
+        {game.isLobbyPhase() && (
+          <LobbyOverlay
+            playerID={playerID}
+            onStartGame={handleStartGame}
+          />
+        )}
+
+        <GameStatusList
+          gameContext={gameContext}
+          playerState={playerState}
+        />
+
+        <Chat
+          playerID={playerID ?? null}
+          chatMessages={chatMessages}
+          sendChatMessage={sendChatMessage}
+        />
+      </GameProvider>
     </>
   );
 }

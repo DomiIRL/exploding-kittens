@@ -1,6 +1,7 @@
 import {IContext} from "../models";
 import {PlayerID} from "boardgame.io";
 import {TheGame} from "../entities/game";
+import {CHOOSE_CARD_TO_GIVE} from "../constants/stages";
 
 /**
  * Request a card from a target player (favor card - first stage)
@@ -15,7 +16,7 @@ export const requestCard = (context: IContext, targetPlayerId: PlayerID) => {
   game.turnManager.endStage();
   game.turnManager.setActivePlayers({
     value: {
-      [targetPlayerId]: 'chooseCardToGive',
+      [targetPlayerId]: CHOOSE_CARD_TO_GIVE,
     },
   });
 };
@@ -29,7 +30,7 @@ export const giveCard = (context: IContext, cardIndex: number) => {
 
   // Find who is giving the card (the player in the chooseCardToGive stage)
   const givingPlayerId = Object.keys(ctx.activePlayers || {}).find(
-    playerId => ctx.activePlayers?.[playerId] === 'chooseCardToGive'
+    playerId => ctx.activePlayers?.[playerId] === CHOOSE_CARD_TO_GIVE
   );
 
   if (!givingPlayerId) {

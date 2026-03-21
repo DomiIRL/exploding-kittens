@@ -1,6 +1,7 @@
 import type {ICard} from '../models';
 import {TheGame} from './game';
 import {Card} from './card';
+import {AWAITING_NOW_CARDS, RESPOND_WITH_NOW_CARD} from "../constants/stages";
 
 export class CardType {
   name: string;
@@ -21,16 +22,16 @@ export class CardType {
     return true;
   }
 
-  isNowCard(_game: TheGame, _card: Card): boolean {
+  isNowCard(): boolean {
     return false;
   }
 
 
   setupPendingState(game: TheGame) {
     game.turnManager.setActivePlayers({
-      currentPlayer: 'awaitingNowCards',
+      currentPlayer: AWAITING_NOW_CARDS,
       others: {
-        stage: 'respondWithNowCard',
+        stage: RESPOND_WITH_NOW_CARD,
       },
     });
   }

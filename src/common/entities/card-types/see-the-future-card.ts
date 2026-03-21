@@ -1,6 +1,7 @@
 import {CardType} from '../card-type';
 import {TheGame} from '../game';
 import {Card} from '../card';
+import {VIEWING_FUTURE} from "../../constants/stages";
 
 export class SeeTheFutureCard extends CardType {
 
@@ -10,7 +11,7 @@ export class SeeTheFutureCard extends CardType {
 
   onPlayed(game: TheGame, _card: Card) {
     // Set stage to view the future
-    game.turnManager.setStage("viewingFuture")
+    game.turnManager.setStage(VIEWING_FUTURE)
   }
 
 

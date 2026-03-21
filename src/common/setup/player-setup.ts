@@ -1,6 +1,6 @@
 import type {ICard, IGameState, IPlayer, IPlayers} from '../models';
 import type {DeckType} from '../entities/deck-type';
-import {cardTypeRegistry} from "../constants/card-types";
+import {cardTypeRegistry} from "../registries/card-registry";
 import {CardType} from "../entities/card-type";
 
 export const createPlayerState = (): IPlayer => ({

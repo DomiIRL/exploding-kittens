@@ -1,10 +1,10 @@
 import {Player} from './player';
 import {TheGame} from "./game";
 import {PlayerID} from "boardgame.io";
-import {IPlayerAPI} from "../models";
+import {IPlayers} from "../models";
 
 export class Players {
-  constructor(private game: TheGame, private playerAPI: IPlayerAPI) {}
+  constructor(private game: TheGame, private players: IPlayers) {}
 
   /**
    * Get a player wrapper instance for a specific player ID.
@@ -12,7 +12,7 @@ export class Players {
    */
   getPlayer(id: string): Player {
     // boardgame.io player plugin structure
-    const playerData = this.playerAPI.state?.[id];
+    const playerData = this.players?.[id];
     if (!playerData) {
       throw new Error(`Player data not found for ID: ${id}`);
     }
@@ -39,7 +39,7 @@ export class Players {
    * Get all players
    */
   get allPlayers(): Player[] {
-    const playerIDs = Object.keys(this.playerAPI.state || {});
+    const playerIDs = Object.keys(this.players || {});
     return playerIDs.map(id => this.getPlayer(id));
   }
 

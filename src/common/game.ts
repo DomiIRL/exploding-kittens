@@ -12,6 +12,8 @@ import {dealHands} from './setup/player-setup';
 import {defuseExplodingKitten} from "./moves/defuse-exploding-kitten";
 import {TheGame} from "./entities/game";
 import {stealCard} from "./moves/steal-card-move";
+import {GAME_OVER, PLAY} from "./constants/phases";
+import {VIEWING_FUTURE, WAITING_FOR_START} from "./constants/stages";
 
 export const ExplodingKittens: Game<IGameState, IPluginAPIs> = {
   name: "Exploding-Kittens",
@@ -28,7 +30,7 @@ export const ExplodingKittens: Game<IGameState, IPluginAPIs> = {
 
     let viewableDrawPile: ICard[] = [];
 
-    if (ctx.activePlayers?.[playerID!] === 'viewingFuture') {
+    if (ctx.activePlayers?.[playerID!] === VIEWING_FUTURE) {
       viewableDrawPile = G.piles.drawPile.slice(0, 3);
     }
 
@@ -47,10 +49,6 @@ export const ExplodingKittens: Game<IGameState, IPluginAPIs> = {
     lobby: {
       start: true,
       next: 'play',
-      onBegin: ({G}: IContext) => {
-        // Reset game state for lobby
-        G.lobbyReady = false;
-      },
       onEnd: (context: IContext) => {
         const game = new TheGame(context)
 
@@ -63,24 +61,16 @@ export const ExplodingKittens: Game<IGameState, IPluginAPIs> = {
 
         game.piles.state.drawPile = pile.sort(() => Math.random() - 0.5);
       },
-      endIf: ({G}) => {
-        // Move to play phase only when lobbyReady flag is explicitly set
-        if (G.lobbyReady) {
-          return {next: 'play'};
-        }
-      },
       turn: {
         activePlayers: {
-          all: 'waitingForStart',
+          all: WAITING_FOR_START,
         },
         stages: {
-          'waitingForStart': {
+          waitingForStart: {
             moves: {
               startGame: {
-                move: ({G}: IContext) => {
-                  // Need to trust players since there is no api to see who is currently connected
-                  // Only the client has that info exposed by boardgame.io for some reason
-                  G.lobbyReady = true;
+                move: (context: IContext) => {
+                  context.events.setPhase(PLAY);
                 },
                 client: false,
               },
@@ -179,7 +169,7 @@ export const ExplodingKittens: Game<IGameState, IPluginAPIs> = {
 
         // End phase when only one player is alive
         if (alivePlayers.length === 1) {
-          return {next: 'gameover'};
+          return {next: GAME_OVER};
         }
       },
       onEnd: ({G, player}) => {
@@ -193,7 +183,7 @@ export const ExplodingKittens: Game<IGameState, IPluginAPIs> = {
         }
       },
     },
-    gameover: {},
+    gameOver: {},
   },
 };
 

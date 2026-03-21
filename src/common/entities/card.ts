@@ -1,6 +1,6 @@
 import {ICard} from '../models';
 import {TheGame} from './game';
-import {cardTypeRegistry} from '../constants/card-types';
+import {cardTypeRegistry} from '../registries/card-registry';
 import {CardType} from './card-type';
 
 export class Card {
@@ -13,6 +13,10 @@ export class Card {
   ) {
     this.name = _data.name;
     this.index = _data.index;
+  }
+
+  get data(): ICard {
+    return {name: this.name, index: this.index};
   }
 
   get type(): CardType {
@@ -31,10 +35,6 @@ export class Card {
 
   afterPlay(): void {
     this.type.afterPlay(this.game, this);
-  }
-  
-  isNowCard(): boolean {
-    return this.type.isNowCard(this.game, this);
   }
 }
 

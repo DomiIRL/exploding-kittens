@@ -10,7 +10,7 @@ import {
   SEE_THE_FUTURE,
   SHUFFLE,
   SKIP,
-} from '../../constants/card-types';
+} from '../../registries/card-registry';
 
 const STARTING_HAND_SIZE = 7;
 const TOTAL_DEFUSE_CARDS = 6;

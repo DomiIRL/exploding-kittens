@@ -26,7 +26,6 @@ export const setupGame = (_context: any, setupData?: SetupData): IGameState => {
     deckType: setupData?.deckType ?? 'original',
     client: {
       drawPileLength: 0
-    },
-    lobbyReady: false,
+    }
   };
 };

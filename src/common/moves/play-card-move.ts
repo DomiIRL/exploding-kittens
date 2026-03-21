@@ -3,11 +3,7 @@ import {TheGame} from "../entities/game";
 
 export const playCard = (context: IContext, cardIndex: number) => {
   const game = new TheGame(context);
-  try {
-    game.players.actingPlayer.playCard(cardIndex);
-  } catch (e) {
-    console.error('Failed to play card', e);
-  }
+  game.players.actingPlayer.playCard(cardIndex);
 };
 
 export const playNowCard = (context: IContext, cardIndex: number) => {

@@ -2,6 +2,7 @@ import {CardType} from '../card-type';
 import {TheGame} from '../game';
 import {Card} from '../card';
 import {requestCard} from '../../moves/favor-card-move';
+import {CHOOSE_PLAYER_TO_REQUEST_FROM} from "../../constants/stages";
 
 export class FavorCard extends CardType {
 
@@ -33,7 +34,7 @@ export class FavorCard extends CardType {
       requestCard(game.context, candidates[0].id);
     } else if (candidates.length > 1) {
       // Set stage to choose a player to request a card from
-      game.turnManager.setStage("choosePlayerToRequestFrom")
+      game.turnManager.setStage(CHOOSE_PLAYER_TO_REQUEST_FROM)
     }
 
   }

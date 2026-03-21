@@ -2,6 +2,7 @@ import {CardType} from '../card-type';
 import {TheGame} from '../game';
 import {Card} from '../card';
 import {stealCard} from "../../moves/steal-card-move";
+import {CHOOSE_PLAYER_TO_STEAL_FROM} from "../../constants/stages";
 
 export class CatCard extends CardType {
 
@@ -35,7 +36,7 @@ export class CatCard extends CardType {
       // Automatically choose the only valid opponent
       stealCard(game, candidates[0].id);
     } else if (candidates.length > 1) {
-      game.turnManager.setStage('choosePlayerToStealFrom');
+      game.turnManager.setStage(CHOOSE_PLAYER_TO_STEAL_FROM);
     }
   }
 

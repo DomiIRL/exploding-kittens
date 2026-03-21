@@ -24,10 +24,10 @@ export {
   DEFUSE,
   EXPLODING_KITTEN,
   cardTypeRegistry
-} from './constants/card-types';
+} from './registries/card-registry';
 
 // Constants - Decks
-export {ORIGINAL} from './constants/deck-types';
+export {ORIGINAL} from './registries/deck-registry';
 
 // Setup functions
 export {setupGame} from './setup/game-setup';

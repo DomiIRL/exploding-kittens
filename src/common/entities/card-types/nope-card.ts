@@ -9,7 +9,7 @@ export class NopeCard extends CardType {
     super(name);
   }
 
-  isNowCard(_game: TheGame, _card: Card): boolean {
+  isNowCard(): boolean {
     return true;
   }
 
