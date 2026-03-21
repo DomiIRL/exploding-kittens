@@ -1,5 +1,6 @@
 import {ICard, IPiles} from '../models';
 import {TheGame} from "./game";
+import {Card} from "./card";
 
 export class Piles {
   constructor(private game: TheGame, public state: IPiles) {
@@ -8,24 +9,28 @@ export class Piles {
   /**
    * Add a card to the discard pile
    */
-  discardCard(card: ICard): void {
+  discardCard(card: Card | ICard): void {
+    const cardData: ICard = {name: card.name, index: card.index};
+
     // Clone to avoid Proxy issues
-    this.state.discardPile.push({...card});
+    this.state.discardPile.push({...cardData});
   }
 
   /**
    * Get the last discarded card
    */
-  get lastDiscardedCard(): ICard | null {
+  get lastDiscardedCard(): Card | null {
     const pile = this.state.discardPile;
-    return pile.length > 0 ? pile[pile.length - 1] : null;
+    const iCard = pile[pile.length - 1];
+    return pile.length > 0 ? new Card(this.game, iCard) : null;
   }
 
   /**
    * Draw a card from the top of the draw pile
    */
-  drawCardFromPile(): ICard | undefined {
-    return this.state.drawPile.shift();
+  drawCardFromPile(): Card | null {
+    const shift = this.state.drawPile.shift();
+    return shift ? new Card(this.game, shift) : null;
   }
 
   /**

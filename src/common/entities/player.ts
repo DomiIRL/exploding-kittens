@@ -11,18 +11,10 @@ export class Player {
   ) {}
 
   /**
-   * Get the underlying raw state object.
-   * Useful if direct property access or modification is needed.
-   */
-  get state(): IPlayer {
-    return this._state;
-  }
-
-  /**
    * Get the player's hand of card-types
    */
-  get hand(): ICard[] {
-    return this._state.hand;
+  get hand(): Card[] {
+    return this._state.hand.map(c => new Card(this.game, c));
   }
 
   /**
@@ -64,9 +56,11 @@ export class Player {
   /**
    * Add a card to the player's hand
    */
-  addCard(card: ICard): void {
+  addCard(card: Card | ICard): void {
+    const cardData: ICard = {name: card.name, index: card.index};
+
     // Clone to avoid Proxy issues
-    this._state.hand.push({...card});
+    this._state.hand.push({...cardData});
     this._updateClientState();
   }
 
@@ -74,18 +68,18 @@ export class Player {
    * Remove a card at a specific index
    * @returns The removed card, or undefined if index invalid
    */
-  removeCardAt(index: number): ICard | undefined {
+  removeCardAt(index: number): Card | undefined {
     if (index < 0 || index >= this._state.hand.length) return undefined;
     const [card] = this._state.hand.splice(index, 1);
     this._updateClientState();
-    return card;
+    return new Card(this.game, card);
   }
 
   /**
    * Remove the first occurrence of a specific card type
    * @returns The removed card, or undefined if not found
    */
-  removeCard(cardName: string): ICard | undefined {
+  removeCard(cardName: string): Card | undefined {
     const index = this._state.hand.findIndex(c => c.name === cardName);
     if (index === -1) return undefined;
     return this.removeCardAt(index);
@@ -95,13 +89,13 @@ export class Player {
    * Remove all card-types of a specific type
    * @returns Array of removed card-types
    */
-  removeAllCards(cardName: string): ICard[] {
-    const removed: ICard[] = [];
+  removeAllCards(cardName: string): Card[] {
+    const removed: Card[] = [];
     // Iterate backwards to safely remove
     for (let i = this._state.hand.length - 1; i >= 0; i--) {
       if (this._state.hand[i].name === cardName) {
         const [card] = this._state.hand.splice(i, 1);
-        removed.push(card);
+        removed.push(new Card(this.game, card));
       }
     }
     if (removed.length > 0) {
@@ -114,11 +108,11 @@ export class Player {
    * Remove all card-types from hand
    * @returns Array of all removed card-types
    */
-  removeAllCardsFromHand(): ICard[] {
+  removeAllCardsFromHand(): Card[] {
     const removed = [...this._state.hand];
     this._state.hand = [];
     this._updateClientState();
-    return removed;
+    return removed.map(c => new Card(this.game, c));
   }
 
   eliminate(): void {
@@ -130,7 +124,7 @@ export class Player {
   /**
    * Transfers a card at specific index to another playerWrapper
    */
-  giveCard(cardIndex: number, recipient: Player): ICard {
+  giveCard(cardIndex: number, recipient: Player): Card {
     const card = this.removeCardAt(cardIndex);
     if (!card) {
        throw new Error("Card not found or invalid index");
@@ -145,7 +139,6 @@ export class Player {
     }
 
     const cardData = this.hand[cardIndex];
-    // Create Card wrapper
     const card = new Card(this.game, cardData);
     
     if (!card.type.canBePlayed(this.game, card)) {
@@ -164,7 +157,7 @@ export class Player {
        return;
     }
 
-    // Setup pending state for non-immediate cards
+    // Setup pending state
     const startedAtMs = Date.now();
     this.game.pendingCardPlay = {
         card: {...playedCardData},
@@ -176,8 +169,6 @@ export class Player {
         isNoped: false
     };
 
-    // Note: card.type.setupPendingState logic might need valid PendingCardPlay to be set first? 
-    // The original setupPendingState in CardType calls setActivePlayers.
     card.type.setupPendingState(this.game);
   }
 
@@ -225,12 +216,12 @@ export class Player {
       this.game.turnManager.endTurn();
   }
 
-  stealRandomCardFrom(target: Player): ICard {
+  stealRandomCardFrom(target: Player): Card {
       const count = target.getCardCount();
       if (count === 0) throw new Error("Target has no cards");
       
       // Use game context random
-      const index = Math.floor(this.game.context.random.Number() * count);
+      const index = Math.floor(this.game.random.Number() * count);
       // Give card from target to this player
       return target.giveCard(index, this);
   }
