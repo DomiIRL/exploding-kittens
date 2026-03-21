@@ -1,4 +1,4 @@
-import {IGameState} from '../models/game-state.model';
+import {IGameState} from '../models';
 
 /**
  * Validates if a player can play a Nope card against the current game state.
@@ -24,10 +24,6 @@ export function validateNope(G: IGameState, playerID: string | null | undefined)
   
   // Check expiration
   // Note: Date.now() on client might differ from server, but usually this is acceptable for UI state
-  if (Date.now() > pending.expiresAtMs) {
-    return false;
-  }
-  
-  return true;
+  return Date.now() <= pending.expiresAtMs;
 }
 

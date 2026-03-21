@@ -57,11 +57,7 @@ export class Player {
 
     // Check expiration
     // Note: Date.now() on client might differ from server, but usually this is acceptable for UI state
-    if (Date.now() > pending.expiresAtMs) {
-      return false;
-    }
-
-    return true;
+    return Date.now() <= pending.expiresAtMs;
   }
 
   /**
