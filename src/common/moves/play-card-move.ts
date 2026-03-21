@@ -1,10 +1,10 @@
-import {FnContext} from "../models";
+import {IContext} from "../models";
 import {cardTypeRegistry, NOPE} from "../constants/card-types";
-import {GameLogic} from "../wrappers/game-logic";
+import {Game} from "../entities/game";
 
 
-export const playCard = (context: FnContext, cardIndex: number) => {
-  const game = new GameLogic(context);
+export const playCard = (context: IContext, cardIndex: number) => {
+  const game = new Game(context);
   const player = game.actingPlayer;
   const hand = player.hand;
 
@@ -35,12 +35,12 @@ export const playCard = (context: FnContext, cardIndex: number) => {
   cardType.afterPlay(context, cardToPlay);
 
   if (cardType.isNowCard(context, cardToPlay)) {
-    // Immediate resolution for Now cards (like Nope)
+    // Immediate resolution for Now card-types (like Nope)
     cardType.onPlayed(context, cardToPlay);
     return;
   }
 
-  // For normal action cards, setup pending state
+  // For normal action card-types, setup pending state
   const actingPlayerID = player.id;
   const startedAtMs = Date.now();
   
@@ -54,7 +54,7 @@ export const playCard = (context: FnContext, cardIndex: number) => {
     isNoped: false,
   };
 
-  // Skip wait if playing with open cards and no one else can Nope
+  // Skip wait if playing with open card-types and no one else can Nope
   if (game.gameRules.openCards) {
     const otherPlayers = game.allPlayers.filter(p => p.id !== actingPlayerID && p.isAlive);
     const canSomeoneNope = otherPlayers.some(p => p.hasCard(NOPE.name));
@@ -68,8 +68,8 @@ export const playCard = (context: FnContext, cardIndex: number) => {
   cardType.setupPendingState(context);
 };
 
-export const playNowCard = (context: FnContext, cardIndex: number) => {
-  const game = new GameLogic(context);
+export const playNowCard = (context: IContext, cardIndex: number) => {
+  const game = new Game(context);
   const player = game.actingPlayer;
   const hand = player.hand;
 
@@ -96,7 +96,7 @@ export const playNowCard = (context: FnContext, cardIndex: number) => {
   game.discardCard(cardToPlay);
   cardType.onPlayed(context, cardToPlay);
 
-  // Optimization: If open cards are enabled and no one else can Nope back, resolve immediately
+  // Optimization: If open card-types are enabled and no one else can Nope back, resolve immediately
   if (game.gameRules.openCards) {
     const pending = game.pendingCardPlay;
     if (pending) {
@@ -113,8 +113,8 @@ export const playNowCard = (context: FnContext, cardIndex: number) => {
   }
 };
 
-export const resolvePendingCard = (context: FnContext) => {
-  const game = new GameLogic(context);
+export const resolvePendingCard = (context: IContext) => {
+  const game = new Game(context);
   const pendingCardPlay = game.pendingCardPlay;
 
   // Check if we have a pending card to resolve

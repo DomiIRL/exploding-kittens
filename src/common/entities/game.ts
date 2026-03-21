@@ -1,34 +1,36 @@
-import {FnContext} from '../models';
-import {PlayerWrapper} from './player-wrapper';
-import {DeckLogic} from './deck-logic';
-import {GameStateLogic} from './game-state-logic';
-import {PlayerLogic} from './player-logic';
-import {Card} from '../models';
-import {PendingCardPlay, GameRules} from '../models';
+import {IContext} from '../models';
+import {Player} from './player';
+import {Piles} from './piles';
+import {GameState} from './game-state';
+import {Players} from './players';
+import {ICard} from '../models';
+import {IPendingCardPlay, IGameRules} from '../models';
 
-export class GameLogic {
-  public readonly deck: DeckLogic;
-  public readonly state: GameStateLogic;
-  public readonly players: PlayerLogic;
+export class Game {
+  public readonly context: IContext;
+  public readonly deck: Piles;
+  public readonly state: GameState;
+  public readonly players: Players;
 
-  constructor(context: FnContext) {
-    this.deck = new DeckLogic(context);
-    this.state = new GameStateLogic(context);
-    this.players = new PlayerLogic(context);
+  constructor(context: IContext) {
+    this.context = context;
+    this.deck = new Piles(this);
+    this.state = new GameState(this);
+    this.players = new Players(this);
   }
 
   /**
    * Get a player wrapper instance for a specific player ID.
    * Throws if player data not found.
    */
-  getPlayer(id: string): PlayerWrapper {
+  getPlayer(id: string): Player {
     return this.players.getPlayer(id);
   }
 
   /**
    * Get a wrapper for the current player based on context.currentPlayer
    */
-  get currentPlayer(): PlayerWrapper {
+  get currentPlayer(): Player {
     return this.players.currentPlayer;
   }
 
@@ -36,49 +38,49 @@ export class GameLogic {
    * Get a wrapper for the player executing the move (if playerID available in context)
    * Falls back to currentPlayer if playerID not set
    */
-  get actingPlayer(): PlayerWrapper {
+  get actingPlayer(): Player {
     return this.players.actingPlayer;
   }
 
   /**
    * Get all players as wrappers
    */
-  get allPlayers(): PlayerWrapper[] {
+  get allPlayers(): Player[] {
     return this.players.allPlayers;
   }
 
   /**
    * Get pending card play
    */
-  get pendingCardPlay(): PendingCardPlay | null {
+  get pendingCardPlay(): IPendingCardPlay | null {
     return this.state.pendingCardPlay;
   }
 
   /**
    * Add a card to the discard pile
    */
-  discardCard(card: Card): void {
+  discardCard(card: ICard): void {
     this.deck.discardCard(card);
   }
 
   /**
    * Get the last discarded card
    */
-  get lastDiscardedCard(): Card | null {
+  get lastDiscardedCard(): ICard | null {
     return this.deck.lastDiscardedCard;
   }
 
   /**
    * Draw a card from the top of the draw pile
    */
-  drawCardFromPile(): Card | undefined {
+  drawCardFromPile(): ICard | undefined {
     return this.deck.drawCardFromPile();
   }
 
   /**
    * Insert a card into the draw pile at a specific index
    */
-  insertCardIntoDrawPile(card: Card, index: number): void {
+  insertCardIntoDrawPile(card: ICard, index: number): void {
     this.deck.insertCardIntoDrawPile(card, index);
   }
 
@@ -89,7 +91,7 @@ export class GameLogic {
     return this.deck.drawPileSize;
   }
 
-  set pendingCardPlay(pending: PendingCardPlay | null) {
+  set pendingCardPlay(pending: IPendingCardPlay | null) {
     this.state.pendingCardPlay = pending;
   }
 
@@ -97,15 +99,15 @@ export class GameLogic {
     this.state.lobbyReady = ready;
   }
 
-  get gameRules(): GameRules {
+  get gameRules(): IGameRules {
     return this.state.gameRules;
   }
 
   /**
    * Validate if a player is a valid target for an action.
-   * Checks if target is alive, has cards, and is not the current player.
+   * Checks if target is alive, has card-types, and is not the current player.
    */
-  validateTarget(targetPlayerId: string): PlayerWrapper {
+  validateTarget(targetPlayerId: string): Player {
     return this.players.validateTarget(targetPlayerId);
   }
 }

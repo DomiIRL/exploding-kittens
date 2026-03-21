@@ -1,14 +1,14 @@
 import {CardType} from '../entities/card-type';
-import {DefuseCard} from '../entities/cards/defuse-card';
-import {CatCard} from '../entities/cards/cat-card';
-import {ExplodingKittenCard} from '../entities/cards/exploding-kitten-card';
-import {SkipCard} from "../entities/cards/skip-card";
-import {ShuffleCard} from "../entities/cards/shuffle-card";
+import {DefuseCard} from '../entities/card-types/defuse-card';
+import {CatCard} from '../entities/card-types/cat-card';
+import {ExplodingKittenCard} from '../entities/card-types/exploding-kitten-card';
+import {SkipCard} from "../entities/card-types/skip-card";
+import {ShuffleCard} from "../entities/card-types/shuffle-card";
 import {Registry} from "../registry/registry";
-import {AttackCard} from "../entities/cards/attack-card";
-import {NopeCard} from "../entities/cards/nope-card";
-import {SeeTheFutureCard} from "../entities/cards/see-the-future-card";
-import {FavorCard} from "../entities/cards/favor-card";
+import {AttackCard} from "../entities/card-types/attack-card";
+import {NopeCard} from "../entities/card-types/nope-card";
+import {SeeTheFutureCard} from "../entities/card-types/see-the-future-card";
+import {FavorCard} from "../entities/card-types/favor-card";
 
 // Registry for card models
 export const cardTypeRegistry = new Registry<CardType>();

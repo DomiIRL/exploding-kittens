@@ -1,5 +1,5 @@
-import type {Player} from './player.model';
+import type {IPlayer} from './player.model';
 
-export interface Players {
-  [playerID: string]: Player;
+export interface IPlayers {
+  [playerID: string]: IPlayer;
 }

@@ -7,7 +7,7 @@ export interface MatchDetails {
   players: MatchPlayer[];
   numPlayers: number;
   matchName: string;
-  gameover?: any;
+  gameOver?: any;
 }
 
 interface MatchDetailsContextType {
@@ -46,7 +46,7 @@ export function MatchDetailsProvider({ matchID, children }: MatchDetailsProvider
         matchName: match.setupData?.matchName || 'Match',
         numPlayers: match.setupData?.maxPlayers || match.players.length,
         players: match.players,
-        gameover: match.gameover,
+        gameOver: match.gameover,
       });
       setError(null);
     } catch (err: any) {

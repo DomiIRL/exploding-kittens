@@ -1,10 +1,10 @@
-import {FnContext} from "../models";
+import {IContext} from "../models";
 import {PlayerID} from "boardgame.io";
-import {GameLogic} from "../wrappers/game-logic";
+import {Game} from "../entities/game";
 
-export const stealCard = (context: FnContext, targetPlayerId: PlayerID) => {
+export const stealCard = (context: IContext, targetPlayerId: PlayerID) => {
   const {events, random} = context;
-  const game = new GameLogic(context);
+  const game = new Game(context);
 
   // Validate target player
   const targetPlayer = game.validateTarget(targetPlayerId);

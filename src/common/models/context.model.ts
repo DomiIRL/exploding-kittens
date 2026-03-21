@@ -1,14 +1,14 @@
-import type {GameState} from "./game-state.model";
+import type {IGameState} from "./game-state.model";
 import {Ctx} from "boardgame.io";
-import {PlayerAPI} from "./player-api.model";
+import {IPlayerAPI} from "./player-api.model";
 import {RandomAPI} from "boardgame.io/dist/types/src/plugins/random/random";
 import {EventsAPI} from "boardgame.io/dist/types/src/plugins/events/events";
 
-export type FnContext = Record<string, unknown> & {
-  G: GameState;
+export type IContext = Record<string, unknown> & {
+  G: IGameState;
   ctx: Ctx;
-  player: PlayerAPI;
-  events: EventsAPI; // TODO: Define proper type for events
+  player: IPlayerAPI;
+  events: EventsAPI;
   random: RandomAPI;
   playerID?: string;
 };

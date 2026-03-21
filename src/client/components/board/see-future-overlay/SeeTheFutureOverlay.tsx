@@ -1,8 +1,8 @@
 import './SeeTheFutureOverlay.css';
-import {Card} from '../../../../common';
+import {ICard} from '../../../../common';
 
 interface SeeTheFutureOverlayProps {
-  cards: Card[];
+  cards: ICard[];
   onClose: () => void;
 }
 

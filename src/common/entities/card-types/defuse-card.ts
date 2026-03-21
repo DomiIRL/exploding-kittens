@@ -1,5 +1,5 @@
 import {CardType} from '../card-type';
-import {Card, FnContext} from "../../models";
+import {ICard, IContext} from "../../models";
 
 export class DefuseCard extends CardType {
 
@@ -7,7 +7,7 @@ export class DefuseCard extends CardType {
     super(name);
   }
 
-  canBePlayed(_context: FnContext, _card: Card): boolean {
+  canBePlayed(_context: IContext, _card: ICard): boolean {
     return false;
   }
 

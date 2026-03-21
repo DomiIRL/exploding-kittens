@@ -1,4 +1,4 @@
-import type {GameState} from '../models';
+import type {IGameState} from '../models';
 
 interface SetupData {
   matchName?: string;
@@ -8,8 +8,8 @@ interface SetupData {
   deckType?: string;
 }
 
-export const setupGame = (_context: any, setupData?: SetupData): GameState => {
-  // Don't deal cards yet - will be done when lobby phase ends
+export const setupGame = (_context: any, setupData?: SetupData): IGameState => {
+  // Don't deal card-types yet - will be done when lobby phase ends
   return {
     winner: null,
     drawPile: [],

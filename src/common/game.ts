@@ -1,17 +1,18 @@
 import {Ctx, Game} from 'boardgame.io';
 import {createPlayerPlugin} from './plugins/player-plugin';
 import {setupGame} from './setup/game-setup';
-import type {Card, FnContext, GameState, PluginAPIs} from './models';
+import type {ICard, IContext, IGameState, IPluginAPIs} from './models';
 import {drawCard} from "./moves/draw-move";
 import {playCard, playNowCard, resolvePendingCard} from "./moves/play-card-move";
 import {stealCard} from "./moves/steal-card-move";
 import {requestCard, giveCard} from "./moves/favor-card-move";
 import {closeFutureView} from "./moves/see-future-move";
 import {turnOrder} from "./utils/turn-order";
-import {OriginalDeck} from './entities/decks/original-deck';
+import {OriginalDeck} from './entities/deck-types/original-deck';
 import {dealHands} from './setup/player-setup';
+import {defuseExplodingKitten} from "./moves/defuse-exploding-kitten";
 
-export const ExplodingKittens: Game<GameState, PluginAPIs> = {
+export const ExplodingKittens: Game<IGameState, IPluginAPIs> = {
   name: "Exploding-Kittens",
 
   plugins: [createPlayerPlugin()],
@@ -20,11 +21,11 @@ export const ExplodingKittens: Game<GameState, PluginAPIs> = {
 
   disableUndo: true,
 
-  playerView: ({G, ctx, playerID}: {G: GameState; ctx: Ctx; playerID: any}) => {
+  playerView: ({G, ctx, playerID}: {G: IGameState; ctx: Ctx; playerID: any}) => {
     // The player plugin's playerView will handle filtering the player data
     // We need to pass G through so it's available
 
-    let viewableDrawPile: Card[] = [];
+    let viewableDrawPile: ICard[] = [];
 
     if (ctx.activePlayers?.[playerID!] === 'viewingFuture') {
       viewableDrawPile = G.drawPile.slice(0, 3);
@@ -45,14 +46,14 @@ export const ExplodingKittens: Game<GameState, PluginAPIs> = {
     lobby: {
       start: true,
       next: 'play',
-      onBegin: ({G}: FnContext) => {
+      onBegin: ({G}: IContext) => {
         // Reset game state for lobby
         G.lobbyReady = false;
       },
       onEnd: ({G, ctx, player}) => {
-        // Deal cards when leaving lobby phase
+        // Deal card-types when leaving lobby phase
         const deck = new OriginalDeck();
-        const pile: Card[] = deck.buildBaseDeck().sort(() => Math.random() - 0.5);
+        const pile: ICard[] = deck.buildBaseDeck().sort(() => Math.random() - 0.5);
 
         dealHands(pile, player.state, deck);
         deck.addPostDealCards(pile, Object.keys(ctx.playOrder).length);
@@ -73,7 +74,7 @@ export const ExplodingKittens: Game<GameState, PluginAPIs> = {
           'waitingForStart': {
             moves: {
               startGame: {
-                move: ({G}: FnContext) => {
+                move: ({G}: IContext) => {
                   // Need to trust players since there is no api to see who is currently connected
                   // Only the client has that info exposed by boardgame.io for some reason
                   G.lobbyReady = true;
@@ -102,6 +103,14 @@ export const ExplodingKittens: Game<GameState, PluginAPIs> = {
           }
         },
         stages: {
+          defuseExplodingKitten: {
+            moves: {
+              defuseExplodingKitten: {
+                move: defuseExplodingKitten,
+                client: false
+              },
+            }
+          },
           choosePlayerToStealFrom: {
             moves: {
               stealCard: {

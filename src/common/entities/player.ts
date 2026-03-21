@@ -1,9 +1,10 @@
-import {Player} from '../models';
-import {Card} from '../models';
+import {ICard, IPlayer} from '../models';
+import {Game} from "./game";
 
-export class PlayerWrapper {
+export class Player {
   constructor(
-    private _state: Player,
+    private game: Game,
+    private _state: IPlayer,
     public readonly id: string
   ) {}
 
@@ -11,14 +12,14 @@ export class PlayerWrapper {
    * Get the underlying raw state object.
    * Useful if direct property access or modification is needed.
    */
-  get state(): Player {
+  get state(): IPlayer {
     return this._state;
   }
 
   /**
-   * Get the player's hand of cards
+   * Get the player's hand of card-types
    */
-  get hand(): Card[] {
+  get hand(): ICard[] {
     return this._state.hand;
   }
 
@@ -37,15 +38,15 @@ export class PlayerWrapper {
   }
 
   /**
-   * Get all cards of a specific type from hand, or all cards if no type specified
+   * Get all card-types of a specific type from hand, or all card-types if no type specified
    */
-  getCards(cardName?: string): Card[] {
+  getCards(cardName?: string): ICard[] {
     if (!cardName) return this._state.hand;
     return this._state.hand.filter(c => c.name === cardName);
   }
 
   /**
-   * Get the count of cards in hand
+   * Get the count of card-types in hand
    */
   getCardCount(): number {
     return this._state.hand.length;
@@ -54,7 +55,7 @@ export class PlayerWrapper {
   /**
    * Add a card to the player's hand
    */
-  addCard(card: Card): void {
+  addCard(card: ICard): void {
     // Clone to avoid Proxy issues
     this._state.hand.push({...card});
     this._updateClientState();
@@ -64,7 +65,7 @@ export class PlayerWrapper {
    * Remove a card at a specific index
    * @returns The removed card, or undefined if index invalid
    */
-  removeCardAt(index: number): Card | undefined {
+  removeCardAt(index: number): ICard | undefined {
     if (index < 0 || index >= this._state.hand.length) return undefined;
     const [card] = this._state.hand.splice(index, 1);
     this._updateClientState();
@@ -75,18 +76,18 @@ export class PlayerWrapper {
    * Remove the first occurrence of a specific card type
    * @returns The removed card, or undefined if not found
    */
-  removeCard(cardName: string): Card | undefined {
+  removeCard(cardName: string): ICard | undefined {
     const index = this._state.hand.findIndex(c => c.name === cardName);
     if (index === -1) return undefined;
     return this.removeCardAt(index);
   }
 
   /**
-   * Remove all cards of a specific type
-   * @returns Array of removed cards
+   * Remove all card-types of a specific type
+   * @returns Array of removed card-types
    */
-  removeAllCards(cardName: string): Card[] {
-    const removed: Card[] = [];
+  removeAllCards(cardName: string): ICard[] {
+    const removed: ICard[] = [];
     // Iterate backwards to safely remove
     for (let i = this._state.hand.length - 1; i >= 0; i--) {
       if (this._state.hand[i].name === cardName) {
@@ -101,10 +102,10 @@ export class PlayerWrapper {
   }
 
   /**
-   * Remove all cards from hand
-   * @returns Array of all removed cards
+   * Remove all card-types from hand
+   * @returns Array of all removed card-types
    */
-  removeAllCardsFromHand(): Card[] {
+  removeAllCardsFromHand(): ICard[] {
     const removed = [...this._state.hand];
     this._state.hand = [];
     this._updateClientState();
@@ -113,12 +114,14 @@ export class PlayerWrapper {
 
   eliminate(): void {
     this._state.isAlive = false;
+    // put all hand card-types in discard pile
+    this._state.hand.forEach(card => this.game.discardCard(card));
   }
 
   /**
    * Transfers a card at specific index to another playerWrapper
    */
-  giveCard(cardIndex: number, recipient: PlayerWrapper): Card {
+  giveCard(cardIndex: number, recipient: Player): ICard {
     const card = this.removeCardAt(cardIndex);
     if (!card) {
        throw new Error("Card not found or invalid index");

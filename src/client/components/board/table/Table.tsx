@@ -2,7 +2,7 @@ import back from '/assets/cards/back/0.jpg';
 import './Table.css';
 import {useEffect, useState, useRef} from "react";
 import {GameContext} from "../../../types/component-props";
-import {Card, canPlayerNope} from '../../../../common';
+import {ICard, canPlayerNope} from '../../../../common';
 import PendingPlayStack from './PendingPlayStack';
 import TurnBadge from '../turn-badge/TurnBadge';
 
@@ -13,7 +13,7 @@ import {useResponsive} from "../../../context/ResponsiveContext.tsx";
 
 interface TableProps {
   gameContext: GameContext;
-  playerHand?: Card[];
+  playerHand?: ICard[];
 }
 
 export default function Table({gameContext, playerHand = []}: TableProps) {

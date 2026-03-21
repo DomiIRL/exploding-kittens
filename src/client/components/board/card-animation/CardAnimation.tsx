@@ -1,10 +1,10 @@
 import './CardAnimation.css';
 import React, {useEffect, useState} from 'react';
-import {Card} from '../../../../common';
+import {ICard} from '../../../../common';
 
 export interface CardAnimationData {
   id: string;
-  card: Card | null; // null means face-down
+  card: ICard | null; // null means face-down
   from: { x: number; y: number };
   to: { x: number; y: number };
   duration: number;
@@ -20,7 +20,7 @@ export default function CardAnimation({animation, onComplete}: CardAnimationProp
   const [isVisible, setIsVisible] = useState(false);
   const cardImage = animation.card
     ? `/assets/cards/${animation.card.name}/${animation.card.index}.png`
-    : '/assets/cards/back/0.jpg';
+    : '/assets/card-types/back/0.jpg';
 
   useEffect(() => {
     // Start animation immediately

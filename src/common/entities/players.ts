@@ -1,51 +1,51 @@
-import {FnContext} from '../models';
-import {PlayerWrapper} from './player-wrapper';
+import {Player} from './player';
+import {Game} from "./game";
 
-export class PlayerLogic {
-  constructor(private context: FnContext) {}
+export class Players {
+  constructor(private game: Game) {}
 
   /**
    * Get a player wrapper instance for a specific player ID.
    * Throws if player data not found.
    */
-  getPlayer(id: string): PlayerWrapper {
+  getPlayer(id: string): Player {
     // boardgame.io player plugin structure
-    const playerData = this.context.player.state?.[id];
+    const playerData = this.game.context.player.state?.[id];
     if (!playerData) {
       throw new Error(`Player data not found for ID: ${id}`);
     }
-    return new PlayerWrapper(playerData, id);
+    return new Player(this.game, playerData, id);
   }
 
   /**
    * Get a wrapper for the current player based on context.currentPlayer
    */
-  get currentPlayer(): PlayerWrapper {
-    return this.getPlayer(this.context.ctx.currentPlayer);
+  get currentPlayer(): Player {
+    return this.getPlayer(this.game.context.ctx.currentPlayer);
   }
 
   /**
    * Get a wrapper for the player executing the move (if playerID available in context)
    * Falls back to currentPlayer if playerID not set
    */
-  get actingPlayer(): PlayerWrapper {
-    const id = this.context.playerID ?? this.context.ctx.currentPlayer;
+  get actingPlayer(): Player {
+    const id = this.game.context.playerID ?? this.game.context.ctx.currentPlayer;
     return this.getPlayer(id);
   }
 
   /**
    * Get all players as wrappers
    */
-  get allPlayers(): PlayerWrapper[] {
-    const playerIDs = Object.keys(this.context.player.state || {});
+  get allPlayers(): Player[] {
+    const playerIDs = Object.keys(this.game.context.player.state || {});
     return playerIDs.map(id => this.getPlayer(id));
   }
 
   /**
    * Validate if a player is a valid target for an action.
-   * Checks if target is alive, has cards, and is not the current player.
+   * Checks if target is alive, has card-types, and is not the current player.
    */
-  validateTarget(targetPlayerId: string): PlayerWrapper {
+  validateTarget(targetPlayerId: string): Player {
     const target = this.getPlayer(targetPlayerId);
 
     let current;
@@ -64,7 +64,7 @@ export class PlayerLogic {
     }
 
     if (target.getCardCount() === 0) {
-      throw new Error('Target player has no cards');
+      throw new Error('Target player has no card-types');
     }
 
     return target;

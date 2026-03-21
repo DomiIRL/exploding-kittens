@@ -1,5 +1,5 @@
-import {Deck} from '../deck';
-import type {Card} from '../../models';
+import {DeckType} from '../deck-type';
+import type {ICard} from '../../models';
 
 import {
   ATTACK,
@@ -17,7 +17,7 @@ const TOTAL_DEFUSE_CARDS = 6;
 const MAX_DECK_DEFUSE_CARDS = 2;
 const EXPLODING_KITTENS = 4;
 
-export class OriginalDeck extends Deck {
+export class OriginalDeck extends DeckType {
   constructor() {
     super('original');
   }
@@ -26,12 +26,12 @@ export class OriginalDeck extends Deck {
     return STARTING_HAND_SIZE;
   }
 
-  startingHandForcedCards(index: number): Card[] {
+  startingHandForcedCards(index: number): ICard[] {
     return [DEFUSE.createCard(index)];
   }
 
-  buildBaseDeck(): Card[] {
-    const pile: Card[] = [];
+  buildBaseDeck(): ICard[] {
+    const pile: ICard[] = [];
 
     for (let i = 0; i < 4; i++) {
       pile.push(ATTACK.createCard(i));
@@ -51,7 +51,7 @@ export class OriginalDeck extends Deck {
     return pile;
   }
 
-  addPostDealCards(pile: Card[], playerCount: number): void {
+  addPostDealCards(pile: ICard[], playerCount: number): void {
     const remaining = Math.min(TOTAL_DEFUSE_CARDS - playerCount, MAX_DECK_DEFUSE_CARDS);
 
     for (let i = 0; i < remaining; i++) {

@@ -6,11 +6,11 @@ export * from './models';
 
 // Entities
 export type {CardType} from './entities/card-type';
-export type {Deck} from './entities/deck';
-export type {CatCard} from './entities/cards/cat-card';
-export type {DefuseCard} from './entities/cards/defuse-card';
-export type {ExplodingKittenCard} from './entities/cards/exploding-kitten-card';
-export type {OriginalDeck} from './entities/decks/original-deck';
+export type {DeckType} from './entities/deck-type';
+export type {CatCard} from './entities/card-types/cat-card';
+export type {DefuseCard} from './entities/card-types/defuse-card';
+export type {ExplodingKittenCard} from './entities/card-types/exploding-kitten-card';
+export type {OriginalDeck} from './entities/deck-types/original-deck';
 
 // Constants - Card models
 export {
@@ -27,7 +27,7 @@ export {
 } from './constants/card-types';
 
 // Constants - Decks
-export {ORIGINAL} from './constants/decks';
+export {ORIGINAL} from './constants/deck-types';
 
 // Setup functions
 export {setupGame} from './setup/game-setup';
@@ -41,5 +41,5 @@ export {sortCards} from './utils/card-sorting';
 export {canPlayerNope, validateNope} from './utils/action-validation';
 
 // Wrappers
-export {PlayerWrapper} from './wrappers/player-wrapper';
-export {GameLogic} from './wrappers/game-logic';
+export {Player} from './entities/player';
+export {Game} from './entities/game';

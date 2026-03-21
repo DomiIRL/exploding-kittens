@@ -1,11 +1,11 @@
-import {GameState} from '../models/game-state.model';
-import {Card} from '../models/card.model';
+import {IGameState} from '../models/game-state.model';
+import {ICard} from '../models/card.model';
 
 /**
  * Validates if a player can play a Nope card against the current game state.
  * This is pure game logic validation.
  */
-export function validateNope(G: GameState, playerID: string | null | undefined): boolean {
+export function validateNope(G: IGameState, playerID: string | null | undefined): boolean {
   if (!playerID) return false;
   
   if (!G.pendingCardPlay) return false;
@@ -33,9 +33,9 @@ export function validateNope(G: GameState, playerID: string | null | undefined):
 }
 
 export function canPlayerNope(
-  G: GameState, 
+  G: IGameState,
   playerID: string | null | undefined, 
-  playerHand: Card[]
+  playerHand: ICard[]
 ): boolean {
   const nopeCardIndex = playerHand.findIndex(c => c.name === 'nope');
   if (nopeCardIndex === -1) return false;

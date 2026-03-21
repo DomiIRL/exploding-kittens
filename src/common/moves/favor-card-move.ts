@@ -1,13 +1,13 @@
-import {FnContext} from "../models";
+import {IContext} from "../models";
 import {PlayerID} from "boardgame.io";
-import {GameLogic} from "../wrappers/game-logic";
+import {Game} from "../entities/game";
 
 /**
  * Request a card from a target player (favor card - first stage)
  */
-export const requestCard = (context: FnContext, targetPlayerId: PlayerID) => {
+export const requestCard = (context: IContext, targetPlayerId: PlayerID) => {
   const {events} = context;
-  const game = new GameLogic(context);
+  const game = new Game(context);
 
   // Validate target player
   game.validateTarget(targetPlayerId);
@@ -26,9 +26,9 @@ export const requestCard = (context: FnContext, targetPlayerId: PlayerID) => {
 /**
  * Give a card to the requesting player (favor card - second stage)
  */
-export const giveCard = (context: FnContext, cardIndex: number) => {
+export const giveCard = (context: IContext, cardIndex: number) => {
   const {ctx, events} = context;
-  const game = new GameLogic(context);
+  const game = new Game(context);
 
   // Find who is giving the card (the player in the chooseCardToGive stage)
   const givingPlayerId = Object.keys(ctx.activePlayers || {}).find(

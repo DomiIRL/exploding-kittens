@@ -1,14 +1,14 @@
-import {FnContext} from "../models";
+import {IContext} from "../models";
 import {EXPLODING_KITTEN, DEFUSE} from "../constants/card-types";
-import {GameLogic} from "../wrappers/game-logic";
+import {Game} from "../entities/game";
 
-export const drawCard = (context: FnContext) => {
-  const { events, random } = context;
-  const game = new GameLogic(context);
+export const drawCard = (context: IContext) => {
+  const { events } = context;
+  const game = new Game(context);
   const player = game.actingPlayer;
 
   if (!player.isAlive) {
-    throw new Error('Dead player cannot draw cards');
+    throw new Error('Dead player cannot draw card-types');
   }
 
   const cardToDraw = game.drawCardFromPile();
@@ -16,38 +16,24 @@ export const drawCard = (context: FnContext) => {
     throw new Error('No card to draw');
   }
 
+  player.addCard(cardToDraw);
+
   // Handle Exploding Kitten
   if (cardToDraw.name === EXPLODING_KITTEN.name) {
     // Check for Defuse
-    const defuseCard = player.removeCard(DEFUSE.name);
-    
-    if (defuseCard) {
-      // Player had a Defuse!
-      // 1. Play Defuse to discard
-      game.discardCard(defuseCard);
+    const hasDefuse = player.hasCard(DEFUSE.name);
 
-      // 2. Put Exploding Kitten back into draw pile at random position
-      const insertIndex = Math.floor(random.Number() * (game.drawPileSize + 1));
-      game.insertCardIntoDrawPile(cardToDraw, insertIndex);
-      
-      // Player is safe, turn ends
-      events.endTurn();
+    if (hasDefuse) {
+      events.setStage('defuseExplodingKitten')
       return;
     }
 
-    // Discard all cards from hand
-    const handCards = player.removeAllCardsFromHand(); 
-    handCards.forEach(c => game.discardCard(c));
-
     // No Defuse - Player Explodes!
-    game.discardCard(cardToDraw);
-    
     player.eliminate();
     events.endTurn();
     return;
   }
 
   // Safe card
-  player.addCard(cardToDraw);
   events.endTurn();
 };

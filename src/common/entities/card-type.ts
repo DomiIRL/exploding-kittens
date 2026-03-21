@@ -1,4 +1,4 @@
-import type {Card, FnContext} from '../models';
+import type {ICard, IContext} from '../models';
 
 export class CardType {
   name: string;
@@ -11,20 +11,20 @@ export class CardType {
     return false;
   }
 
-  createCard(index: number): Card {
+  createCard(index: number): ICard {
     return {name: this.name, index};
   }
 
-  canBePlayed(_context: FnContext, _card: Card): boolean {
+  canBePlayed(_context: IContext, _card: ICard): boolean {
     return true;
   }
 
-  isNowCard(_context: FnContext, _card: Card): boolean {
+  isNowCard(_context: IContext, _card: ICard): boolean {
     return false;
   }
 
 
-  setupPendingState(context: FnContext) {
+  setupPendingState(context: IContext) {
     context.events.setActivePlayers({
       currentPlayer: 'awaitingNowCards',
       others: {
@@ -33,13 +33,15 @@ export class CardType {
     });
   }
 
-  cleanupPendingState(context: FnContext) {
-    context.events.setActivePlayers({value: {}});
+  cleanupPendingState(context: IContext) {
+    const { events } = context;
+    events.endStage();
+    events.setActivePlayers({value: {}});
   }
 
-  afterPlay(_context: FnContext, _card: Card): void {}
+  afterPlay(_context: IContext, _card: ICard): void {}
 
-  onPlayed(_context: FnContext, _card: Card): void {}
+  onPlayed(_context: IContext, _card: ICard): void {}
 
   /**
    * Returns the sort order for this card type.

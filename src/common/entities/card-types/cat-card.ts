@@ -1,5 +1,5 @@
 import {CardType} from '../card-type';
-import {Card, FnContext} from "../../models";
+import {ICard, IContext} from "../../models";
 import {stealCard} from '../../moves/steal-card-move';
 
 export class CatCard extends CardType {
@@ -9,24 +9,24 @@ export class CatCard extends CardType {
   }
 
   /**
-   * Cat cards can only be played in pairs
+   * Cat card-types can only be played in pairs
    */
-  canBePlayed(context: FnContext, card: Card): boolean {
+  canBePlayed(context: IContext, card: ICard): boolean {
     const { player, ctx } = context;
 
     const playerData = player.get();
 
-    // Count how many cat cards with the same index the player has
+    // Count how many cat card-types with the same index the player has
     const matchingCards = playerData.hand.filter(
-      (c: Card) => c.name === card.name && c.index === card.index
+      (c: ICard) => c.name === card.name && c.index === card.index
     );
 
-    // Need at least 2 matching cat cards to play
+    // Need at least 2 matching cat card-types to play
     if (matchingCards.length < 2) {
       return false;
     }
 
-    // Check if there is at least one other player with cards
+    // Check if there is at least one other player with card-types
     return Object.keys(player.state).some((playerId) => {
       if (playerId === ctx.currentPlayer) {
         return false; // Can't target yourself
@@ -39,7 +39,7 @@ export class CatCard extends CardType {
   /**
    * Prompt player to choose a target after pair cost is already consumed.
    */
-  onPlayed(context: FnContext, _card: Card) {
+  onPlayed(context: IContext, _card: ICard) {
     const { events, player, ctx } = context;
 
     const candidates = Object.keys(player.state).filter((playerId) => {
@@ -61,12 +61,12 @@ export class CatCard extends CardType {
   /**
    * Immediately consume the second matching cat card after the first is played.
    */
-  afterPlay(context: FnContext, card: Card) {
+  afterPlay(context: IContext, card: ICard) {
     const {G, player} = context;
     const playerData = player.get();
 
     const secondCardIndex = playerData.hand.findIndex(
-      (c: Card) => c.name === card.name && c.index === card.index
+      (c: ICard) => c.name === card.name && c.index === card.index
     );
 
     if (secondCardIndex === -1) {
@@ -74,7 +74,7 @@ export class CatCard extends CardType {
     }
 
     const secondCard = playerData.hand[secondCardIndex];
-    const newHand = playerData.hand.filter((_: Card, index: number) => index !== secondCardIndex);
+    const newHand = playerData.hand.filter((_: ICard, index: number) => index !== secondCardIndex);
 
     player.set({
       ...playerData,

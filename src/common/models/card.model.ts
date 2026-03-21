@@ -1,4 +1,4 @@
-export interface Card {
+export interface ICard {
   name: string;
   index: number;
 }

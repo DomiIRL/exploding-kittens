@@ -1,7 +1,7 @@
 import {CardType} from '../card-type';
-import {Card, FnContext} from "../../models";
+import {ICard, IContext} from "../../models";
 import {validateNope} from '../../utils/action-validation';
-import {GameLogic} from '../../wrappers/game-logic';
+import {Game} from '../game';
 
 export class NopeCard extends CardType {
 
@@ -9,17 +9,17 @@ export class NopeCard extends CardType {
     super(name);
   }
 
-  isNowCard(_context: FnContext, _card: Card): boolean {
+  isNowCard(_context: IContext, _card: ICard): boolean {
     return true;
   }
 
-  canBePlayed(context: FnContext, _card: Card): boolean {
+  canBePlayed(context: IContext, _card: ICard): boolean {
     const {G, playerID} = context;
     return validateNope(G, playerID);
   }
 
-  onPlayed(context: FnContext, _card: Card): void {
-    const game = new GameLogic(context);
+  onPlayed(context: IContext, _card: ICard): void {
+    const game = new Game(context);
     const pendingCardPlay = game.pendingCardPlay;
     const player = game.actingPlayer;
 

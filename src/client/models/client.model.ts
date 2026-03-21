@@ -1,19 +1,19 @@
-import {Player} from '../../common';
+import {IPlayer} from '../../common';
 
 /**
  * Type definitions for the client
  */
 
-export interface PlayerPlugin {
+export interface IPlayerPlugin {
   data: {
     players: {
-      [key: string]: Player
+      [key: string]: IPlayer
     };
   };
 }
 
-export interface BoardPlugins {
+export interface IBoardPlugins {
   [pluginName: string]: any;
-  player: PlayerPlugin;
+  player: IPlayerPlugin;
 }
 

@@ -1,11 +1,11 @@
-import {PendingCardPlay} from '../../../../common';
+import {IPendingCardPlay} from '../../../../common';
 import '../card/Card.css'; // Import the shared card styles
 import './PendingPlayStack.css';
 import {useRef, useState} from 'react';
 import HoverCardPreview from '../card/HoverCardPreview';
 
 interface PendingPlayStackProps {
-  pendingPlay: PendingCardPlay;
+  pendingPlay: IPendingCardPlay;
   canNope: boolean;
   onNope: () => void;
 }

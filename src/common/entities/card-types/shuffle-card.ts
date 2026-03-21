@@ -1,5 +1,5 @@
 import {CardType} from '../card-type';
-import {Card, FnContext} from "../../models";
+import {ICard, IContext} from "../../models";
 
 export class ShuffleCard extends CardType {
 
@@ -7,7 +7,7 @@ export class ShuffleCard extends CardType {
     super(name);
   }
 
-  onPlayed(context: FnContext, _card: Card) {
+  onPlayed(context: IContext, _card: ICard) {
     const { G, random } = context;
     G.drawPile = random.Shuffle(G.drawPile)
   }

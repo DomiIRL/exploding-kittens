@@ -1,8 +1,8 @@
-import type {Players} from './players.model';
-import {Player} from "./player.model";
+import type {IPlayers} from './players.model';
+import {IPlayer} from "./player.model";
 
-export interface PlayerAPI {
-  state: Players;
-  get(): Player;
-  set(value: Player): Player;
+export interface IPlayerAPI {
+  state: IPlayers;
+  get(): IPlayer;
+  set(value: IPlayer): IPlayer;
 }

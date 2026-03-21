@@ -1,11 +1,11 @@
 import React, {useState, useCallback, useRef, useEffect} from 'react';
 import CardAnimation, {CardAnimationData} from '../components/board/card-animation/CardAnimation';
-import {Card, GameState, Players} from '../../common';
+import {ICard, IGameState, IPlayers} from '../../common';
 
 interface UseCardAnimationsReturn {
   animations: CardAnimationData[];
   AnimationLayer: () => React.JSX.Element;
-  triggerCardMovement: (card: Card | null, fromId: string, toId: string) => void;
+  triggerCardMovement: (card: ICard | null, fromId: string, toId: string) => void;
 }
 
 type PlayerHandCounts = Record<string, number>;
@@ -15,13 +15,13 @@ interface HandChange {
   delta: number;
 }
 
-export const useCardAnimations = (G: GameState, players: Players, selfPlayerId: string | null): UseCardAnimationsReturn => {
+export const useCardAnimations = (G: IGameState, players: IPlayers, selfPlayerId: string | null): UseCardAnimationsReturn => {
   const [animations, setAnimations] = useState<CardAnimationData[]>([]);
   const animationIdCounter = useRef(0);
   const previousDrawPileLength = useRef(G.client.drawPileLength);
   const previousDiscardPileLength = useRef(G.discardPile.length);
   const previousPlayerHands = useRef<PlayerHandCounts>({});
-  const previousLocalHand = useRef<Card[]>([]);
+  const previousLocalHand = useRef<ICard[]>([]);
 
   const getElementCenter = useCallback((id: string): { x: number; y: number } | null => {
     const element = document.querySelector(`[data-animation-id="${id}"]`) as HTMLElement;
@@ -38,7 +38,7 @@ export const useCardAnimations = (G: GameState, players: Players, selfPlayerId: 
   }, []);
 
   const triggerCardMovement = useCallback((
-    card: Card | null,
+    card: ICard | null,
     fromId: string,
     toId: string,
     delay = 0
@@ -98,7 +98,7 @@ export const useCardAnimations = (G: GameState, players: Players, selfPlayerId: 
       handChanges
         .filter(change => change.delta > 0)
         .forEach(change => {
-          let card: Card | null = null;
+          let card: ICard | null = null;
           // If local player gained a card, check their hand for the new card
           if (change.playerId === selfPlayerId && players[selfPlayerId]) {
             const hand = players[selfPlayerId].hand;
@@ -122,7 +122,7 @@ export const useCardAnimations = (G: GameState, players: Players, selfPlayerId: 
       const playerLost = handChanges.find(change => change.delta < 0);
 
       if (playerGained && playerLost) {
-        let card: Card | null = null;
+        let card: ICard | null = null;
         // If local player gained the transferred card, look it up
         if (playerGained.playerId === selfPlayerId && players[selfPlayerId]) {
           const hand = players[selfPlayerId].hand;

@@ -1,9 +1,6 @@
 import './Board.css';
-import {BoardProps} from 'boardgame.io/react';
-import {GameState} from '../../../common';
 import {useCardAnimations} from '../../hooks/useCardAnimations';
 import {useGameState} from '../../hooks/useGameState';
-import {BoardPlugins} from '../../models/client.model';
 import {GameContext, PlayerStateBundle, OverlayStateBundle} from '../../types/component-props';
 import Table from './table/Table';
 import PlayerList from './player-list/PlayerList';
@@ -13,10 +10,7 @@ import GameStatusList from './game-status/GameStatusList';
 import {useEffect} from 'react';
 import {Chat} from '../chat/Chat';
 import {useMatchDetails} from "../../context/MatchDetailsContext.tsx";
-
-type BoardPropsWithPlugins = Omit<BoardProps<GameState>, 'plugins'> & {
-  plugins: BoardPlugins;
-}
+import {IClientContext} from "../../types/client-context.ts";
 
 /**
  * Main game board component
@@ -29,7 +23,7 @@ export default function ExplodingKittensBoard({
   playerID,
   chatMessages,
   sendChatMessage
-}: BoardPropsWithPlugins) {
+}: IClientContext) {
   const { matchDetails, setPollingInterval } = useMatchDetails();
 
   const isInLobby = ctx.phase === 'lobby';
@@ -45,12 +39,12 @@ export default function ExplodingKittensBoard({
     ctx,
     G,
     moves,
-    playerID,
+    playerID: playerID ?? null,
     matchData: matchDetails?.players
   };
 
   // Derive game state properties
-  const gameState = useGameState(ctx, G, allPlayers, playerID);
+  const gameState = useGameState(ctx, G, allPlayers, playerID ?? null);
   
   const selfPlayer = gameState.selfPlayerId !== null && allPlayers[gameState.selfPlayerId] ? allPlayers[gameState.selfPlayerId] : null;
   const selfHand = selfPlayer ? selfPlayer.hand : [];
@@ -103,7 +97,7 @@ export default function ExplodingKittensBoard({
   };
 
   // Handle card animations
-  const {AnimationLayer, triggerCardMovement} = useCardAnimations(G, allPlayers, playerID);
+  const {AnimationLayer, triggerCardMovement} = useCardAnimations(G, allPlayers, playerID ?? null);
 
   /**
    * Handle player selection for stealing/requesting a card
@@ -191,7 +185,7 @@ export default function ExplodingKittensBoard({
       />
       
       <Chat
-        playerID={playerID}
+        playerID={playerID ?? null}
         chatMessages={chatMessages}
         sendChatMessage={sendChatMessage}
       />

@@ -1,7 +1,7 @@
-import {FnContext} from '../models';
+import {IContext} from '../models';
 
 const findNextAlivePlayer = (
-  ctx: FnContext['ctx'],
+  ctx: IContext['ctx'],
   players: Record<string, any>,
   startPos: number
 ): number | undefined => {
@@ -24,7 +24,7 @@ const findNextAlivePlayer = (
 };
 
 export const turnOrder = {
-  first: ({ctx, player}: FnContext): number => {
+  first: ({ctx, player}: IContext): number => {
     const nextAlive = findNextAlivePlayer(ctx, player.state, 0);
     // Fallback to first player if no one is alive (shouldn't happen)
     return nextAlive ?? 0;
@@ -34,7 +34,7 @@ export const turnOrder = {
    * Get the next alive player, considering turnsRemaining counter
    * Note: We only read G.turnsRemaining here, the decrement happens in turn.onEnd
    */
-  next: ({G, ctx, player}: FnContext): number | undefined => {
+  next: ({G, ctx, player}: IContext): number | undefined => {
     // If there are still turns remaining (> 1 because we check before decrement), stay with the current player
     if (G.turnsRemaining > 1) {
       return ctx.playOrderPos;
@@ -48,7 +48,7 @@ export const turnOrder = {
   /**
    * Shuffle the play order at the start of the play phase
    */
-  playOrder: ({ ctx, random }: FnContext): string[] => {
+  playOrder: ({ ctx, random }: IContext): string[] => {
     const ids = Array.from({ length: ctx.numPlayers }, (_, i) => String(i));
     return random.Shuffle(ids);
   },

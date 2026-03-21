@@ -1,5 +1,5 @@
 import {CardType} from '../card-type';
-import {Card, FnContext} from "../../models";
+import {ICard, IContext} from "../../models";
 import {requestCard} from '../../moves/favor-card-move';
 
 export class FavorCard extends CardType {
@@ -8,10 +8,10 @@ export class FavorCard extends CardType {
     super(name);
   }
 
-  canBePlayed(context: FnContext, _card: Card): boolean {
+  canBePlayed(context: IContext, _card: ICard): boolean {
     const { player, ctx } = context;
 
-    // Check if there is at least one other player with cards
+    // Check if there is at least one other player with card-types
     return Object.keys(player.state).some((playerId) => {
       if (playerId === ctx.currentPlayer) {
         return false; // Can't target yourself
@@ -21,7 +21,7 @@ export class FavorCard extends CardType {
     });
   }
 
-  onPlayed(context: FnContext, _card: Card) {
+  onPlayed(context: IContext, _card: ICard) {
     const { events, player, ctx } = context;
 
     const candidates = Object.keys(player.state).filter((playerId) => {

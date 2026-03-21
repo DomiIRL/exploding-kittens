@@ -1,12 +1,12 @@
-import type {Card} from './card.model';
+import type {ICard} from './card.model';
 
-export interface ClientPlayer {
+export interface IClientPlayer {
   handCount: number;
 }
 
-export interface Player {
-  hand: Card[];
+export interface IPlayer {
+  hand: ICard[];
   // On server this is always 0! Do not use anywhere else than on the client frontend for when player .
   isAlive: boolean;
-  client: ClientPlayer
+  client: IClientPlayer
 }

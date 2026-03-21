@@ -4,7 +4,7 @@
  */
 
 import {Ctx} from 'boardgame.io';
-import {GameState, Players, Card} from '../../common';
+import {IGameState, IPlayers, ICard} from '../../common';
 import {MatchPlayer} from '../utils/matchData';
 
 /**
@@ -12,7 +12,7 @@ import {MatchPlayer} from '../utils/matchData';
  */
 export interface GameContext {
   ctx: Ctx;
-  G: GameState;
+  G: IGameState;
   moves: any;
   playerID: string | null;
   matchData?: MatchPlayer[];
@@ -22,7 +22,7 @@ export interface GameContext {
  * Player state bundle - contains player-specific state
  */
 export interface PlayerStateBundle {
-  allPlayers: Players;
+  allPlayers: IPlayers;
   selfPlayerId: number | null;
   currentPlayer: number;
   isSelfDead: boolean;
@@ -54,7 +54,7 @@ export interface ExplosionEventBundle {
  * Animation callbacks bundle - contains animation-related functions
  */
 export interface AnimationCallbacks {
-  triggerCardMovement: (card: Card | null, fromId: string, toId: string) => void;
+  triggerCardMovement: (card: ICard | null, fromId: string, toId: string) => void;
 }
 
 /**

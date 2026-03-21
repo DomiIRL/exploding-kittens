@@ -1,5 +1,5 @@
 import {CardType} from '../card-type';
-import {Card, FnContext} from "../../models";
+import {ICard, IContext} from "../../models";
 
 export class AttackCard extends CardType {
 
@@ -7,7 +7,7 @@ export class AttackCard extends CardType {
     super(name);
   }
 
-  onPlayed(context: FnContext, _card: Card) {
+  onPlayed(context: IContext, _card: ICard) {
     const { G, ctx, events } = context;
 
     // Add 3 to turnsRemaining for proper 2, 4, 6, 8 stacking

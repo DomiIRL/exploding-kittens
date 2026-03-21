@@ -1,9 +1,9 @@
-import type {FnContext} from "../models";
+import type {IContext} from "../models";
 
 /**
  * Close the see the future overlay
  */
-export const closeFutureView = (context: FnContext) => {
+export const closeFutureView = (context: IContext) => {
   const {events} = context;
 
   // End the viewing stage
