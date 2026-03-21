@@ -1,5 +1,6 @@
 import {CardType} from '../card-type';
-import {ICard, IContext} from "../../models";
+import {TheGame} from '../game';
+import {Card} from '../card';
 
 export class SeeTheFutureCard extends CardType {
 
@@ -7,14 +8,11 @@ export class SeeTheFutureCard extends CardType {
     super(name);
   }
 
-  onPlayed(context: IContext, _card: ICard) {
-    const { events } = context;
-
+  onPlayed(game: TheGame, _card: Card) {
     // Set stage to view the future
-    events.setActivePlayers({
-      currentPlayer: 'viewingFuture',
-    });
+    game.turnManager.setStage("viewingFuture")
   }
+
 
   sortOrder(): number {
     return 5;

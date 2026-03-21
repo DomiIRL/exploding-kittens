@@ -19,7 +19,7 @@ export const useCardAnimations = (G: IGameState, players: IPlayers, selfPlayerId
   const [animations, setAnimations] = useState<CardAnimationData[]>([]);
   const animationIdCounter = useRef(0);
   const previousDrawPileLength = useRef(G.client.drawPileLength);
-  const previousDiscardPileLength = useRef(G.discardPile.length);
+  const previousDiscardPileLength = useRef(G.piles.discardPile.length);
   const previousPlayerHands = useRef<PlayerHandCounts>({});
   const previousLocalHand = useRef<ICard[]>([]);
 
@@ -90,9 +90,9 @@ export const useCardAnimations = (G: IGameState, players: IPlayers, selfPlayerId
     const handChanges = getHandChanges(currentHandCounts, previousPlayerHands.current);
 
     const drawPileDecreased = G.client.drawPileLength < previousDrawPileLength.current;
-    const discardPileIncreased = G.discardPile.length > previousDiscardPileLength.current;
+    const discardPileIncreased = G.piles.discardPile.length > previousDiscardPileLength.current;
     const pilesUnchanged = G.client.drawPileLength === previousDrawPileLength.current &&
-      G.discardPile.length === previousDiscardPileLength.current;
+      G.piles.discardPile.length === previousDiscardPileLength.current;
 
     if (drawPileDecreased) {
       handChanges
@@ -111,7 +111,7 @@ export const useCardAnimations = (G: IGameState, players: IPlayers, selfPlayerId
     }
 
     if (discardPileIncreased) {
-      const lastCard = G.discardPile[G.discardPile.length - 1];
+      const lastCard = G.piles.discardPile[G.piles.discardPile.length - 1];
       handChanges
         .filter(change => change.delta < 0)
         .forEach(change => triggerCardMovement(lastCard, `player-${change.playerId}`, 'discard-pile'));
@@ -144,13 +144,13 @@ export const useCardAnimations = (G: IGameState, players: IPlayers, selfPlayerId
             card = lostCard;
           }
         }
-        
+
         triggerCardMovement(card, `player-${playerLost.playerId}`, `player-${playerGained.playerId}`);
       }
     }
 
     previousDrawPileLength.current = G.client.drawPileLength;
-    previousDiscardPileLength.current = G.discardPile.length;
+    previousDiscardPileLength.current = G.piles.discardPile.length;
     previousPlayerHands.current = currentHandCounts;
     
     if (selfPlayerId && players[selfPlayerId]) {
@@ -158,7 +158,7 @@ export const useCardAnimations = (G: IGameState, players: IPlayers, selfPlayerId
     } else {
       previousLocalHand.current = [];
     }
-  }, [G.client.drawPileLength, G.discardPile.length, G.discardPile, triggerCardMovement, players, selfPlayerId]);
+  }, [G.client.drawPileLength, G.piles.discardPile.length, G.piles.discardPile, triggerCardMovement, players, selfPlayerId]);
 
   const AnimationLayer = useCallback(() => (
     <>

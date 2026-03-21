@@ -1,5 +1,6 @@
 import {CardType} from '../card-type';
-import {ICard, IContext} from "../../models";
+import {TheGame} from '../game';
+import {Card} from '../card';
 import {requestCard} from '../../moves/favor-card-move';
 
 export class FavorCard extends CardType {
@@ -8,36 +9,33 @@ export class FavorCard extends CardType {
     super(name);
   }
 
-  canBePlayed(context: IContext, _card: ICard): boolean {
-    const { player, ctx } = context;
+  canBePlayed(game: TheGame, _card: Card): boolean {
+    const { ctx } = game.context;
 
     // Check if there is at least one other player with card-types
-    return Object.keys(player.state).some((playerId) => {
-      if (playerId === ctx.currentPlayer) {
+    return game.players.allPlayers.some((target) => {
+      if (target.id === ctx.currentPlayer) {
         return false; // Can't target yourself
       }
-      const targetPlayerData = player.state[playerId];
-      return targetPlayerData.isAlive && targetPlayerData.hand.length > 0;
+      return target.isAlive && target.getCardCount() > 0;
     });
   }
 
-  onPlayed(context: IContext, _card: ICard) {
-    const { events, player, ctx } = context;
+  onPlayed(game: TheGame, _card: Card) {
+    const { ctx } = game.context;
 
-    const candidates = Object.keys(player.state).filter((playerId) => {
-      const p = player.state[playerId];
-      return playerId !== ctx.currentPlayer && p.isAlive && p.hand.length > 0;
+    const candidates = game.players.allPlayers.filter((target) => {
+      return target.id !== ctx.currentPlayer && target.isAlive && target.getCardCount() > 0;
     });
 
     if (candidates.length === 1) {
       // Automatically choose the only valid opponent
-      requestCard(context, candidates[0]);
+      requestCard(game.context, candidates[0].id);
     } else if (candidates.length > 1) {
       // Set stage to choose a player to request a card from
-      events.setActivePlayers({
-        currentPlayer: 'choosePlayerToRequestFrom',
-      });
+      game.turnManager.setStage("choosePlayerToRequestFrom")
     }
+
   }
 
   sortOrder(): number {

@@ -1,22 +1,19 @@
 import {IContext} from "../models";
 import {PlayerID} from "boardgame.io";
-import {Game} from "../entities/game";
+import {TheGame} from "../entities/game";
 
 /**
  * Request a card from a target player (favor card - first stage)
  */
 export const requestCard = (context: IContext, targetPlayerId: PlayerID) => {
-  const {events} = context;
-  const game = new Game(context);
+  const game = new TheGame(context);
 
   // Validate target player
-  game.validateTarget(targetPlayerId);
+  game.players.validateTarget(targetPlayerId);
 
   // End current player's stage and set the target player to choose a card to give
-  events.endStage();
-
-  // Set target player to choose a card to give
-  events.setActivePlayers({
+  game.turnManager.endStage();
+  game.turnManager.setActivePlayers({
     value: {
       [targetPlayerId]: 'chooseCardToGive',
     },
@@ -27,8 +24,8 @@ export const requestCard = (context: IContext, targetPlayerId: PlayerID) => {
  * Give a card to the requesting player (favor card - second stage)
  */
 export const giveCard = (context: IContext, cardIndex: number) => {
-  const {ctx, events} = context;
-  const game = new Game(context);
+  const {ctx} = context;
+  const game = new TheGame(context);
 
   // Find who is giving the card (the player in the chooseCardToGive stage)
   const givingPlayerId = Object.keys(ctx.activePlayers || {}).find(
@@ -39,13 +36,15 @@ export const giveCard = (context: IContext, cardIndex: number) => {
     throw Error('No player is in the card giving stage');
   }
 
-  const givingPlayer = game.getPlayer(givingPlayerId);
-  const requestingPlayer = game.currentPlayer;
+  const givingPlayer = game.players.getPlayer(givingPlayerId);
+  const requestingPlayer = game.players.currentPlayer;
 
   // Transfer the card from giving player to requesting player
   givingPlayer.giveCard(cardIndex, requestingPlayer);
 
   // End all stages
-  events.endStage();
+  game.turnManager.endStage();
 };
+
+
 

@@ -1,113 +1,76 @@
-import {IContext} from '../models';
-import {Player} from './player';
+import {IContext, IGameState} from '../models';
 import {Piles} from './piles';
-import {GameState} from './game-state';
 import {Players} from './players';
-import {ICard} from '../models';
+import {TurnManager} from './turn-manager';
 import {IPendingCardPlay, IGameRules} from '../models';
+import {Card} from "./card";
+import {RandomAPI} from "boardgame.io/dist/types/src/plugins/random/random";
+import {EventsAPI} from "boardgame.io/dist/types/src/plugins/events/events";
 
-export class Game {
+
+export class TheGame {
   public readonly context: IContext;
-  public readonly deck: Piles;
-  public readonly state: GameState;
+  public readonly gameState: IGameState;
+  public readonly events: EventsAPI;
+  public readonly random: RandomAPI;
+
+  public readonly piles: Piles;
   public readonly players: Players;
+  public readonly turnManager: TurnManager;
 
   constructor(context: IContext) {
     this.context = context;
-    this.deck = new Piles(this);
-    this.state = new GameState(this);
-    this.players = new Players(this);
+    this.gameState = context.G;
+    this.events = context.events;
+    this.random = context.random;
+
+    this.piles = new Piles(this, this.gameState.piles);
+    this.players = new Players(this, this.context.player);
+    this.turnManager = new TurnManager(this);
   }
 
-  /**
-   * Get a player wrapper instance for a specific player ID.
-   * Throws if player data not found.
-   */
-  getPlayer(id: string): Player {
-    return this.players.getPlayer(id);
-  }
-
-  /**
-   * Get a wrapper for the current player based on context.currentPlayer
-   */
-  get currentPlayer(): Player {
-    return this.players.currentPlayer;
-  }
-
-  /**
-   * Get a wrapper for the player executing the move (if playerID available in context)
-   * Falls back to currentPlayer if playerID not set
-   */
-  get actingPlayer(): Player {
-    return this.players.actingPlayer;
-  }
-
-  /**
-   * Get all players as wrappers
-   */
-  get allPlayers(): Player[] {
-    return this.players.allPlayers;
-  }
 
   /**
    * Get pending card play
    */
   get pendingCardPlay(): IPendingCardPlay | null {
-    return this.state.pendingCardPlay;
-  }
-
-  /**
-   * Add a card to the discard pile
-   */
-  discardCard(card: ICard): void {
-    this.deck.discardCard(card);
-  }
-
-  /**
-   * Get the last discarded card
-   */
-  get lastDiscardedCard(): ICard | null {
-    return this.deck.lastDiscardedCard;
-  }
-
-  /**
-   * Draw a card from the top of the draw pile
-   */
-  drawCardFromPile(): ICard | undefined {
-    return this.deck.drawCardFromPile();
-  }
-
-  /**
-   * Insert a card into the draw pile at a specific index
-   */
-  insertCardIntoDrawPile(card: ICard, index: number): void {
-    this.deck.insertCardIntoDrawPile(card, index);
-  }
-
-  /**
-   * Get draw pile size
-   */
-  get drawPileSize(): number {
-    return this.deck.drawPileSize;
+    return this.gameState.pendingCardPlay;
   }
 
   set pendingCardPlay(pending: IPendingCardPlay | null) {
-    this.state.pendingCardPlay = pending;
+    this.gameState.pendingCardPlay = pending;
   }
 
   set lobbyReady(ready: boolean) {
-    this.state.lobbyReady = ready;
+    this.gameState.lobbyReady = ready;
   }
 
   get gameRules(): IGameRules {
-    return this.state.gameRules;
+    return this.gameState.gameRules;
   }
 
   /**
-   * Validate if a player is a valid target for an action.
-   * Checks if target is alive, has card-types, and is not the current player.
+   * Resolve any pending card play if the window (timer) has expired.
    */
-  validateTarget(targetPlayerId: string): Player {
-    return this.players.validateTarget(targetPlayerId);
+  resolvePendingCard(): void {
+    const pendingCardPlay = this.pendingCardPlay;
+
+    if (!pendingCardPlay) {
+      return;
+    }
+
+    // Check if the timer has expired
+    if (Date.now() < pendingCardPlay.expiresAtMs) {
+      return;
+    }
+
+    this.pendingCardPlay = null;
+
+    const card = new Card(this, pendingCardPlay.card);
+    card.type.cleanupPendingState(this);
+
+    if (!pendingCardPlay.isNoped) {
+      card.play();
+    }
   }
 }

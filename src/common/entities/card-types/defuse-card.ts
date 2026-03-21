@@ -1,5 +1,6 @@
 import {CardType} from '../card-type';
-import {ICard, IContext} from "../../models";
+import {TheGame} from '../game';
+import {Card} from '../card';
 
 export class DefuseCard extends CardType {
 
@@ -7,9 +8,10 @@ export class DefuseCard extends CardType {
     super(name);
   }
 
-  canBePlayed(_context: IContext, _card: ICard): boolean {
+  canBePlayed(_game: TheGame, _card: Card): boolean {
     return false;
   }
+
 
   sortOrder(): number {
     return 99;

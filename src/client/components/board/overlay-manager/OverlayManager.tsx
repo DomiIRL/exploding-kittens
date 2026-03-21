@@ -39,7 +39,7 @@ export default function OverlayManager({
   }
 
   // Get the top 3 card-types from the draw pile for the see the future overlay
-  const futureCards = isViewingFuture ? G.drawPile.slice(0, 3) : [];
+  const futureCards = isViewingFuture ? G.piles.drawPile.slice(0, 3) : [];
 
   return (
     <>

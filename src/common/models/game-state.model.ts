@@ -21,10 +21,14 @@ export interface IPendingCardPlay {
   isNoped: boolean;
 }
 
-export interface IGameState {
-  winner: PlayerID | null;
+export interface IPiles {
   drawPile: ICard[];
   discardPile: ICard[];
+}
+
+export interface IGameState {
+  winner: PlayerID | null;
+  piles: IPiles;
   pendingCardPlay: IPendingCardPlay | null;
   turnsRemaining: number;
   gameRules: IGameRules;

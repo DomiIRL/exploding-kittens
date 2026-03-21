@@ -1,7 +1,7 @@
 import {CardType} from '../card-type';
-import {ICard, IContext} from "../../models";
+import {TheGame} from '../game';
+import {Card} from '../card';
 import {validateNope} from '../../utils/action-validation';
-import {Game} from '../game';
 
 export class NopeCard extends CardType {
 
@@ -9,24 +9,24 @@ export class NopeCard extends CardType {
     super(name);
   }
 
-  isNowCard(_context: IContext, _card: ICard): boolean {
+  isNowCard(_game: TheGame, _card: Card): boolean {
     return true;
   }
 
-  canBePlayed(context: IContext, _card: ICard): boolean {
-    const {G, playerID} = context;
+  canBePlayed(game: TheGame, _card: Card): boolean {
+    const {G, playerID} = game.context;
     return validateNope(G, playerID);
   }
 
-  onPlayed(context: IContext, _card: ICard): void {
-    const game = new Game(context);
+  onPlayed(game: TheGame, _card: Card) {
     const pendingCardPlay = game.pendingCardPlay;
-    const player = game.actingPlayer;
+    const player = game.players.actingPlayer;
 
     if (!pendingCardPlay) {
       console.log("No pending card play to nope");
       return;
     }
+
 
     const nowMs = Date.now();
     const windowDurationMs = Math.max(0, pendingCardPlay.expiresAtMs - pendingCardPlay.startedAtMs);

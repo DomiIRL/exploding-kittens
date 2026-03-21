@@ -1,8 +1,10 @@
 import {Player} from './player';
-import {Game} from "./game";
+import {TheGame} from "./game";
+import {PlayerID} from "boardgame.io";
+import {IPlayerAPI} from "../models";
 
 export class Players {
-  constructor(private game: Game) {}
+  constructor(private game: TheGame, private playerAPI: IPlayerAPI) {}
 
   /**
    * Get a player wrapper instance for a specific player ID.
@@ -10,7 +12,7 @@ export class Players {
    */
   getPlayer(id: string): Player {
     // boardgame.io player plugin structure
-    const playerData = this.game.context.player.state?.[id];
+    const playerData = this.playerAPI.state?.[id];
     if (!playerData) {
       throw new Error(`Player data not found for ID: ${id}`);
     }
@@ -25,7 +27,7 @@ export class Players {
   }
 
   /**
-   * Get a wrapper for the player executing the move (if playerID available in context)
+   * Get the player executing the move (if playerID available in context)
    * Falls back to currentPlayer if playerID not set
    */
   get actingPlayer(): Player {
@@ -34,11 +36,32 @@ export class Players {
   }
 
   /**
-   * Get all players as wrappers
+   * Get all players
    */
   get allPlayers(): Player[] {
-    const playerIDs = Object.keys(this.game.context.player.state || {});
+    const playerIDs = Object.keys(this.playerAPI.state || {});
     return playerIDs.map(id => this.getPlayer(id));
+  }
+
+  /**
+   * Get all alive players
+   */
+  get alivePlayers(): Player[] {
+    return this.allPlayers.filter(player => player.isAlive);
+  }
+
+  /**
+   * Get all alive players who have at least one card in hand
+   */
+  get playersWithCards(): Player[] {
+    return this.alivePlayers.filter(player => player.getCardCount() > 0);
+  }
+
+  /**
+   * Get all alive players who have at least one card in hand
+   */
+  getValidCardActionTargets(exclude: PlayerID | Player): Player[] {
+    return this.playersWithCards.filter(player => (player.id !== (exclude instanceof Player ? exclude.id : exclude)));
   }
 
   /**
@@ -46,27 +69,11 @@ export class Players {
    * Checks if target is alive, has card-types, and is not the current player.
    */
   validateTarget(targetPlayerId: string): Player {
-    const target = this.getPlayer(targetPlayerId);
-
-    let current;
-    try {
-      current = this.currentPlayer;
-    } catch(e) {
-      // Current player might be undefined in some contexts
+    const validTargets = this.getValidCardActionTargets(this.game.context.ctx.currentPlayer);
+    const target = validTargets.find(player => player.id === targetPlayerId);
+    if (!target) {
+      throw new Error(`Invalid target player ID: ${targetPlayerId}`);
     }
-
-    if (current && target.id === current.id) {
-       throw new Error('Cannot target yourself');
-    }
-
-    if (!target.isAlive) {
-      throw new Error('Target player is dead');
-    }
-
-    if (target.getCardCount() === 0) {
-      throw new Error('Target player has no card-types');
-    }
-
     return target;
   }
 }

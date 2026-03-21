@@ -1,5 +1,6 @@
 import {CardType} from '../card-type';
-import {ICard, IContext} from "../../models";
+import {TheGame} from '../game';
+import {Card} from '../card';
 
 export class SkipCard extends CardType {
 
@@ -7,10 +8,10 @@ export class SkipCard extends CardType {
     super(name);
   }
 
-  onPlayed(context: IContext, _card: ICard) {
-    const { events } = context;
-    events.endTurn();
+  onPlayed(game: TheGame, _card: Card) {
+    game.turnManager.endTurn();
   }
+
 
   sortOrder(): number {
     return 2;

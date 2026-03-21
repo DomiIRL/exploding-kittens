@@ -22,6 +22,8 @@ export default function CardAnimation({animation, onComplete}: CardAnimationProp
     ? `/assets/cards/${animation.card.name}/${animation.card.index}.png`
     : '/assets/card-types/back/0.jpg';
 
+  console.log(cardImage);
+
   useEffect(() => {
     // Start animation immediately
     setIsVisible(true);

@@ -42,4 +42,4 @@ export {canPlayerNope, validateNope} from './utils/action-validation';
 
 // Wrappers
 export {Player} from './entities/player';
-export {Game} from './entities/game';
+export {TheGame} from './entities/game';

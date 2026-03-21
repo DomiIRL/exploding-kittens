@@ -1,6 +1,7 @@
 import {CardType} from '../card-type';
-import {ICard, IContext} from "../../models";
-import {stealCard} from '../../moves/steal-card-move';
+import {TheGame} from '../game';
+import {Card} from '../card';
+import {stealCard} from "../../moves/steal-card-move";
 
 export class CatCard extends CardType {
 
@@ -11,77 +12,45 @@ export class CatCard extends CardType {
   /**
    * Cat card-types can only be played in pairs
    */
-  canBePlayed(context: IContext, card: ICard): boolean {
-    const { player, ctx } = context;
-
-    const playerData = player.get();
-
-    // Count how many cat card-types with the same index the player has
-    const matchingCards = playerData.hand.filter(
-      (c: ICard) => c.name === card.name && c.index === card.index
-    );
+  canBePlayed(game: TheGame, card: Card): boolean {
+    const player = game.players.actingPlayer;
 
     // Need at least 2 matching cat card-types to play
+    const matchingCards = player.getMatchingCards(card);
     if (matchingCards.length < 2) {
       return false;
     }
 
-    // Check if there is at least one other player with card-types
-    return Object.keys(player.state).some((playerId) => {
-      if (playerId === ctx.currentPlayer) {
-        return false; // Can't target yourself
-      }
-      const targetPlayerData = player.state[playerId];
-      return targetPlayerData.isAlive && targetPlayerData.hand.length > 0;
-    });
+    const candidates = game.players.getValidCardActionTargets(game.players.actingPlayer);
+    return candidates.length > 0;
   }
 
   /**
    * Prompt player to choose a target after pair cost is already consumed.
    */
-  onPlayed(context: IContext, _card: ICard) {
-    const { events, player, ctx } = context;
-
-    const candidates = Object.keys(player.state).filter((playerId) => {
-      const p = player.state[playerId];
-      return playerId !== ctx.currentPlayer && p.isAlive && p.hand.length > 0;
-    });
+  onPlayed(game: TheGame, _card: Card) {
+    const candidates = game.players.getValidCardActionTargets(game.players.actingPlayer);
 
     if (candidates.length === 1) {
       // Automatically choose the only valid opponent
-      stealCard(context, candidates[0]);
+      stealCard(game, candidates[0].id);
     } else if (candidates.length > 1) {
-      // Set stage to choose a player to steal from
-      events.setActivePlayers({
-        currentPlayer: 'choosePlayerToStealFrom',
-      });
+      game.turnManager.setStage('choosePlayerToStealFrom');
     }
   }
 
   /**
    * Immediately consume the second matching cat card after the first is played.
    */
-  afterPlay(context: IContext, card: ICard) {
-    const {G, player} = context;
-    const playerData = player.get();
+  afterPlay(game: TheGame, card: Card) {
+    const player = game.players.actingPlayer;
+    const secondCard = player.removeCard(card.name);
 
-    const secondCardIndex = playerData.hand.findIndex(
-      (c: ICard) => c.name === card.name && c.index === card.index
-    );
-
-    if (secondCardIndex === -1) {
+    if (!secondCard) {
+      console.log("Error: Expected to find a second cat card to consume, but none found.");
       return;
     }
-
-    const secondCard = playerData.hand[secondCardIndex];
-    const newHand = playerData.hand.filter((_: ICard, index: number) => index !== secondCardIndex);
-
-    player.set({
-      ...playerData,
-      hand: newHand,
-    });
-
-    G.discardPile.push(secondCard);
+    game.piles.discardCard(secondCard);
   }
 
   sortOrder(): number {

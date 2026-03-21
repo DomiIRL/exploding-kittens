@@ -24,12 +24,12 @@ export default function Table({gameContext, playerHand = []}: TableProps) {
   const [isDrawing, setIsDrawing] = useState(false);
   const [isShuffling, setIsShuffling] = useState(false);
   const [lastDrawPileLength, setLastDrawPileLength] = useState(G.client.drawPileLength);
-  const [lastDiscardPileLength, setLastDiscardPileLength] = useState(G.discardPile.length);
+  const [lastDiscardPileLength, setLastDiscardPileLength] = useState(G.piles.discardPile.length);
   const [isHoveringDrawPile, setIsHoveringDrawPile] = useState(false);
   const [isDiscardPileSelected, setIsDiscardPileSelected] = useState(false);
   const discardPileRef = useRef<HTMLDivElement>(null);
 
-  const discardCard = G.discardPile[G.discardPile.length - 1];
+  const discardCard = G.piles.discardPile[G.piles.discardPile.length - 1];
   const discardImage = discardCard ? `/assets/cards/${discardCard.name}/${discardCard.index}.png` : "None";
 
   // Check for Nope card in hand
@@ -65,14 +65,14 @@ export default function Table({gameContext, playerHand = []}: TableProps) {
     pendingCardRef.current = null;
 
     // Check if discard pile changed
-    const discardChanged = G.discardPile.length > lastDiscardPileLength;
+    const discardChanged = G.piles.discardPile.length > lastDiscardPileLength;
     
     // Check if we just finished a pending play that was a Shuffle and NOT noped
     const resolvedShuffle = wasPending && 
                             !wasPending.isNoped && 
                             wasPending.card.name === 'shuffle';
 
-    const lastCard = G.discardPile[G.discardPile.length - 1];
+    const lastCard = G.piles.discardPile[G.piles.discardPile.length - 1];
     
     // Trigger if newly placed shuffle
     // OR if delayed resolution happened
@@ -85,9 +85,9 @@ export default function Table({gameContext, playerHand = []}: TableProps) {
     }
     
     if (!G.pendingCardPlay) {
-        setLastDiscardPileLength(G.discardPile.length);
+        setLastDiscardPileLength(G.piles.discardPile.length);
     }
-  }, [G.discardPile.length, lastDiscardPileLength, G.discardPile, G.pendingCardPlay]);
+  }, [G.piles.discardPile.length, lastDiscardPileLength, G.piles.discardPile, G.pendingCardPlay]);
 
   const handleDrawClick = () => {
     if (!isDrawing) {

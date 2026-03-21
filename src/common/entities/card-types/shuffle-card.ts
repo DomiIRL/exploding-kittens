@@ -1,5 +1,6 @@
 import {CardType} from '../card-type';
-import {ICard, IContext} from "../../models";
+import {TheGame} from '../game';
+import {Card} from '../card';
 
 export class ShuffleCard extends CardType {
 
@@ -7,10 +8,10 @@ export class ShuffleCard extends CardType {
     super(name);
   }
 
-  onPlayed(context: IContext, _card: ICard) {
-    const { G, random } = context;
-    G.drawPile = random.Shuffle(G.drawPile)
+  onPlayed(game: TheGame, _card: Card) {
+    game.piles.shuffleDrawPile();
   }
+
 
   sortOrder(): number {
     return 4;

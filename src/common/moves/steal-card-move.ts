@@ -1,20 +1,11 @@
-import {IContext} from "../models";
 import {PlayerID} from "boardgame.io";
-import {Game} from "../entities/game";
+import {TheGame} from "../entities/game";
 
-export const stealCard = (context: IContext, targetPlayerId: PlayerID) => {
-  const {events, random} = context;
-  const game = new Game(context);
-
+export function stealCard(game: TheGame, targetPlayerId: PlayerID) {
   // Validate target player
-  const targetPlayer = game.validateTarget(targetPlayerId);
+  const targetPlayer = game.players.validateTarget(targetPlayerId);
 
-  // Pick a random card index from target player's hand
-  const randomIndex = Math.floor(random.Number() * targetPlayer.getCardCount());
+  game.players.actingPlayer.stealRandomCardFrom(targetPlayer);
 
-  // Transfer the card from target to current player
-  targetPlayer.giveCard(randomIndex, game.currentPlayer);
-
-  events.endStage();
-};
-
+  game.turnManager.endStage();
+}

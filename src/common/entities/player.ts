@@ -1,9 +1,11 @@
 import {ICard, IPlayer} from '../models';
-import {Game} from "./game";
+import {TheGame} from "./game";
+import {Card} from "./card";
+import {EXPLODING_KITTEN, DEFUSE} from "../constants/card-types";
 
 export class Player {
   constructor(
-    private game: Game,
+    private game: TheGame,
     private _state: IPlayer,
     public readonly id: string
   ) {}
@@ -40,9 +42,16 @@ export class Player {
   /**
    * Get all card-types of a specific type from hand, or all card-types if no type specified
    */
-  getCards(cardName?: string): ICard[] {
-    if (!cardName) return this._state.hand;
-    return this._state.hand.filter(c => c.name === cardName);
+  getCards(cardName: Card | string): Card[] {
+    const name = typeof cardName === 'string' ? cardName : cardName.name;
+    return this._state.hand.filter(c => c.name === name).map(c => new Card(this.game, c));
+  }
+
+  /**
+   * Get all card-types that match both name and index of the given card.
+   */
+  getMatchingCards(card: Card): Card[] {
+    return this.getCards(card.name).filter(c => c.index === card.index);
   }
 
   /**
@@ -115,7 +124,7 @@ export class Player {
   eliminate(): void {
     this._state.isAlive = false;
     // put all hand card-types in discard pile
-    this._state.hand.forEach(card => this.game.discardCard(card));
+    this._state.hand.forEach(card => this.game.piles.discardCard(card));
   }
 
   /**
@@ -128,6 +137,102 @@ export class Player {
     }
     recipient.addCard(card);
     return card;
+  }
+
+  playCard(cardIndex: number): void {
+    if (cardIndex < 0 || cardIndex >= this.hand.length) {
+       throw new Error(`Invalid card index: ${cardIndex}`);
+    }
+
+    const cardData = this.hand[cardIndex];
+    // Create Card wrapper
+    const card = new Card(this.game, cardData);
+    
+    if (!card.type.canBePlayed(this.game, card)) {
+       throw new Error(`Card cannot be played: ${card.name}`);
+    }
+
+    // Remove card from hand
+    const playedCardData = this.removeCardAt(cardIndex);
+    if (!playedCardData) return; // Should not happen
+
+    this.game.piles.discardCard(playedCardData);
+    card.afterPlay();
+
+    if (card.isNowCard()) {
+       card.play();
+       return;
+    }
+
+    // Setup pending state for non-immediate cards
+    const startedAtMs = Date.now();
+    this.game.pendingCardPlay = {
+        card: {...playedCardData},
+        playedBy: this.id,
+        startedAtMs, 
+        expiresAtMs: startedAtMs + (this.game.gameRules.pendingTimerMs || 5000),
+        lastNopeBy: null,
+        nopeCount: 0,
+        isNoped: false
+    };
+
+    // Note: card.type.setupPendingState logic might need valid PendingCardPlay to be set first? 
+    // The original setupPendingState in CardType calls setActivePlayers.
+    card.type.setupPendingState(this.game);
+  }
+
+  draw(): void {
+      if (!this.isAlive) throw new Error("Dead player cannot draw");
+
+      const cardData = this.game.piles.drawCardFromPile();
+      if (!cardData) throw new Error("No cards left to draw");
+
+      this.addCard(cardData);
+
+      if (cardData.name === EXPLODING_KITTEN.name) {
+          const hasDefuse = this.hasCard(DEFUSE.name);
+          if (hasDefuse) {
+              this.game.turnManager.setStage('defuseExplodingKitten');
+          } else {
+              this.eliminate();
+              this.game.turnManager.endTurn();
+          }
+      } else {
+          this.game.turnManager.endTurn();
+      }
+  }
+
+  defuseExplodingKitten(insertIndex: number): void {
+      if (insertIndex < 0 || insertIndex > this.game.piles.drawPileSize) {
+          throw new Error('Invalid insert index');
+      }
+
+      const defuseCard = this.removeCard(DEFUSE.name);
+      const kittenCard = this.removeCard(EXPLODING_KITTEN.name);
+
+      if (!defuseCard || !kittenCard) {
+          // Should not happen if UI is correct, but safer to eliminate
+          this.eliminate();
+          this.game.turnManager.endStage();
+          this.game.turnManager.endTurn();
+          return;
+      }
+
+      this.game.piles.discardCard(defuseCard);
+      this.game.piles.insertCardIntoDrawPile(kittenCard, insertIndex);
+      
+      this.game.turnManager.endStage();
+      this.game.turnManager.endTurn();
+  }
+
+  stealRandomCardFrom(target: Player): ICard {
+      const count = target.getCardCount();
+      if (count === 0) throw new Error("Target has no cards");
+      
+      // Use game context random
+      const index = Math.floor(this.game.context.random.Number() * count);
+      // Give card from target to this player
+      return target.giveCard(index, this);
   }
 
   private _updateClientState() {

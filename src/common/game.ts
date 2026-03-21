@@ -1,16 +1,17 @@
-import {Ctx, Game} from 'boardgame.io';
+import {Game, PlayerID} from 'boardgame.io';
 import {createPlayerPlugin} from './plugins/player-plugin';
 import {setupGame} from './setup/game-setup';
 import type {ICard, IContext, IGameState, IPluginAPIs} from './models';
 import {drawCard} from "./moves/draw-move";
 import {playCard, playNowCard, resolvePendingCard} from "./moves/play-card-move";
-import {stealCard} from "./moves/steal-card-move";
 import {requestCard, giveCard} from "./moves/favor-card-move";
 import {closeFutureView} from "./moves/see-future-move";
 import {turnOrder} from "./utils/turn-order";
 import {OriginalDeck} from './entities/deck-types/original-deck';
 import {dealHands} from './setup/player-setup';
 import {defuseExplodingKitten} from "./moves/defuse-exploding-kitten";
+import {TheGame} from "./entities/game";
+import {stealCard} from "./moves/steal-card-move";
 
 export const ExplodingKittens: Game<IGameState, IPluginAPIs> = {
   name: "Exploding-Kittens",
@@ -21,21 +22,21 @@ export const ExplodingKittens: Game<IGameState, IPluginAPIs> = {
 
   disableUndo: true,
 
-  playerView: ({G, ctx, playerID}: {G: IGameState; ctx: Ctx; playerID: any}) => {
+  playerView: ({G, ctx, playerID}) => {
     // The player plugin's playerView will handle filtering the player data
     // We need to pass G through so it's available
 
     let viewableDrawPile: ICard[] = [];
 
     if (ctx.activePlayers?.[playerID!] === 'viewingFuture') {
-      viewableDrawPile = G.drawPile.slice(0, 3);
+      viewableDrawPile = G.piles.drawPile.slice(0, 3);
     }
 
     return {
       ...G,
       drawPile: viewableDrawPile,
       client: {
-        drawPileLength: G.drawPile.length
+        drawPileLength: G.piles.drawPile.length
       }
     };
   },
@@ -50,15 +51,17 @@ export const ExplodingKittens: Game<IGameState, IPluginAPIs> = {
         // Reset game state for lobby
         G.lobbyReady = false;
       },
-      onEnd: ({G, ctx, player}) => {
+      onEnd: (context: IContext) => {
+        const game = new TheGame(context)
+
         // Deal card-types when leaving lobby phase
         const deck = new OriginalDeck();
         const pile: ICard[] = deck.buildBaseDeck().sort(() => Math.random() - 0.5);
 
-        dealHands(pile, player.state, deck);
-        deck.addPostDealCards(pile, Object.keys(ctx.playOrder).length);
+        dealHands(pile, game.context.player.state, deck); // TODO: use api wrapper
+        deck.addPostDealCards(pile, Object.keys(game.context.ctx.playOrder).length);
 
-        G.drawPile = pile.sort(() => Math.random() - 0.5);
+        game.piles.state.drawPile = pile.sort(() => Math.random() - 0.5);
       },
       endIf: ({G}) => {
         // Move to play phase only when lobbyReady flag is explicitly set
@@ -114,7 +117,7 @@ export const ExplodingKittens: Game<IGameState, IPluginAPIs> = {
           choosePlayerToStealFrom: {
             moves: {
               stealCard: {
-                move: stealCard,
+                move: (context: IContext, targetPlayerId: PlayerID) => stealCard(new TheGame(context), targetPlayerId),
                 client: false
               },
             },

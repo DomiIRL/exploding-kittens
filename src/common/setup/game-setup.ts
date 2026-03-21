@@ -12,8 +12,10 @@ export const setupGame = (_context: any, setupData?: SetupData): IGameState => {
   // Don't deal card-types yet - will be done when lobby phase ends
   return {
     winner: null,
-    drawPile: [],
-    discardPile: [],
+    piles: {
+        drawPile: [],
+        discardPile: [],
+    },
     pendingCardPlay: null,
     turnsRemaining: 1,
     gameRules: {
