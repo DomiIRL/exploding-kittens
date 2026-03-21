@@ -1,5 +1,6 @@
-import { TheGame } from '../../common';
+import {Player, TheGame} from '../../common';
 import { IContext } from '../../common';
+import {PlayerID} from "boardgame.io";
 
 export class TheGameClient extends TheGame {
   public readonly moves: Record<string, (...args: any[]) => void>;
@@ -30,5 +31,19 @@ export class TheGameClient extends TheGame {
     this.chatMessages = chatMessages;
     this.isMultiplayer = isMultiplayer;
   }
+
+  get isSpectator(): boolean {
+    return this.playerID === null;
+  }
+
+  get selfPlayerId(): PlayerID | null {
+    return this.isSpectator ? null : this.playerID;
+  }
+
+  get selfPlayer(): Player | null {
+    if (this.isSpectator) return null;
+    return this.players.getPlayer(this.selfPlayerId!);
+  }
+
 }
 

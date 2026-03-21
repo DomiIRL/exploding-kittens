@@ -4,13 +4,13 @@ import {PlayerID} from "boardgame.io";
 import {IPlayers} from "../models";
 
 export class Players {
-  constructor(private game: TheGame, private players: IPlayers) {}
+  constructor(private game: TheGame, public players: IPlayers) {}
 
   /**
    * Get a player wrapper instance for a specific player ID.
    * Throws if player data not found.
    */
-  getPlayer(id: string): Player {
+  getPlayer(id: PlayerID): Player {
     // boardgame.io player plugin structure
     const playerData = this.players?.[id];
     if (!playerData) {
@@ -54,7 +54,7 @@ export class Players {
    * Get all alive players who have at least one card in hand
    */
   get playersWithCards(): Player[] {
-    return this.alivePlayers.filter(player => player.getCardCount() > 0);
+    return this.alivePlayers.filter(player => player.cardCount > 0);
   }
 
   /**

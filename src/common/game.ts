@@ -59,7 +59,7 @@ export const ExplodingKittens: Game<IGameState, IPluginAPIs> = {
         dealHands(pile, game.context.player.state, deck); // TODO: use api wrapper
         deck.addPostDealCards(pile, Object.keys(game.context.ctx.playOrder).length);
 
-        game.piles.state.drawPile = pile.sort(() => Math.random() - 0.5);
+        game.piles.cards.drawPile = pile.sort(() => Math.random() - 0.5);
       },
       turn: {
         activePlayers: {

@@ -50,7 +50,6 @@ export default function ExplodingKittensBoard(props: BoardProps<IGameState> & { 
     ctx,
     G,
     moves,
-    plugins,
     playerID,
     chatMessages,
     sendChatMessage
@@ -60,8 +59,6 @@ export default function ExplodingKittensBoard(props: BoardProps<IGameState> & { 
   useEffect(() => {
     setPollingInterval(game.isLobbyPhase() ? 500 : 3000);
   }, [game.isLobbyPhase(), setPollingInterval]);
-
-  const allPlayers = plugins.player.data.players;
 
   // Bundle game context
   const gameContext: GameContext = {
@@ -73,10 +70,7 @@ export default function ExplodingKittensBoard(props: BoardProps<IGameState> & { 
   };
 
   // Derive game state properties
-  const gameState = useGameState(ctx, G, allPlayers, playerID ?? null);
-
-  const selfPlayer = gameState.selfPlayerId !== null && allPlayers[gameState.selfPlayerId] ? allPlayers[gameState.selfPlayerId] : null;
-  const selfHand = selfPlayer ? selfPlayer.hand : [];
+  const gameState = useGameState(ctx, G, game.players.players, playerID ?? null);
 
   useEffect(() => {
     if (!gameState.isInNowCardStage || !G.pendingCardPlay || !moves.resolvePendingCard) {
@@ -109,7 +103,7 @@ export default function ExplodingKittensBoard(props: BoardProps<IGameState> & { 
 
   // Bundle player state
   const playerState: PlayerStateBundle = {
-    allPlayers,
+    allPlayers: game.players.players,
     selfPlayerId: gameState.selfPlayerId,
     currentPlayer: gameState.currentPlayer,
     isSelfDead: gameState.isSelfDead,
@@ -126,7 +120,7 @@ export default function ExplodingKittensBoard(props: BoardProps<IGameState> & { 
   };
 
   // Handle card animations
-  const {AnimationLayer, triggerCardMovement} = useCardAnimations(G, allPlayers, playerID ?? null);
+  const {AnimationLayer, triggerCardMovement} = useCardAnimations(G, game.players.players, playerID ?? null);
 
   /**
    * Handle player selection for stealing/requesting a card
@@ -177,7 +171,7 @@ export default function ExplodingKittensBoard(props: BoardProps<IGameState> & { 
 
         <div className={`board-container ${playerState.isSelfSpectator ? 'hand-interactable' : ''} ${playerState.isSelfDead ? 'dimmed' : ''} ${game.isLobbyPhase() ? 'pointer-events-none' : ''}`}>
           <div className={"game-elements"}>
-            <Table gameContext={gameContext} playerHand={selfHand} />
+            <Table gameContext={gameContext} />
 
             <PlayerList
               alivePlayersSorted={gameState.alivePlayersSorted}

@@ -38,7 +38,7 @@ export {createPlayerPlugin} from './plugins/player-plugin';
 
 // Utilities
 export {sortCards} from './utils/card-sorting';
-export {canPlayerNope, validateNope} from './utils/action-validation';
+export {validateNope} from './utils/action-validation';
 
 // Wrappers
 export {Player} from './entities/player';

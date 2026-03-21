@@ -12,8 +12,8 @@ import {LOBBY} from "../constants/phases";
 
 export class TheGame {
   public readonly context: IContext;
-  private readonly gameState: IGameState;
-  private readonly bgContext: Ctx;
+  protected readonly gameState: IGameState;
+  protected readonly bgContext: Ctx;
   public readonly events: EventsAPI;
   public readonly random: RandomAPI;
 

@@ -1,5 +1,4 @@
 import {IGameState} from '../models/game-state.model';
-import {ICard} from '../models/card.model';
 
 /**
  * Validates if a player can play a Nope card against the current game state.
@@ -32,13 +31,3 @@ export function validateNope(G: IGameState, playerID: string | null | undefined)
   return true;
 }
 
-export function canPlayerNope(
-  G: IGameState,
-  playerID: string | null | undefined, 
-  playerHand: ICard[]
-): boolean {
-  const nopeCardIndex = playerHand.findIndex(c => c.name === 'nope');
-  if (nopeCardIndex === -1) return false;
-
-  return validateNope(G, playerID);
-}

@@ -3,12 +3,14 @@ import {TheGame} from "./game";
 import {Card} from "./card";
 import {EXPLODING_KITTEN, DEFUSE} from "../registries/card-registry";
 import {DEFUSE_EXPLODING_KITTEN} from "../constants/stages";
+import {PlayerID} from "boardgame.io";
+import {NAME_NOPE} from "../constants/cards";
 
 export class Player {
   constructor(
     private game: TheGame,
     private _state: IPlayer,
-    public readonly id: string
+    public readonly id: PlayerID
   ) {}
 
   /**
@@ -26,10 +28,51 @@ export class Player {
   }
 
   /**
+   * Get the count of card-types in hand
+   */
+  get cardCount(): number {
+    return this._state.hand.length;
+  }
+
+  get canNope(): boolean {
+    if (!this.hand.some(c => c.name === NAME_NOPE)) {
+      return false;
+    }
+    if (!this.game.pendingCardPlay) {
+      return false;
+    }
+
+    const pending = this.game.pendingCardPlay;
+
+    // Player cannot nope their own card play if it hasn't been noped yet
+    // If it HAS been noped, they can re-nope (un-nope) it, unless they were the last person to nope it
+    if (!pending.isNoped && pending.playedBy === this.id) {
+      return false;
+    }
+
+    // Player cannot nope their own nope card (cannot double-nope themselves immediately)
+    if (pending.lastNopeBy === this.id) {
+      return false;
+    }
+
+    // Check expiration
+    // Note: Date.now() on client might differ from server, but usually this is acceptable for UI state
+    if (Date.now() > pending.expiresAtMs) {
+      return false;
+    }
+
+    return true;
+  }
+
+  /**
    * Check if the player has at least one card of the given type
    */
   hasCard(cardName: string): boolean {
     return this._state.hand.some(c => c.name === cardName);
+  }
+
+  findCardIndex(cardName: string): number {
+    return this._state.hand.findIndex(c => c.name === cardName);
   }
 
   /**
@@ -45,13 +88,6 @@ export class Player {
    */
   getMatchingCards(card: Card): Card[] {
     return this.getCards(card.name).filter(c => c.index === card.index);
-  }
-
-  /**
-   * Get the count of card-types in hand
-   */
-  getCardCount(): number {
-    return this._state.hand.length;
   }
 
   /**
@@ -175,7 +211,7 @@ export class Player {
   draw(): void {
       if (!this.isAlive) throw new Error("Dead player cannot draw");
 
-      const cardData = this.game.piles.drawCardFromPile();
+      const cardData = this.game.piles.drawCard();
       if (!cardData) throw new Error("No cards left to draw");
 
       this.addCard(cardData);
@@ -194,7 +230,7 @@ export class Player {
   }
 
   defuseExplodingKitten(insertIndex: number): void {
-      if (insertIndex < 0 || insertIndex > this.game.piles.drawPileSize) {
+      if (insertIndex < 0 || insertIndex > this.game.piles.drawPile.size) {
           throw new Error('Invalid insert index');
       }
 
@@ -210,14 +246,14 @@ export class Player {
       }
 
       this.game.piles.discardCard(defuseCard);
-      this.game.piles.insertCardIntoDrawPile(kittenCard, insertIndex);
+      this.game.piles.drawPile.insertCard(kittenCard, insertIndex);
       
       this.game.turnManager.endStage();
       this.game.turnManager.endTurn();
   }
 
   stealRandomCardFrom(target: Player): Card {
-      const count = target.getCardCount();
+      const count = target.cardCount;
       if (count === 0) throw new Error("Target has no cards");
       
       // Use game context random

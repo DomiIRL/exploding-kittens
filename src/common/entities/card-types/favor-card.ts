@@ -18,7 +18,7 @@ export class FavorCard extends CardType {
       if (target.id === ctx.currentPlayer) {
         return false; // Can't target yourself
       }
-      return target.isAlive && target.getCardCount() > 0;
+      return target.isAlive && target.cardCount > 0;
     });
   }
 
@@ -26,7 +26,7 @@ export class FavorCard extends CardType {
     const { ctx } = game.context;
 
     const candidates = game.players.allPlayers.filter((target) => {
-      return target.id !== ctx.currentPlayer && target.isAlive && target.getCardCount() > 0;
+      return target.id !== ctx.currentPlayer && target.isAlive && target.cardCount > 0;
     });
 
     if (candidates.length === 1) {

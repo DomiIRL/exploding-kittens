@@ -9,9 +9,8 @@ export class ShuffleCard extends CardType {
   }
 
   onPlayed(game: TheGame, _card: Card) {
-    game.piles.shuffleDrawPile();
+    game.piles.drawPile.shuffle();
   }
-
 
   sortOrder(): number {
     return 4;
