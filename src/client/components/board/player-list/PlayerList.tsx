@@ -1,90 +1,33 @@
 import Player from '../player-area/Player';
-import PlayerState from '../../../model/PlayerState';
-import {calculatePlayerPositions} from '../../../utils/playerPositioning';
-import {
-  GameContext,
-  PlayerStateBundle,
-  OverlayStateBundle,
-  AnimationCallbacks,
-  PlayerInteractionHandlers
-} from '../../../types/component-props';
+import { calculatePlayerPositions } from '../../../utils/playerPositioning';
 import './PlayerList.css';
+import { useGame } from '../../../context/GameContext.tsx';
 
-interface PlayerListProps {
-  alivePlayersSorted: string[];
-  playerState: PlayerStateBundle;
-  overlayState: OverlayStateBundle;
-  isInNowCardStage: boolean;
-  animationCallbacks: AnimationCallbacks;
-  interactionHandlers: PlayerInteractionHandlers;
-  gameContext: GameContext;
-}
+export default function PlayerList() {
+  const game = useGame();
+  const alivePlayers = game.players.alivePlayers;
 
-/**
- * Renders the list of alive players positioned around the table
- */
-export default function PlayerList({
-  alivePlayersSorted,
-  playerState,
-  overlayState,
-  isInNowCardStage,
-  animationCallbacks,
-  interactionHandlers,
-  gameContext,
-}: PlayerListProps) {
-  const {allPlayers, selfPlayerId, isSelfDead, isSelfSpectator, currentPlayer} = playerState;
-  const {isSelectingPlayer, isChoosingCardToGive} = overlayState;
-  const {playerID, moves, matchData} = gameContext;
+  const selfIndex = !game.isSelfAlive
+    ? null
+    : alivePlayers.findIndex(p => p.id === game.selfPlayerId);
 
   return (
     <div className="player-list">
-      {alivePlayersSorted.map((player) => {
-        const playerNumber = parseInt(player);
-        const playerInfo = allPlayers[player];
-        const isSelf = selfPlayerId !== null && playerNumber === selfPlayerId;
+      {alivePlayers.map((player, playerIndex) => {
 
-        let {cardPosition, infoPosition} = calculatePlayerPositions(
-          player,
-          alivePlayersSorted,
-          selfPlayerId,
-          isSelfDead
+        const { cardPosition, infoPosition } = calculatePlayerPositions(
+          playerIndex,
+          alivePlayers.length,
+          selfIndex === -1 ? null : selfIndex,
+          !game.selfPlayer?.isAlive
         );
-
-        const playerRenderState = new PlayerState(
-          isSelfSpectator,
-          isSelf,
-          playerInfo.isAlive,
-          playerNumber === currentPlayer,
-          playerInfo.client.handCount,
-          playerInfo.hand
-        );
-
-        const isSelectable = isSelectingPlayer
-          && player !== playerID
-          && playerRenderState.isAlive
-          && playerRenderState.handCount > 0;
-
-        const isWaitingOn = gameContext.ctx.activePlayers?.[player] === 'chooseCardToGive';
-        const isSelfChoosingCard = isChoosingCardToGive
-          && player === playerID;
-
-        const isSelfInNowCardStage = isInNowCardStage
-          && player === playerID;
 
         return (
           <Player
-            key={player}
-            playerID={player}
-            playerState={playerRenderState}
-            position={{cardPosition, infoPosition}}
-            isSelectable={isSelectable}
-            isChoosingCardToGive={isSelfChoosingCard}
-            isInNowCardStage={isSelfInNowCardStage}
-            isWaitingOn={isWaitingOn}
-            interactionHandlers={interactionHandlers}
-            animationCallbacks={animationCallbacks}
-            moves={moves}
-            matchData={matchData}
+            player={player}
+            key={player.id}
+            position={{ cardPosition, infoPosition }}
+            matchData={game.matchData}
           />
         );
       })}

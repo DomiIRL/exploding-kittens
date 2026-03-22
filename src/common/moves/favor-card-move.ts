@@ -1,14 +1,11 @@
-import {IContext} from "../models";
-import {PlayerID} from "boardgame.io";
 import {TheGame} from "../entities/game";
+import {PlayerID} from "boardgame.io";
 import {CHOOSE_CARD_TO_GIVE} from "../constants/stages";
 
 /**
  * Request a card from a target player (favor card - first stage)
  */
-export const requestCard = (context: IContext, targetPlayerId: PlayerID) => {
-  const game = new TheGame(context);
-
+export const requestCard = (game: TheGame, targetPlayerId: PlayerID) => {
   // Validate target player
   game.players.validateTarget(targetPlayerId);
 
@@ -24,9 +21,8 @@ export const requestCard = (context: IContext, targetPlayerId: PlayerID) => {
 /**
  * Give a card to the requesting player (favor card - second stage)
  */
-export const giveCard = (context: IContext, cardIndex: number) => {
-  const {ctx} = context;
-  const game = new TheGame(context);
+export const giveCard = (game: TheGame, cardIndex: number) => {
+  const {ctx} = game.context;
 
   // Find who is giving the card (the player in the chooseCardToGive stage)
   const givingPlayerId = Object.keys(ctx.activePlayers || {}).find(

@@ -1,57 +1,51 @@
 import Card from '../card/Card';
-import PlayerRenderState from "../../../model/PlayerState";
-import {AnimationCallbacks, PlayerInteractionHandlers} from "../../../types/component-props";
-import '../card/Card.css'; // Ensure Card CSS is available for reusing styles if needed
+import '../card/Card.css';
+import {ICard, Player, sortCards} from "../../../../common";
+import {useGame} from "../../../context/GameContext.tsx";
+
+export interface CardWithServerIndex extends ICard {
+  serverIndex: number;
+}
 
 interface PlayerCardsProps {
-  playerState: PlayerRenderState;
-  moves?: any;
-  playerID: string;
-  isChoosingCardToGive: boolean;
-  isInNowCardStage: boolean;
-  animationCallbacks: AnimationCallbacks;
-  interactionHandlers: PlayerInteractionHandlers;
+  player: Player;
 }
 
 export default function PlayerCards({
-  playerState,
-  moves,
-  isChoosingCardToGive,
-  isInNowCardStage,
-  interactionHandlers
+  player
 }: PlayerCardsProps) {
+  const game = useGame();
 
-  const {onCardGive} = interactionHandlers;
-  const {isSelfSpectator, isSelf, isTurn, handCount, hand} = playerState;
-  const fanSpread = isSelfSpectator || isSelf ? Math.min(handCount * 6, 60) : Math.min(handCount * 4, 40);
-  const angleStep = handCount > 1 ? fanSpread / (handCount - 1) : 0;
-  const baseOffset = handCount > 1 ? -fanSpread / 2 : 0;
-  const spreadDistance = isSelf ? 25 : isSelfSpectator ? 10 : 5;
-  const canPlay = (isSelf && (isTurn || isInNowCardStage)) || isChoosingCardToGive;
+  const cardCount = player.cardCount;
+  const fanSpread = game.isSpectator || game.isSelf(player) ? Math.min(cardCount * 6, 60) : Math.min(cardCount * 4, 40);
+  const angleStep = cardCount > 1 ? fanSpread / (cardCount - 1) : 0;
+  const baseOffset = cardCount > 1 ? -fanSpread / 2 : 0;
+  const spreadDistance = game.isSelf(player) ? 25 : game.isSpectator ? 10 : 5;
+
+  const cardsWithIndices: CardWithServerIndex[] = player.hand.map((card, index) => ({
+    ...card,
+    serverIndex: index
+  }));
+  const hand = sortCards(cardsWithIndices) as CardWithServerIndex[];
 
   return (
     <div className="player-cards">
-      {Array(handCount).fill(null).map((_, i) => {
+      {Array(cardCount).fill(null).map((_, i) => {
         const angle = baseOffset + (angleStep * i);
-        const offsetX = (i - (handCount - 1) / 2) * spreadDistance;
+        const offsetX = (i - (cardCount - 1) / 2) * spreadDistance;
         const offsetY = Math.abs(angle) * 0.3;
 
         const card = hand && hand.length > 0 ? hand[i] : null;
 
         return (
           <Card
+            owner={player}
             card={card}
             key={i}
             index={i}
-            count={playerState.handCount}
             angle={angle}
             offsetX={offsetX}
             offsetY={offsetY}
-            moves={moves}
-            isClickable={canPlay}
-            isChoosingCardToGive={isChoosingCardToGive}
-            isInNowCardStage={isInNowCardStage}
-            onCardGive={onCardGive}
           />
         );
       })}

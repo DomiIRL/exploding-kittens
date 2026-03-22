@@ -1,5 +1,6 @@
 import './LobbyOverlay.css';
 import {useMatchDetails} from "../../../context/MatchDetailsContext.tsx";
+import {useGame} from "../../../context/GameContext.tsx";
 
 interface LobbyOverlayProps {
   playerID?: string | null;
@@ -7,6 +8,8 @@ interface LobbyOverlayProps {
 }
 
 export default function LobbyOverlay({playerID, onStartGame}: LobbyOverlayProps) {
+  const game = useGame();
+
   const { matchDetails } = useMatchDetails();
   const { players, numPlayers } = matchDetails || {players: [], numPlayers: 1};
 
@@ -49,7 +52,7 @@ export default function LobbyOverlay({playerID, onStartGame}: LobbyOverlayProps)
           {Array.from({length: numPlayers}).map((_, i) => {
             const player = players?.[i];
             const hasJoined = player?.isConnected;
-            const isSelf = player?.id.toString() === playerID;
+            const isSelf = game.isSelf(player);
 
             return (
               <div

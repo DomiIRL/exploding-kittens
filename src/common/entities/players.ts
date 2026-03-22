@@ -1,10 +1,10 @@
 import {Player} from './player';
 import {TheGame} from "./game";
 import {PlayerID} from "boardgame.io";
-import {IPlayers} from "../models";
+import {IGameState, IPlayers} from "../models";
 
 export class Players {
-  constructor(private game: TheGame, public players: IPlayers) {}
+  constructor(private game: TheGame, private gamestate: IGameState, public players: IPlayers) {}
 
   /**
    * Get a player wrapper instance for a specific player ID.
@@ -35,12 +35,17 @@ export class Players {
     return this.getPlayer(id);
   }
 
+  get winner(): Player | null {
+    return this.gamestate.winner ? this.getPlayer(this.gamestate.winner) : null;
+  }
+
   /**
    * Get all players
    */
   get allPlayers(): Player[] {
-    const playerIDs = Object.keys(this.players || {});
-    return playerIDs.map(id => this.getPlayer(id));
+    return this.game.turnManager.playOrder
+      .map(id => this.getPlayer(id))
+      .filter(player => player !== null) as Player[];
   }
 
   /**
@@ -69,12 +74,14 @@ export class Players {
    * Checks if target is alive, has card-types, and is not the current player.
    */
   validateTarget(targetPlayerId: string): Player {
-    const validTargets = this.getValidCardActionTargets(this.game.context.ctx.currentPlayer);
-    const target = validTargets.find(player => player.id === targetPlayerId);
-    if (!target) {
-      throw new Error(`Invalid target player ID: ${targetPlayerId}`);
+    const player = this.getPlayer(targetPlayerId);
+    if (!player) {
+      throw new Error(`Player with ID ${targetPlayerId} not found`);
     }
-    return target;
+    if (!player.isValidCardTarget) {
+      throw new Error(`Player with ID ${targetPlayerId} is not a valid target (must be alive and have cards)`);
+    }
+    return player;
   }
 }
 

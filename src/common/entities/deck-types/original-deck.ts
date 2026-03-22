@@ -4,7 +4,6 @@ import type {ICard} from '../../models';
 import {
   ATTACK,
   CAT_CARD,
-  DEFUSE,
   EXPLODING_KITTEN,
   FAVOR, NOPE,
   SEE_THE_FUTURE,
@@ -26,8 +25,8 @@ export class OriginalDeck extends DeckType {
     return STARTING_HAND_SIZE;
   }
 
-  startingHandForcedCards(index: number): ICard[] {
-    return [DEFUSE.createCard(index)];
+  startingHandForcedCards(_index: number): ICard[] {
+    return [];
   }
 
   buildBaseDeck(): ICard[] {
@@ -55,7 +54,7 @@ export class OriginalDeck extends DeckType {
     const remaining = Math.min(TOTAL_DEFUSE_CARDS - playerCount, MAX_DECK_DEFUSE_CARDS);
 
     for (let i = 0; i < remaining; i++) {
-      pile.push(DEFUSE.createCard(playerCount - 1 + i));
+      // pile.push(DEFUSE.createCard(playerCount - 1 + i));
     }
 
     for (let i = 0; i < EXPLODING_KITTENS; i++) {

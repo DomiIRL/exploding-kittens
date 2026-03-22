@@ -47,7 +47,7 @@ export default function PendingPlayStack() {
       {game.selfPlayer?.canNope && (
         <button 
           className="nope-button-inline"
-          onClick={game.playNope}
+          onClick={() => game.playNope()}
         >
           {isNoped ? 'Un-Nope!' : 'NOPE!'}
         </button>

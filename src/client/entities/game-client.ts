@@ -1,14 +1,20 @@
 import {ICard, Player, TheGame} from '../../common';
 import { IContext } from '../../common';
-import {PlayerID} from "boardgame.io";
 import {Card} from "../../common/entities/card.ts";
 import {NAME_NOPE} from "../../common/constants/cards.ts";
+import {
+  CHOOSE_CARD_TO_GIVE,
+  CHOOSE_PLAYER_TO_REQUEST_FROM,
+  CHOOSE_PLAYER_TO_STEAL_FROM
+} from "../../common/constants/stages.ts";
+import {MatchPlayer} from "../utils/matchData.ts";
+import {PlayerID} from "boardgame.io";
 
 export class TheGameClient extends TheGame {
   public readonly moves: Record<string, (...args: any[]) => void>;
   public readonly matchID: string;
-  public readonly playerID: string | null;
-  public readonly matchData: any;
+  public readonly selfPlayerId: string | null;
+  public readonly matchData: MatchPlayer[];
   public readonly sendChatMessage: (message: string) => void;
   public readonly chatMessages: any[];
   public readonly isMultiplayer: boolean;
@@ -27,7 +33,7 @@ export class TheGameClient extends TheGame {
     
     this.moves = moves;
     this.matchID = matchID;
-    this.playerID = playerID;
+    this.selfPlayerId = playerID;
     this.matchData = matchData;
     this.sendChatMessage = sendChatMessage;
     this.chatMessages = chatMessages;
@@ -35,26 +41,61 @@ export class TheGameClient extends TheGame {
   }
 
   get isSpectator(): boolean {
-    return this.playerID === null;
-  }
-
-  get selfPlayerId(): PlayerID | null {
-    return this.isSpectator ? null : this.playerID;
+    return this.selfPlayerId === null;
   }
 
   get selfPlayer(): Player | null {
-    if (this.isSpectator) return null;
-    return this.players.getPlayer(this.selfPlayerId!);
+    if (!this.selfPlayerId) {
+      return null;
+    }
+    return this.players.getPlayer(this.selfPlayerId);
+  }
+
+  get isSelfAlive(): boolean {
+    const selfPlayer = this.selfPlayer;
+    return !!selfPlayer && selfPlayer.isAlive;
   }
 
   get isSelfCurrentPlayer(): boolean {
     return this.selfPlayerId === this.players.currentPlayer.id;
   }
 
+  isSelf(player: Player | PlayerID | string | null) {
+    if (!this.selfPlayerId || !player) {
+      return false;
+    }
+    const playerId = typeof player === 'string' ? player : player.id;
+    return this.selfPlayerId === playerId;
+  }
+
   playDrawCard() {
-    if (!this.isSpectator && this.moves.drawCard) {
+    if (this.selfPlayer && this.moves.drawCard) {
       this.moves.drawCard();
     }
+  }
+
+  selectCard(cardIndex: number) {
+    if (!this.selfPlayer) {
+      console.error("No self player found");
+      return;
+    }
+    if (this.canGiveCard()) {
+      this.giveCard(cardIndex);
+    } else {
+      this.playCard(cardIndex);
+    }
+  }
+
+  canPlayCard(cardIndex: number): boolean {
+    if (!this.isSelfCurrentPlayer) {
+      return false;
+    }
+    const cardAt = this.selfPlayer?.getCardAt(cardIndex);
+    if (!cardAt) {
+      console.error(`No card at index ${cardIndex} in player's hand`);
+      return false;
+    }
+    return this.piles.canCardBePlayed(cardAt);
   }
 
   playCard(cardIndex: number) {
@@ -64,7 +105,7 @@ export class TheGameClient extends TheGame {
         console.error(`No card at index ${cardIndex} in player's hand`);
         return;
       }
-      if (!cardAt.canPlay()) {
+      if (!this.canPlayCard(cardIndex)) {
         console.error(`Card ${cardAt.name} at index ${cardIndex} cannot be played right now`);
         return;
       }
@@ -73,8 +114,50 @@ export class TheGameClient extends TheGame {
   }
 
   playNope() {
-    if (this.selfPlayer?.canNope && this.piles.pendingCard && this.moves.playNowCard) {
-      this.moves.playNowCard(this.selfPlayer?.findCardIndex(NAME_NOPE))
+    if (this.selfPlayer && this.selfPlayer.canNope && this.piles.pendingCard && this.moves.playCard) {
+      const number = this.selfPlayer.findCardIndex(NAME_NOPE);
+      this.moves.playCard(number)
+    }
+  }
+
+  canGiveCard(): boolean {
+    if (!this.selfPlayer) {
+      return false;
+    }
+    return this.selfPlayer.isInStage(CHOOSE_CARD_TO_GIVE);
+  }
+
+  giveCard(cardIndex: number) {
+    if (!this.selfPlayer) {
+      console.error("No self player found");
+      return;
+    }
+
+    if (!this.canGiveCard()) {
+      console.error("Player cannot give a card right now");
+      return;
+    }
+
+    if (this.moves.giveCard) {
+      this.moves.giveCard(cardIndex);
+    }
+  }
+
+  selectPlayer(player: Player) {
+    if (!this.selfPlayer) {
+      return false;
+    }
+    if (!this.selfPlayer.canSelectPlayer()) {
+      console.error("Player cannot be selected right now");
+      return false;
+    }
+    if (!player.isValidCardTarget) {
+      return false;
+    }
+    if (this.selfPlayer.isInStage(CHOOSE_PLAYER_TO_STEAL_FROM) && this.moves.stealCard) {
+      this.moves.stealCard(player.id);
+    } else if (this.selfPlayer.isInStage(CHOOSE_PLAYER_TO_REQUEST_FROM) && this.moves.requestCard) {
+      this.moves.requestCard(player.id);
     }
   }
 

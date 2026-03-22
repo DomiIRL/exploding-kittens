@@ -1,46 +1,48 @@
 import './Player.css';
 import PlayerCards from '../player-cards/PlayerCards';
-import PlayerState from "../../../model/PlayerState";
 import {MatchPlayer, getPlayerName} from "../../../utils/matchData";
-import {PlayerPosition, AnimationCallbacks, PlayerInteractionHandlers} from "../../../types/component-props";
+import {PlayerPosition} from "../../../types/component-props";
+import {useGame} from "../../../context/GameContext.tsx";
+import {Player as PlayerModel} from "../../../../common";
+import {
+  CHOOSE_CARD_TO_GIVE,
+  CHOOSE_PLAYER_TO_REQUEST_FROM,
+  CHOOSE_PLAYER_TO_STEAL_FROM
+} from "../../../../common/constants/stages.ts";
 
 interface PlayerAreaProps {
-  playerID: string;
-  playerState: PlayerState;
+  player: PlayerModel;
   position: PlayerPosition;
-  moves: any;
-  isSelectable: boolean;
-  isChoosingCardToGive: boolean;
-  isInNowCardStage: boolean;
-  interactionHandlers: PlayerInteractionHandlers;
-  animationCallbacks: AnimationCallbacks;
   matchData?: MatchPlayer[];
-  isWaitingOn?: boolean;
 }
 
 export default function Player({
-  playerID, 
-  playerState, 
+  player,
   position,
-  moves,
-  isSelectable = false,
-  isChoosingCardToGive = false,
-  isInNowCardStage = false,
-  interactionHandlers,
-  animationCallbacks,
   matchData,
-  isWaitingOn = false
 }: PlayerAreaProps) {
-  const {cardPosition, infoPosition} = position;
-  const {onPlayerSelect} = interactionHandlers;
+  const game = useGame();
+  const selfPlayer = game.selfPlayer;
+
+  const playerId = player.id;
+  const isSelf = game.isSelf(playerId);
+  const isTurn = player.isCurrentPlayer;
+  const isSelectable =
+    player.isValidCardTarget && (
+    selfPlayer?.isInStage(CHOOSE_PLAYER_TO_STEAL_FROM) ||
+    selfPlayer?.isInStage(CHOOSE_PLAYER_TO_REQUEST_FROM));
+  const isWaitingOn = player.isInStage(CHOOSE_CARD_TO_GIVE);
+
+  const { cardPosition, infoPosition } = position;
+
   const cardRotation = cardPosition.angle - 90;
-  const playerName = getPlayerName(playerID, matchData);
+  const playerName = getPlayerName(playerId, matchData);
 
-  const extraClasses = `${playerState.isSelf ? 'hand-interactable self' : ''} ${playerState.isTurn ? 'turn' : ''} ${isSelectable ? 'selectable' : ''} ${isWaitingOn ? 'waiting-on' : ''}`
+  const extraClasses = `${isSelf ? 'hand-interactable self' : ''} ${isTurn ? 'turn' : ''} ${isSelectable ? 'selectable' : ''} ${isWaitingOn ? 'waiting-on' : ''}`
 
-  const handleClick = () => {
-    if (isSelectable && onPlayerSelect) {
-      onPlayerSelect(playerID);
+  const handleInteract = () => {
+    if (isSelectable) {
+      game.selectPlayer(player);
     }
   };
 
@@ -53,17 +55,11 @@ export default function Player({
           top: cardPosition.top,
           left: cardPosition.left,
           transform: `translate(-50%, -50%) rotate(${cardRotation}deg)`,
-          zIndex: playerState.isSelf ? 2 : 1,
+          zIndex: isSelf ? 2 : 1,
         }}
       >
         <PlayerCards
-          playerState={playerState}
-          moves={moves}
-          playerID={playerID}
-          isChoosingCardToGive={isChoosingCardToGive}
-          isInNowCardStage={isInNowCardStage}
-          animationCallbacks={animationCallbacks}
-          interactionHandlers={interactionHandlers}
+          player={player}
         />
       </div>
 
@@ -76,18 +72,18 @@ export default function Player({
           transform: 'translate(-50%, -50%)',
           zIndex: 3,
         }}
-        onClick={handleClick}
-        data-player-id={playerID}
-        data-hand-count={playerState.handCount}
-        data-animation-id={`player-${playerID}`}
+        onClick={handleInteract}
+        data-player-id={playerId}
+        data-hand-count={player.cardCount}
+        data-animation-id={`player-${playerId}`}
       >
         <div className="player-info flex flex-col items-center">
           <div className="player-id mt-2 font-bold">
             {playerName}
-            {playerState.isSelf && ' (You)'}
+            {isSelf && ' (You)'}
           </div>
           <div className="player-hand border-2 border-black bg-white p-2 rounded">
-            Cards: {playerState.handCount}
+            Cards: {player.cardCount}
           </div>
         </div>
       </div>

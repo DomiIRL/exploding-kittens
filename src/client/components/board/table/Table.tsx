@@ -16,8 +16,8 @@ export default function Table() {
 
   const [isDrawing, setIsDrawing] = useState(false);
   const [isShuffling, setIsShuffling] = useState(false);
-  const [lastDrawPileLength, setLastDrawPileLength] = useState(game.piles.drawPile.size);
-  const [lastDiscardPileLength, setLastDiscardPileLength] = useState(game.piles.discardPile.size);
+  const [lastDrawPileSize, setLastDrawPileSize] = useState(game.piles.drawPile.size);
+  const [lastDiscardPileSize, setLastDiscardPileSize] = useState(game.piles.discardPile.size);
   const [isHoveringDrawPile, setIsHoveringDrawPile] = useState(false);
   const [isDiscardPileSelected, setIsDiscardPileSelected] = useState(false);
   const discardPileRef = useRef<HTMLDivElement>(null);
@@ -26,12 +26,12 @@ export default function Table() {
 
   // Detect when a card is drawn
   useEffect(() => {
-    if (game.piles.drawPile.size < lastDrawPileLength) {
+    if (game.piles.drawPile.size < lastDrawPileSize) {
       setIsDrawing(true);
       setTimeout(() => setIsDrawing(false), 400);
     }
-    setLastDrawPileLength(game.piles.drawPile.size);
-  }, [game.piles.drawPile.size, lastDrawPileLength]);
+    setLastDrawPileSize(game.piles.drawPile.size);
+  }, [game.piles.drawPile.size, lastDrawPileSize]);
 
   // Detect when a shuffle card is played
   const pendingCardRef = useRef(game.piles.pendingCard);
@@ -46,7 +46,7 @@ export default function Table() {
     pendingCardRef.current = null;
 
     // Check if discard pile changed
-    const discardChanged = game.piles.discardPile.size > lastDiscardPileLength;
+    const discardChanged = game.piles.discardPile.size > lastDiscardPileSize;
     
     // Check if we just finished a pending play that was a Shuffle and NOT noped
     const resolvedShuffle = wasPending && 
@@ -56,7 +56,6 @@ export default function Table() {
     const lastCard = game.piles.discardPile.topCard;
     
     // Trigger if newly placed shuffle
-    // OR if delayed resolution happened
     if ((discardChanged || resolvedShuffle) && lastCard?.name === NAME_SHUFFLE) {
       // Double check it wasn't noped if it came from pending
       if (!(wasPending && wasPending.isNoped)) {
@@ -66,9 +65,9 @@ export default function Table() {
     }
     
     if (!game.piles.pendingCard) {
-        setLastDiscardPileLength(game.piles.discardPile.size);
+        setLastDiscardPileSize(game.piles.discardPile.size);
     }
-  }, [game.piles.discardPile.size, lastDiscardPileLength, game.piles.discardPile, game.piles.pendingCard]);
+  }, [game.piles.discardPile.size, lastDiscardPileSize, game.piles.discardPile, game.piles.pendingCard]);
 
   const handleDrawClick = () => {
     // wait for previous draw animation to finish before allowing another draw

@@ -11,15 +11,7 @@ export class FavorCard extends CardType {
   }
 
   canBePlayed(game: TheGame, _card: Card): boolean {
-    const { ctx } = game.context;
-
-    // Check if there is at least one other player with card-types
-    return game.players.allPlayers.some((target) => {
-      if (target.id === ctx.currentPlayer) {
-        return false; // Can't target yourself
-      }
-      return target.isAlive && target.cardCount > 0;
-    });
+    return game.players.getValidCardActionTargets(game.players.actingPlayer).length > 0;
   }
 
   onPlayed(game: TheGame, _card: Card) {
@@ -31,7 +23,7 @@ export class FavorCard extends CardType {
 
     if (candidates.length === 1) {
       // Automatically choose the only valid opponent
-      requestCard(game.context, candidates[0].id);
+      requestCard(game, candidates[0].id);
     } else if (candidates.length > 1) {
       // Set stage to choose a player to request a card from
       game.turnManager.setStage(CHOOSE_PLAYER_TO_REQUEST_FROM)

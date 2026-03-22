@@ -1,12 +1,29 @@
 import './SeeTheFutureOverlay.css';
-import {ICard} from '../../../../common';
+import {useGame} from "../../../context/GameContext.tsx";
+import {VIEWING_FUTURE} from "../../../../common/constants/stages.ts";
+import {Card} from "../../../../common/entities/card.ts";
 
-interface SeeTheFutureOverlayProps {
-  cards: ICard[];
-  onClose: () => void;
-}
+export default function SeeTheFutureOverlay() {
+  const game = useGame();
 
-export default function SeeTheFutureOverlay({ cards, onClose }: SeeTheFutureOverlayProps) {
+  if (!game.selfPlayer?.isInStage(VIEWING_FUTURE)) {
+    return null;
+  }
+
+  // Get the top 3 card-types from the draw pile for the see the future overlay
+  const cards: Card[] = game.piles.drawPile.peek(3);
+
+  if (!cards || cards.length === 0) {
+    console.error("No cards available to see in the future! This shouldn't happen.");
+    return null;
+  }
+
+  const handleFutureClose = () => {
+    if (game.moves.closeFutureView) {
+      game.moves.closeFutureView();
+    }
+  }
+
   return (
     <div className="see-future-overlay">
       <div className="see-future-content">
@@ -27,7 +44,7 @@ export default function SeeTheFutureOverlay({ cards, onClose }: SeeTheFutureOver
             </div>
           ))}
         </div>
-        <button className="see-future-close-btn" onClick={onClose}>
+        <button className="see-future-close-btn" onClick={handleFutureClose}>
           Close
         </button>
       </div>

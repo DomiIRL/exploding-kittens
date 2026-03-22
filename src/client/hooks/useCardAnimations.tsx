@@ -1,6 +1,7 @@
 import React, {useState, useCallback, useRef, useEffect} from 'react';
 import CardAnimation, {CardAnimationData} from '../components/board/card-animation/CardAnimation';
-import {ICard, IGameState, IPlayers} from '../../common';
+import {ICard} from '../../common';
+import {TheGameClient} from "../entities/game-client.ts";
 
 interface UseCardAnimationsReturn {
   animations: CardAnimationData[];
@@ -15,11 +16,14 @@ interface HandChange {
   delta: number;
 }
 
-export const useCardAnimations = (G: IGameState, players: IPlayers, selfPlayerId: string | null): UseCardAnimationsReturn => {
+export const useCardAnimations = (game: TheGameClient): UseCardAnimationsReturn => {
+  const players = game.players.players
+  const selfPlayerId = game.selfPlayerId;
+
   const [animations, setAnimations] = useState<CardAnimationData[]>([]);
   const animationIdCounter = useRef(0);
-  const previousDrawPileLength = useRef(G.client.drawPileLength);
-  const previousDiscardPileLength = useRef(G.piles.discardPile.length);
+  const previousDrawPileSize = useRef(game.piles.drawPile.size);
+  const previousDiscardPileSize = useRef(game.piles.discardPile.size);
   const previousPlayerHands = useRef<PlayerHandCounts>({});
   const previousLocalHand = useRef<ICard[]>([]);
 
@@ -89,10 +93,10 @@ export const useCardAnimations = (G: IGameState, players: IPlayers, selfPlayerId
     const currentHandCounts = getPlayerHandCounts();
     const handChanges = getHandChanges(currentHandCounts, previousPlayerHands.current);
 
-    const drawPileDecreased = G.client.drawPileLength < previousDrawPileLength.current;
-    const discardPileIncreased = G.piles.discardPile.length > previousDiscardPileLength.current;
-    const pilesUnchanged = G.client.drawPileLength === previousDrawPileLength.current &&
-      G.piles.discardPile.length === previousDiscardPileLength.current;
+    const drawPileDecreased = game.piles.drawPile.size < previousDrawPileSize.current;
+    const discardPileIncreased = game.piles.discardPile.size > previousDiscardPileSize.current;
+    const pilesUnchanged = game.piles.drawPile.size === previousDrawPileSize.current &&
+      game.piles.discardPile.size === previousDiscardPileSize.current;
 
     if (drawPileDecreased) {
       handChanges
@@ -111,10 +115,12 @@ export const useCardAnimations = (G: IGameState, players: IPlayers, selfPlayerId
     }
 
     if (discardPileIncreased) {
-      const lastCard = G.piles.discardPile[G.piles.discardPile.length - 1];
+      const lastCard = game.piles.discardPile.topCard;
       handChanges
         .filter(change => change.delta < 0)
-        .forEach(change => triggerCardMovement(lastCard, `player-${change.playerId}`, 'discard-pile'));
+        .forEach(change => {
+          triggerCardMovement(lastCard, `player-${change.playerId}`, 'discard-pile')
+        });
     }
 
     if (pilesUnchanged && handChanges.length > 0) {
@@ -144,13 +150,12 @@ export const useCardAnimations = (G: IGameState, players: IPlayers, selfPlayerId
             card = lostCard;
           }
         }
-
         triggerCardMovement(card, `player-${playerLost.playerId}`, `player-${playerGained.playerId}`);
       }
     }
 
-    previousDrawPileLength.current = G.client.drawPileLength;
-    previousDiscardPileLength.current = G.piles.discardPile.length;
+    previousDrawPileSize.current = game.piles.drawPile.size;
+    previousDiscardPileSize.current = game.piles.discardPile.size;
     previousPlayerHands.current = currentHandCounts;
     
     if (selfPlayerId && players[selfPlayerId]) {
@@ -158,7 +163,7 @@ export const useCardAnimations = (G: IGameState, players: IPlayers, selfPlayerId
     } else {
       previousLocalHand.current = [];
     }
-  }, [G.client.drawPileLength, G.piles.discardPile.length, G.piles.discardPile, triggerCardMovement, players, selfPlayerId]);
+  }, [game.piles.drawPile.size, game.piles.discardPile.size, game.piles.drawPile, triggerCardMovement, players, selfPlayerId]);
 
   const AnimationLayer = useCallback(() => (
     <>

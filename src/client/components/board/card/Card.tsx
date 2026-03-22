@@ -1,38 +1,31 @@
 import './Card.css';
 import back from '/assets/cards/back/0.jpg';
 import {CSSProperties, useRef, useState} from 'react';
-import {CardWithServerIndex} from "../../../model/PlayerState";
 import HoverCardPreview from './HoverCardPreview';
 import {useResponsive} from "../../../context/ResponsiveContext.tsx";
+import {useGame} from "../../../context/GameContext.tsx";
+import {Player} from "../../../../common";
+import {CardWithServerIndex} from "../player-cards/PlayerCards.tsx";
 
 interface CardProps {
+  owner: Player,
   card: CardWithServerIndex | null;
   index: number;
-  count: number;
   angle: number;
   offsetX: number;
   offsetY: number;
-  moves?: any;
-  isClickable?: boolean;
-  isChoosingCardToGive?: boolean;
-  isInNowCardStage?: boolean;
-  onCardGive?: (cardIndex: number) => void;
 }
 
 export default function Card({
+                               owner,
                                card,
                                index,
-                               count,
                                angle,
                                offsetX,
                                offsetY,
-                               moves,
-                               isClickable,
-                               isChoosingCardToGive = false,
-                               isInNowCardStage = false,
-                               onCardGive,
                              }: CardProps) {
 
+  const game = useGame();
   const { isMobile } = useResponsive();
 
   const [isHovered, setIsHovered] = useState(false);
@@ -41,32 +34,13 @@ export default function Card({
 
   const cardImage = card ? `/assets/cards/${card.name}/${card.index}.png` : back;
 
+  const couldBePlayed = game.isSelf(owner) && game.isSelfCurrentPlayer;
+
   const handleAction = () => {
-    if (!card) return;
-
-    const serverIndex = card.serverIndex ?? index;
-
-    // If choosing a card to give (favor card flow)
-    if (isChoosingCardToGive && onCardGive) {
-      onCardGive(serverIndex);
+    if (!card) {
       return;
     }
-
-    // Otherwise, play the card (normal turn or now-card reaction stage)
-    if (isClickable && moves) {
-      try {
-        if (isInNowCardStage && moves.playNowCard) {
-          moves.playNowCard(serverIndex);
-        } else {
-          moves.playCard(serverIndex);
-        }
-
-        // Animation is now handled by useCardAnimations reacting to state changes
-        // This ensures animation only plays if the move was valid and server accepted it
-      } catch (error) {
-        console.error('Unexpected error playing card:', error);
-      }
-    }
+    game.selectCard(card.serverIndex);
   }
 
   const handleClick = () => {
@@ -74,21 +48,21 @@ export default function Card({
       setIsSelected(true)
       return;
     }
-
     handleAction();
   };
+
 
   return (
     <>
       <div
         ref={cardRef}
-        className={`card ${isClickable ? 'clickable' : ''} ${isHovered ? 'selected' : ''}`}
+        className={`card ${isHovered ? 'selected' : ''}`}
         style={{
           backgroundImage: `url(${cardImage})`,
           position: 'absolute',
           '--base-transform': `translate(${offsetX}%, ${offsetY}%) rotate(${angle}deg)`,
           transformOrigin: 'center 200%',
-          zIndex: count - index,
+          zIndex: owner.cardCount - index,
         } as CSSProperties}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
@@ -98,8 +72,8 @@ export default function Card({
         cardImage={cardImage} 
         anchorRef={cardRef} 
         isVisible={(isMobile ? isSelected : isHovered) && !!card}
-        actionLabel={isChoosingCardToGive ? "Give This Card" : "Play Card"}
-        canPlay={isClickable}
+        actionLabel={game.canGiveCard() ? "Give This Card" : "Play Card"}
+        canPlay={couldBePlayed}
         onAction={() => {
           setIsSelected(false);
           handleAction();

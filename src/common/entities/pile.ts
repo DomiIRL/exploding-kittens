@@ -1,9 +1,12 @@
-import {ICard} from '../models';
+import {ICard, IPile} from '../models';
 import {TheGame} from "./game";
 import {Card} from "./card";
 
 export class Pile {
-  constructor(private game: TheGame, public cards: ICard[]) {
+  public cards: ICard[];
+
+  constructor(private game: TheGame, public state: IPile) {
+    this.cards = state.cards;
   }
 
   addCard(card: Card | ICard): void {
@@ -11,6 +14,7 @@ export class Pile {
 
     // Clone to avoid Proxy issues
     this.cards.push({...cardData});
+    this.updateSize();
   }
 
   get topCard(): Card | null {
@@ -18,8 +22,14 @@ export class Pile {
     return this.cards.length > 0 ? new Card(this.game, iCard) : null;
   }
 
+  peek(amount: number): Card[] {
+    const peekedCards = this.cards.slice(0, amount);
+    return peekedCards.map(iCard => new Card(this.game, iCard));
+  }
+
   drawCard(): Card | null {
     const shift = this.cards.shift();
+    this.updateSize();
     return shift ? new Card(this.game, shift) : null;
   }
 
@@ -27,14 +37,19 @@ export class Pile {
     const cardData: ICard = {name: card.name, index: card.index};
     // Clone to avoid Proxy issues
     this.cards.splice(index, 0, {...cardData});
+    this.updateSize();
   }
 
   get size(): number {
-    return this.cards.length;
+    return this.state.size;
   }
 
   shuffle(): void {
-    this.cards = this.game.random.Shuffle(this.cards);
+    this.state.cards = this.game.random.Shuffle(this.cards);
+  }
+
+  private updateSize(): void {
+    this.state.size = this.cards.length;
   }
 }
 

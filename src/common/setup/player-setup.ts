@@ -5,31 +5,22 @@ import {CardType} from "../entities/card-type";
 
 export const createPlayerState = (): IPlayer => ({
   hand: [],
-  isAlive: true,
-  client: {
-    handCount: 0
-  }
+  handSize: 0,
+  isAlive: true
 });
 
 /**
  * Create a full view of a player (used for self-view and spectators)
  */
-const createFullPlayerView = (player: IPlayer): IPlayer => ({
-  ...player,
-  client: {
-    handCount: player.hand.length
-  }
-});
+const createFullPlayerView = (player: IPlayer): IPlayer => player;
 
 /**
  * Create a limited view of a player (used for opponent views)
  */
 const createLimitedPlayerView = (player: IPlayer): IPlayer => ({
   hand: [],
-  isAlive: player.isAlive,
-  client: {
-    handCount: player.hand.length
-  }
+  handSize: player.hand.length,
+  isAlive: player.isAlive
 });
 
 /**
@@ -86,5 +77,6 @@ export function dealHands(pile: ICard[], players: IPlayers, deck: DeckType) {
     });
 
     player.hand.push(...forcedCards);
+    player.handSize = player.hand.length;
   });
 }

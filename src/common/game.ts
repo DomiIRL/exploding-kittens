@@ -1,11 +1,12 @@
-import {Game, PlayerID} from 'boardgame.io';
+import {Game} from 'boardgame.io';
 import {createPlayerPlugin} from './plugins/player-plugin';
 import {setupGame} from './setup/game-setup';
 import type {ICard, IContext, IGameState, IPluginAPIs} from './models';
 import {drawCard} from "./moves/draw-move";
-import {playCard, playNowCard, resolvePendingCard} from "./moves/play-card-move";
+import {playCard, resolvePendingCard} from "./moves/play-card-move";
 import {requestCard, giveCard} from "./moves/favor-card-move";
 import {closeFutureView} from "./moves/see-future-move";
+import {inGame} from "./moves/in-game";
 import {turnOrder} from "./utils/turn-order";
 import {OriginalDeck} from './entities/deck-types/original-deck';
 import {dealHands} from './setup/player-setup';
@@ -31,15 +32,12 @@ export const ExplodingKittens: Game<IGameState, IPluginAPIs> = {
     let viewableDrawPile: ICard[] = [];
 
     if (ctx.activePlayers?.[playerID!] === VIEWING_FUTURE) {
-      viewableDrawPile = G.piles.drawPile.slice(0, 3);
+      viewableDrawPile = G.piles.drawPile.cards.slice(0, 3);
     }
 
     return {
       ...G,
-      drawPile: viewableDrawPile,
-      client: {
-        drawPileLength: G.piles.drawPile.length
-      }
+      drawPile: viewableDrawPile
     };
   },
 
@@ -54,10 +52,10 @@ export const ExplodingKittens: Game<IGameState, IPluginAPIs> = {
 
         // Initialize the hands and piles
         const deck = new OriginalDeck();
-        const pile: ICard[] = deck.buildBaseDeck();
+        const pile: ICard[] = deck.buildBaseDeck().sort(() => Math.random() - 0.5);
 
         dealHands(pile, game.context.player.state, deck); // TODO: use api wrapper
-        deck.addPostDealCards(pile, Object.keys(game.context.ctx.playOrder).length);
+        deck.addPostDealCards(pile, Object.keys(game.context.ctx.playOrder).length); // TODO: use api wrapper
 
         game.piles.drawPile = pile;
         game.piles.drawPile.shuffle();
@@ -100,7 +98,7 @@ export const ExplodingKittens: Game<IGameState, IPluginAPIs> = {
           defuseExplodingKitten: {
             moves: {
               defuseExplodingKitten: {
-                move: defuseExplodingKitten,
+                move: inGame(defuseExplodingKitten),
                 client: false
               },
             }
@@ -108,7 +106,7 @@ export const ExplodingKittens: Game<IGameState, IPluginAPIs> = {
           choosePlayerToStealFrom: {
             moves: {
               stealCard: {
-                move: (context: IContext, targetPlayerId: PlayerID) => stealCard(new TheGame(context), targetPlayerId),
+                move: inGame(stealCard),
                 client: false
               },
             },
@@ -116,37 +114,37 @@ export const ExplodingKittens: Game<IGameState, IPluginAPIs> = {
           choosePlayerToRequestFrom: {
             moves: {
               requestCard: {
-                move: requestCard,
+                move: inGame(requestCard),
                 client: false
               },
             },
           },
           chooseCardToGive: {
             moves: {
-              giveCard: giveCard,
+              giveCard: inGame(giveCard),
             },
           },
           viewingFuture: {
             moves: {
-              closeFutureView: closeFutureView,
+              closeFutureView: inGame(closeFutureView),
             },
           },
           respondWithNowCard: {
             moves: {
-              playNowCard: {
-                move: playNowCard,
+              playCard: {
+                move: inGame(playCard),
                 client: false,
               },
             },
           },
           awaitingNowCards: {
             moves: {
-              playNowCard: {
-                move: playNowCard,
+              playCard: {
+                move: inGame(playCard),
                 client: false,
               },
               resolvePendingCard: {
-                move: resolvePendingCard,
+                move: inGame(resolvePendingCard),
                 client: false,
               },
             },
@@ -155,11 +153,11 @@ export const ExplodingKittens: Game<IGameState, IPluginAPIs> = {
       },
       moves: {
         drawCard: {
-          move: drawCard,
+          move: inGame(drawCard),
           client: false
         },
         playCard: {
-          move: playCard,
+          move: inGame(playCard),
           client: false
         }
       },

@@ -13,8 +13,14 @@ export const setupGame = (_context: any, setupData?: SetupData): IGameState => {
   return {
     winner: null,
     piles: {
-      drawPile: [],
-      discardPile: [],
+      drawPile: {
+        cards: [],
+        size: 0,
+      },
+      discardPile: {
+        cards: [],
+        size: 0,
+      },
       pendingCardPlay: null,
     },
     turnsRemaining: 1,
@@ -23,9 +29,6 @@ export const setupGame = (_context: any, setupData?: SetupData): IGameState => {
       openCards: setupData?.openCards ?? false,
       pendingTimerMs: 3000,
     },
-    deckType: setupData?.deckType ?? 'original',
-    client: {
-      drawPileLength: 0
-    }
+    deckType: setupData?.deckType ?? 'original'
   };
 };

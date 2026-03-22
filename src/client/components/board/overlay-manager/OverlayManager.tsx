@@ -1,57 +1,39 @@
-import WinnerOverlay from '../winner-overlay/WinnerOverlay';
-import DeadOverlay from '../dead-overlay/DeadOverlay';
-import PlayerSelectionOverlay from '../player-selection-overlay/PlayerSelectionOverlay';
-import SeeTheFutureOverlay from '../see-future-overlay/SeeTheFutureOverlay';
+import WinnerOverlay from '../../overlay/winner-overlay/WinnerOverlay';
+import DeadOverlay from '../../overlay/dead-overlay/DeadOverlay';
+import SpecialActionOverlay from '../../overlay/special-action-overlay/SpecialActionOverlay.tsx';
+import SeeTheFutureOverlay from '../../overlay/see-future-overlay/SeeTheFutureOverlay';
+import {useGame} from "../../../context/GameContext.tsx";
 import {
-  GameContext,
-  PlayerStateBundle,
-  OverlayStateBundle,
-} from '../../../types/component-props';
-
-interface OverlayManagerProps {
-  gameContext: GameContext;
-  playerState: PlayerStateBundle;
-  overlayState: OverlayStateBundle;
-  winnerID: string | null;
-  onCloseFutureView: () => void;
-}
+  CHOOSE_CARD_TO_GIVE,
+  CHOOSE_PLAYER_TO_REQUEST_FROM,
+  CHOOSE_PLAYER_TO_STEAL_FROM
+} from "../../../../common/constants/stages.ts";
 
 /**
  * Manages and renders all game overlays
  */
-export default function OverlayManager({
-  gameContext,
-  playerState,
-  overlayState,
-  winnerID,
-  onCloseFutureView,
-}: OverlayManagerProps) {
-  const {ctx, G, playerID, matchData} = gameContext;
-  const {isSelfDead} = playerState;
-  const {isSelectingPlayer, isChoosingCardToGive, isViewingFuture, isGameOver} = overlayState;
-  // Determine the overlay message based on the current stage
-  let selectionMessage = "Select a player to steal a card from";
-  if (isSelectingPlayer) {
-    const stage = ctx.activePlayers?.[playerID || ''];
-    if (stage === 'choosePlayerToRequestFrom') {
-      selectionMessage = "Select a player to request a card from";
-    }
-  }
+export default function OverlayManager() {
+  const game = useGame();
 
-  // Get the top 3 card-types from the draw pile for the see the future overlay
-  const futureCards = isViewingFuture ? G.piles.drawPile.slice(0, 3) : [];
+  // Determine the overlay message based on the current stage
+  let selectionMessage = null;
+  if (game.selfPlayer?.isInStage(CHOOSE_PLAYER_TO_REQUEST_FROM)) {
+    selectionMessage = "Select a player to request a card from";
+  } else if (game.selfPlayer?.isInStage(CHOOSE_PLAYER_TO_STEAL_FROM)) {
+    selectionMessage = "Select a player to steal a card from";
+  }
 
   return (
     <>
-      {isSelectingPlayer && <PlayerSelectionOverlay message={selectionMessage} />}
-      {isChoosingCardToGive && <PlayerSelectionOverlay message="You were chosen to gift a card. Pick one." />}
-      {isViewingFuture && (
-        <SeeTheFutureOverlay cards={futureCards} onClose={onCloseFutureView} />
+      {selectionMessage && (
+        <SpecialActionOverlay message={selectionMessage} />)
+      }
+      {game.selfPlayer?.isInStage(CHOOSE_CARD_TO_GIVE) && (
+        <SpecialActionOverlay message="You were chosen to gift a card. Pick one." />
       )}
-      {isSelfDead && !isGameOver && <DeadOverlay />}
-      {isGameOver && winnerID && (
-        <WinnerOverlay winnerID={winnerID} playerID={playerID} matchData={matchData} />
-      )}
+      <SeeTheFutureOverlay />
+      <DeadOverlay />
+      <WinnerOverlay/>
     </>
   );
 }

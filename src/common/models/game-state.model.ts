@@ -1,10 +1,6 @@
 import type {ICard} from './card.model';
 import type {PlayerID} from 'boardgame.io';
 
-export interface IClientGameState {
-  drawPileLength: number;
-}
-
 export interface IGameRules {
   spectatorsSeeCards: boolean;
   openCards: boolean;
@@ -21,9 +17,14 @@ export interface IPendingCardPlay {
   isNoped: boolean;
 }
 
+export interface IPile {
+  cards: ICard[];
+  size: number;
+}
+
 export interface IPiles {
-  drawPile: ICard[];
-  discardPile: ICard[];
+  drawPile: IPile;
+  discardPile: IPile;
   pendingCardPlay: IPendingCardPlay | null;
 }
 
@@ -33,5 +34,4 @@ export interface IGameState {
   turnsRemaining: number;
   gameRules: IGameRules;
   deckType: string;
-  client: IClientGameState; // todo: remove
 }

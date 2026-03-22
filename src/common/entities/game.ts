@@ -6,7 +6,7 @@ import {IGameRules} from '../models';
 import {RandomAPI} from "boardgame.io/dist/types/src/plugins/random/random";
 import {EventsAPI} from "boardgame.io/dist/types/src/plugins/events/events";
 import {Ctx} from "boardgame.io";
-import {LOBBY} from "../constants/phases";
+import {GAME_OVER, LOBBY, PLAY} from "../constants/phases";
 
 
 export class TheGame {
@@ -30,6 +30,7 @@ export class TheGame {
     this.piles = new Piles(this, this.gameState.piles);
     this.players = new Players(
       this,
+      this.gameState,
       this.context.player.state ?? (this.context.player as IPlayerAPI & { data: { players: IPlayers } }).data.players
     );
     this.turnManager = new TurnManager(this.context);
@@ -41,6 +42,14 @@ export class TheGame {
 
   isLobbyPhase(): boolean {
     return this.phase === LOBBY;
+  }
+
+  isPlayingPhase(): boolean {
+    return this.phase === PLAY;
+  }
+
+  isGameOver(): boolean {
+    return this.bgContext.phase === GAME_OVER;
   }
 
   get gameRules(): IGameRules {

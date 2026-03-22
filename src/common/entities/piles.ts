@@ -4,7 +4,7 @@ import {Card} from "./card";
 import {Pile} from "./pile";
 
 export class Piles {
-  constructor(private game: TheGame, public piles: IPiles) {
+  constructor(private game: TheGame, private piles: IPiles) {
   }
 
   get drawPile(): Pile {
@@ -12,7 +12,7 @@ export class Piles {
   }
 
   set drawPile(pile: ICard[]) {
-    this.piles.drawPile = pile;
+    this.piles.drawPile = { ...this.piles.drawPile, cards: pile, size: pile.length };
   }
 
   get discardPile(): Pile {
@@ -20,7 +20,7 @@ export class Piles {
   }
 
   set discardPile(pile: ICard[]) {
-    this.piles.discardPile = pile;
+    this.piles.discardPile = { ...this.piles.discardPile, cards: pile, size: pile.length };
   }
 
   /**
@@ -35,6 +35,14 @@ export class Piles {
    */
   drawCard(): Card | null {
     return this.drawPile.drawCard();
+  }
+
+  canCardBePlayed(card: Card): boolean {
+    if (this.game.piles.pendingCard && !card.type.isNowCard()) {
+      return false;
+    }
+
+    return card.canPlay();
   }
 
   /**

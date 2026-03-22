@@ -1,7 +1,3 @@
-/**
- * Position calculation utilities for player positioning around the table
- */
-
 export interface Position {
   top: string;
   left: string;
@@ -16,9 +12,6 @@ export interface PlayerPositions {
   infoPosition: Position;
 }
 
-/**
- * Calculate position on a circle given an angle and radius
- */
 export const calculateCircularPosition = (
   angle: number,
   radius: string
@@ -30,17 +23,10 @@ export const calculateCircularPosition = (
   };
 };
 
-/**
- * Calculate angle from slot position
- */
 const calculateAngleFromSlot = (slotPosition: number, totalSlots: number): number => {
-  const angleStep = 360 / totalSlots;
-  return 180 + (slotPosition * angleStep);
+  return 180 + (slotPosition * (360 / totalSlots));
 };
 
-/**
- * Find relative position in a circular array
- */
 const getRelativePosition = (
   targetIndex: number,
   referenceIndex: number,
@@ -49,54 +35,30 @@ const getRelativePosition = (
   return (targetIndex - referenceIndex + arrayLength) % arrayLength;
 };
 
-/**
- * Calculate the angle for a player position around the table
- * Takes into account whether the viewer is alive or dead
- */
 export const calculatePlayerAngle = (
-  playerIdStr: string,
-  alivePlayers: string[],
-  selfPlayerId: number | null,
+  playerIndex: number,
+  totalPlayers: number,
+  selfIndex: number | null,
   isSelfDead: boolean
 ): number => {
-  const alivePlayerIds = [...alivePlayers]
-    .map(p => parseInt(p))
-    .sort((a, b) => a - b);
-
-  const playerId = parseInt(playerIdStr);
-  const playerIndex = alivePlayerIds.indexOf(playerId);
-
-  // Self is alive or spectator: distribute alive players evenly
-  if (!isSelfDead || selfPlayerId === null) {
-    const selfIndex = selfPlayerId !== null
-      ? alivePlayerIds.indexOf(selfPlayerId)
-      : 0;
-
-    const relativePosition = getRelativePosition(playerIndex, selfIndex, alivePlayerIds.length);
-    return calculateAngleFromSlot(relativePosition, alivePlayerIds.length);
+  if (isSelfDead) {
+    // Slot 0 (bottom) is always the empty seat for the dead viewer.
+    // Shift all alive players by 1 to leave that slot vacant.
+    const relativePosition = (playerIndex + 1) % (totalPlayers + 1);
+    return calculateAngleFromSlot(relativePosition, totalPlayers + 1);
   }
 
-  // Self is dead: leave empty slot at position 0 where self was
-  // Maintain relative positions based on original player IDs
-  const allPlayerIds = [...alivePlayerIds, selfPlayerId].sort((a, b) => a - b);
-  const selfIndex = allPlayerIds.indexOf(selfPlayerId);
-  const fullPlayerIndex = allPlayerIds.indexOf(playerId);
-
-  const relativePosition = getRelativePosition(fullPlayerIndex, selfIndex, allPlayerIds.length);
-  return calculateAngleFromSlot(relativePosition, allPlayerIds.length);
+  const relativePosition = getRelativePosition(playerIndex, selfIndex ?? 0, totalPlayers);
+  return calculateAngleFromSlot(relativePosition, totalPlayers);
 };
 
-/**
- * Calculate both card and info positions for a player
- */
 export const calculatePlayerPositions = (
-  playerIdStr: string,
-  alivePlayers: string[],
-  selfPlayerId: number | null,
+  playerIndex: number,
+  totalPlayers: number,
+  selfIndex: number | null,
   isSelfDead: boolean
 ): PlayerPositions => {
-  const angle = calculatePlayerAngle(playerIdStr, alivePlayers, selfPlayerId, isSelfDead);
-
+  const angle = calculatePlayerAngle(playerIndex, totalPlayers, selfIndex, isSelfDead);
   return {
     cardPosition: {
       ...calculateCircularPosition(angle, 'min(35vw, 35vh)'),
@@ -105,4 +67,3 @@ export const calculatePlayerPositions = (
     infoPosition: calculateCircularPosition(angle, 'min(45vw, 45vh)'),
   };
 };
-

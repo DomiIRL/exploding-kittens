@@ -1,7 +1,7 @@
 import './Board.css';
 import {useCardAnimations} from '../../hooks/useCardAnimations';
 import {useGameState} from '../../hooks/useGameState';
-import {GameContext, PlayerStateBundle, OverlayStateBundle} from '../../types/component-props';
+import {GameContext, PlayerStateBundle} from '../../types/component-props';
 import Table from './table/Table';
 import PlayerList from './player-list/PlayerList';
 import OverlayManager from './overlay-manager/OverlayManager';
@@ -111,49 +111,8 @@ export default function ExplodingKittensBoard(props: BoardProps<IGameState> & { 
     isSelfTurn: gameState.selfPlayerId === gameState.currentPlayer
   };
 
-  // Bundle overlay state
-  const overlayState: OverlayStateBundle = {
-    isSelectingPlayer: gameState.isSelectingPlayer,
-    isChoosingCardToGive: gameState.isChoosingCardToGive,
-    isViewingFuture: gameState.isViewingFuture,
-    isGameOver: gameState.isGameOver
-  };
-
   // Handle card animations
-  const {AnimationLayer, triggerCardMovement} = useCardAnimations(G, game.players.players, playerID ?? null);
-
-  /**
-   * Handle player selection for stealing/requesting a card
-   */
-  const handlePlayerSelect = (targetPlayerId: string) => {
-    if (!gameState.isSelectingPlayer) return;
-
-    // Check which stage we're in and call the appropriate move
-    const stage = ctx.activePlayers?.[playerID || ''];
-    if (stage === 'choosePlayerToStealFrom' && moves.stealCard) {
-      moves.stealCard(targetPlayerId);
-    } else if (stage === 'choosePlayerToRequestFrom' && moves.requestCard) {
-      moves.requestCard(targetPlayerId);
-    }
-  };
-
-  /**
-   * Handle card selection when giving a card (favor card)
-   */
-  const handleCardGive = (cardIndex: number) => {
-    if (gameState.isChoosingCardToGive && moves.giveCard) {
-      moves.giveCard(cardIndex);
-    }
-  };
-
-  /**
-   * Handle closing the see the future overlay
-   */
-  const handleCloseFutureView = () => {
-    if (gameState.isViewingFuture && moves.closeFutureView) {
-      moves.closeFutureView();
-    }
-  };
+  const {AnimationLayer} = useCardAnimations(game);
 
   /**
    * Handle starting the game from lobby
@@ -169,32 +128,14 @@ export default function ExplodingKittensBoard(props: BoardProps<IGameState> & { 
       <GameProvider game={game}>
         <AnimationLayer />
 
-        <div className={`board-container ${playerState.isSelfSpectator ? 'hand-interactable' : ''} ${playerState.isSelfDead ? 'dimmed' : ''} ${game.isLobbyPhase() ? 'pointer-events-none' : ''}`}>
+        <div className={`board-container ${game.isSpectator ? 'hand-interactable' : ''} ${!game.selfPlayer?.isAlive ? 'dimmed' : ''} ${game.isLobbyPhase() ? 'pointer-events-none' : ''}`}>
           <div className={"game-elements"}>
             <Table />
-
-            <PlayerList
-              alivePlayersSorted={gameState.alivePlayersSorted}
-              playerState={playerState}
-              overlayState={overlayState}
-              isInNowCardStage={gameState.isInNowCardStage}
-              animationCallbacks={{triggerCardMovement}}
-              interactionHandlers={{
-                onPlayerSelect: handlePlayerSelect,
-                onCardGive: handleCardGive
-              }}
-              gameContext={gameContext}
-            />
+            <PlayerList />
           </div>
         </div>
 
-        <OverlayManager
-          gameContext={gameContext}
-          playerState={playerState}
-          overlayState={overlayState}
-          winnerID={G.winner}
-          onCloseFutureView={handleCloseFutureView}
-        />
+        <OverlayManager />
 
         {game.isLobbyPhase() && (
           <LobbyOverlay

@@ -2,7 +2,7 @@ import {ICard, IPlayer} from '../models';
 import {TheGame} from "./game";
 import {Card} from "./card";
 import {EXPLODING_KITTEN, DEFUSE} from "../registries/card-registry";
-import {DEFUSE_EXPLODING_KITTEN} from "../constants/stages";
+import {CHOOSE_PLAYER_TO_REQUEST_FROM, DEFUSE_EXPLODING_KITTEN} from "../constants/stages";
 import {PlayerID} from "boardgame.io";
 import {NAME_NOPE} from "../constants/cards";
 
@@ -31,7 +31,7 @@ export class Player {
    * Get the count of card-types in hand
    */
   get cardCount(): number {
-    return this._state.hand.length;
+    return this._state.handSize;
   }
 
   get isCurrentPlayer(): boolean {
@@ -40,6 +40,10 @@ export class Player {
 
   get isActingPlayer(): boolean {
     return this.game.players.actingPlayer.id === this.id;
+  }
+
+  get isValidCardTarget(): boolean {
+    return this.isAlive && this.cardCount > 0;
   }
 
   get canNope(): boolean {
@@ -66,6 +70,15 @@ export class Player {
     // Check expiration
     // Note: Date.now() on client might differ from server, but usually this is acceptable for UI state
     return Date.now() <= pending.expiresAtMs;
+  }
+
+  canGiveCard(): boolean {
+    return this.isInStage(CHOOSE_PLAYER_TO_REQUEST_FROM);
+  }
+
+  canSelectPlayer(): boolean {
+    return this.isInStage(CHOOSE_PLAYER_TO_REQUEST_FROM)
+      || this.isInStage(CHOOSE_PLAYER_TO_REQUEST_FROM);
   }
 
   /**
@@ -107,7 +120,7 @@ export class Player {
 
     // Clone to avoid Proxy issues
     this._state.hand.push({...cardData});
-    this._updateClientState();
+    this.updateHandSize();
   }
 
   /**
@@ -117,7 +130,7 @@ export class Player {
   removeCardAt(index: number): Card | undefined {
     if (index < 0 || index >= this._state.hand.length) return undefined;
     const [card] = this._state.hand.splice(index, 1);
-    this._updateClientState();
+    this.updateHandSize();
     return new Card(this.game, card);
   }
 
@@ -145,7 +158,7 @@ export class Player {
       }
     }
     if (removed.length > 0) {
-      this._updateClientState();
+      this.updateHandSize();
     }
     return removed;
   }
@@ -157,7 +170,7 @@ export class Player {
   removeAllCardsFromHand(): Card[] {
     const removed = [...this._state.hand];
     this._state.hand = [];
-    this._updateClientState();
+    this.updateHandSize();
     return removed.map(c => new Card(this.game, c));
   }
 
@@ -173,6 +186,10 @@ export class Player {
     }
   }
 
+  isInStage(stage: string): boolean {
+    return this.game.turnManager.isInStage(this, stage);
+  }
+
   /**
    * Transfers a card at specific index to another playerWrapper
    */
@@ -186,19 +203,14 @@ export class Player {
   }
 
   playCard(cardIndex: number): void {
-    if (this.game.piles.pendingCard) {
-      throw new Error("Cannot play a card while another card play is pending resolution");
-    }
-
     if (cardIndex < 0 || cardIndex >= this.hand.length) {
        throw new Error(`Invalid card index: ${cardIndex}`);
     }
 
     const card = this.hand[cardIndex];
-    
-    if (!card.type.canBePlayed(this.game, card)) {
-      // todo: client feedback and should ideally be prevented by UI, but just ignore invalid play for now
-      return;
+
+    if (!this.game.piles.canCardBePlayed(card)) {
+      throw new Error(`Cannot play card: ${card.name}`);
     }
 
     // Remove card from hand
@@ -283,9 +295,7 @@ export class Player {
       return target.giveCard(index, this);
   }
 
-  private _updateClientState() {
-     if (this._state.client) {
-         this._state.client.handCount = this._state.hand.length;
-     }
+  private updateHandSize() {
+    this._state.handSize = this._state.hand.length;
   }
 }
