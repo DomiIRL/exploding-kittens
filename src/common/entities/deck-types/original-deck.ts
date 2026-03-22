@@ -3,7 +3,7 @@ import type {ICard} from '../../models';
 
 import {
   ATTACK,
-  CAT_CARD,
+  CAT_CARD, DEFUSE,
   EXPLODING_KITTEN,
   FAVOR, NOPE,
   SEE_THE_FUTURE,
@@ -14,7 +14,6 @@ import {
 const STARTING_HAND_SIZE = 7;
 const TOTAL_DEFUSE_CARDS = 6;
 const MAX_DECK_DEFUSE_CARDS = 2;
-const EXPLODING_KITTENS = 4;
 
 export class OriginalDeck extends DeckType {
   constructor() {
@@ -25,8 +24,8 @@ export class OriginalDeck extends DeckType {
     return STARTING_HAND_SIZE;
   }
 
-  startingHandForcedCards(_index: number): ICard[] {
-    return [];
+  startingHandForcedCards(index: number): ICard[] {
+    return [DEFUSE.createCard(index)];
   }
 
   buildBaseDeck(): ICard[] {
@@ -54,11 +53,15 @@ export class OriginalDeck extends DeckType {
     const remaining = Math.min(TOTAL_DEFUSE_CARDS - playerCount, MAX_DECK_DEFUSE_CARDS);
 
     for (let i = 0; i < remaining; i++) {
-      // pile.push(DEFUSE.createCard(playerCount - 1 + i));
+      pile.push(DEFUSE.createCard(playerCount - 1 + i));
     }
 
-    for (let i = 0; i < EXPLODING_KITTENS; i++) {
-      pile.push(EXPLODING_KITTEN.createCard(i));
+    // add amount of players minus one exploding kitten
+
+    for (let i = 0; i < playerCount - 1; i++) {
+      // after index 3 restart at 0, since there are only 4 unique exploding kitten cards
+      const cardIndex = (playerCount - 1 + i) % 4;
+      pile.push(EXPLODING_KITTEN.createCard(cardIndex));
     }
   }
 }
