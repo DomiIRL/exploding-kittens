@@ -1,5 +1,5 @@
 import './Board.css';
-import {useCardAnimations} from '../../hooks/useCardAnimations';
+import {useCardAnimations} from '../../animations/useCardAnimations';
 import Table from './table/Table';
 import PlayerList from './player/player-list/PlayerList';
 import BoardOverlays from './overlay/BoardOverlays.tsx';

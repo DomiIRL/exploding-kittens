@@ -39,7 +39,7 @@ export default function SeeTheFutureOverlay() {
               <div
                 className="see-future-card"
                 style={{
-                  backgroundImage: TheGameClient.getCardTexture(card),
+                  backgroundImage: `url(${TheGameClient.getCardTexture(card)})`,
                 }}
               />
             </div>

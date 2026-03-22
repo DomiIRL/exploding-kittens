@@ -25,24 +25,21 @@ export const ExplodingKittens: Game<IGameState, IPluginAPIs> = {
 
   disableUndo: true,
 
-  playerView: ({G, ctx, playerID}) => {
-    // Cannot use the game api because not the whole context is passed through.
-
-    // The player plugin's playerView will handle filtering the player data
-    // We need to pass G through so it's available
-
-    let viewableDrawPile: ICard[] = [];
-
-    if (ctx.activePlayers?.[playerID!] === VIEWING_FUTURE) {
-      viewableDrawPile = G.piles.drawPile.cards.slice(0, 3);
-    }
+  playerView: ({ G, ctx, playerID }) => {
+    const isViewingFuture = playerID != null && ctx.activePlayers?.[playerID] === VIEWING_FUTURE;
+    const drawPileCards = G.piles?.drawPile?.cards ?? [];
 
     return {
       ...G,
-      drawPile: viewableDrawPile
+      piles: {
+        ...G.piles,
+        drawPile: {
+          ...(G.piles?.drawPile ?? {}),
+          cards: isViewingFuture ? drawPileCards.slice(0, 3) : [],
+        },
+      },
     };
   },
-
   moves: {},
 
   phases: {
