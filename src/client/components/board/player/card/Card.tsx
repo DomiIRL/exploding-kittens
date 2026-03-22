@@ -34,7 +34,7 @@ export default function Card({
 
   const cardImage = card ? `/assets/cards/${card.name}/${card.index}.png` : back;
 
-  const couldBePlayed = game.isSelf(owner) && game.isSelfCurrentPlayer;
+  const couldBePlayed = game.isSelf(owner) && ((card?.serverIndex && game.canPlayCard(card?.serverIndex)) || game.canGiveCard());
 
   const handleAction = () => {
     if (!card) {

@@ -6,6 +6,10 @@ import {IGameState, IPlayers} from "../models";
 export class Players {
   constructor(private game: TheGame, private gamestate: IGameState, public players: IPlayers) {}
 
+  get playerCount(): number {
+    return Object.keys(this.players).length;
+  }
+
   /**
    * Get a player wrapper instance for a specific player ID.
    * Throws if player data not found.
@@ -26,17 +30,32 @@ export class Players {
     return this.getPlayer(this.game.context.ctx.currentPlayer);
   }
 
+  get currentPlayerId(): PlayerID {
+    return this.game.context.ctx.currentPlayer;
+  }
+
   /**
    * Get the player executing the move (if playerID available in context)
    * Falls back to currentPlayer if playerID not set
    */
   get actingPlayer(): Player {
-    const id = this.game.context.playerID ?? this.game.context.ctx.currentPlayer;
+    const id = this.game.context.playerID;
+    if (!id) {
+      throw new Error('No playerID found in context; cannot determine acting player');
+    }
     return this.getPlayer(id);
+  }
+
+  get actingPlayerId(): PlayerID {
+    return this.game.context.playerID ?? this.game.context.ctx.currentPlayer;
   }
 
   get winner(): Player | null {
     return this.gamestate.winner ? this.getPlayer(this.gamestate.winner) : null;
+  }
+
+  set winner(player: Player | PlayerID) {
+    this.gamestate.winner = typeof player === 'string' ? player : player.id;
   }
 
   /**

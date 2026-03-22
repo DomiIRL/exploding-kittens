@@ -1,4 +1,4 @@
-import {IContext, IGameState, IPlayerAPI, IPlayers} from '../models';
+import {IContext, IGameState, IPlayers} from '../models';
 import {Piles} from './piles';
 import {Players} from './players';
 import {TurnManager} from './turn-manager';
@@ -17,8 +17,8 @@ export class TheGame {
   public readonly random: RandomAPI;
 
   public readonly piles: Piles;
-  public readonly players: Players;
   public readonly turnManager: TurnManager;
+  public players: Players;
 
   constructor(context: IContext) {
     this.context = context;
@@ -28,12 +28,17 @@ export class TheGame {
     this.random = context.random;
 
     this.piles = new Piles(this, this.gameState.piles);
-    this.players = new Players(
-      this,
-      this.gameState,
-      this.context.player.state ?? (this.context.player as IPlayerAPI & { data: { players: IPlayers } }).data.players
-    );
     this.turnManager = new TurnManager(this.context);
+
+    if (this.context?.player?.state) {
+      this.players = new Players(this, this.gameState, this.context.player.state);
+    } else {
+      this.players = new Players(this, this.gameState, {});
+    }
+  }
+
+  setPlayers(players: IPlayers) {
+    this.players = new Players(this, this.gameState, players);
   }
 
   get phase(): string {

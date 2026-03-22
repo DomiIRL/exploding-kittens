@@ -1,7 +1,8 @@
 import {PluginPlayer} from 'boardgame.io/dist/cjs/plugins.js';
 import {createPlayerState, filterPlayerView} from '../setup/player-setup';
-import type {Plugin} from 'boardgame.io';
-import type {IGameState} from '../models';
+import type {Ctx, Plugin} from 'boardgame.io';
+import type {IContext, IGameState} from '../models';
+import {TheGame} from "../entities/game";
 
 export const createPlayerPlugin = (): Plugin => {
   const basePlugin = PluginPlayer({
@@ -11,9 +12,18 @@ export const createPlayerPlugin = (): Plugin => {
   // Wrap the playerView to access G from the State
   return {
     ...basePlugin,
-    playerView: ({G, data, playerID}: {G: IGameState, data: any, playerID?: string | null}) => {
+    playerView: ({G, ctx, data, playerID}: {G: IGameState, data: any, ctx: Ctx, playerID?: string | null}) => {
+      const context = {
+        G,
+        ctx,
+        playerID: playerID,
+      } as IContext;
+
+      const game = new TheGame(context);
+      game.setPlayers(data.players);
+
       // Use our custom filterPlayerView that has access to G
-      const filteredPlayers = filterPlayerView(G, data.players, playerID ?? null);
+      const filteredPlayers = filterPlayerView(game);
       return { players: filteredPlayers };
     },
   };

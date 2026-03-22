@@ -1,18 +1,15 @@
 import {IContext} from '../models';
+import {TheGame} from "../entities/game";
 
-const findNextAlivePlayer = (
-  ctx: IContext['ctx'],
-  players: Record<string, any>,
-  startPos: number
-): number | undefined => {
-  const numPlayers = ctx.numPlayers;
+const findNextAlivePlayer = (game: TheGame, startPos: number): number | undefined => {
+  const numPlayers = game.players.playerCount;
   let currentPos = startPos % numPlayers;
 
   // Check all players once to avoid infinite loops
   for (let i = 0; i < numPlayers; i++) {
-    const playerId = ctx.playOrder[currentPos];
+    const playerId = game.turnManager.playOrder[currentPos];
 
-    if (players[playerId]?.isAlive) {
+    if (game.players.getPlayer(playerId).isAlive) {
       return currentPos;
     }
 
@@ -24,25 +21,31 @@ const findNextAlivePlayer = (
 };
 
 export const turnOrder = {
-  first: ({ctx, player}: IContext): number => {
-    const nextAlive = findNextAlivePlayer(ctx, player.state, 0);
+  first: (context: IContext): number => {
+    const game = new TheGame(context)
+
+    const nextAlive = findNextAlivePlayer(game, 0);
     // Fallback to first player if no one is alive (shouldn't happen)
     return nextAlive ?? 0;
   },
 
   /**
    * Get the next alive player, considering turnsRemaining counter
-   * Note: We only read G.turnsRemaining here, the decrement happens in turn.onEnd
+   * Note: We only read turnsRemaining here, the decrement happens in turn.onEnd
    */
-  next: ({G, ctx, player}: IContext): number | undefined => {
+  next: (context: IContext): number | undefined => {
+    const game = new TheGame(context)
+
     // If there are still turns remaining (> 1 because we check before decrement), stay with the current player
-    if (G.turnsRemaining > 1) {
-      return ctx.playOrderPos;
+    const playOrderPos = game.turnManager.playOrderPos;
+    if (game.turnManager.turnsRemaining > 1) {
+      return playOrderPos;
     }
 
 
     // Move to the next alive player
-    return findNextAlivePlayer(ctx, player.state, ctx.playOrderPos + 1);
+    // return findNextAlivePlayer(ctx, player.state, ctx.playOrderPos + 1);
+    return findNextAlivePlayer(game, playOrderPos + 1);
   },
 
   /**

@@ -1,7 +1,8 @@
-import type {ICard, IGameState, IPlayer, IPlayers} from '../models';
+import type {ICard, IPlayer, IPlayers} from '../models';
 import type {DeckType} from '../entities/deck-type';
 import {cardTypeRegistry} from "../registries/card-registry";
 import {CardType} from "../entities/card-type";
+import {TheGame} from "../entities/game";
 
 export const createPlayerState = (): IPlayer => ({
   hand: [],
@@ -26,36 +27,31 @@ const createLimitedPlayerView = (player: IPlayer): IPlayer => ({
 /**
  * Check if the viewing player should see all card-types (spectator or dead player)
  */
-const shouldSeeAllCards = (
-  G: IGameState,
-  players: IPlayers,
-  playerID?: string | null,
-): boolean => {
+const shouldSeeAllCards = (game: TheGame): boolean => {
   // If openCards rule is enabled, everyone sees all card-types
-  if (G.gameRules.openCards) return true;
+  if (game.gameRules.openCards) return true;
 
   // Spectators (no playerID) see all card-types ONLY if rule allows
-  if (!playerID) return G.gameRules.spectatorsSeeCards;
+  if (!game.players.actingPlayerId || !game.players.actingPlayer.isAlive) {
+    return game.gameRules.spectatorsSeeCards;
+  }
 
-  const currentPlayer = players[playerID];
-  const isCurrentPlayerDead = currentPlayer && !currentPlayer.isAlive;
-  const spectatorsCanSeeAll = G.gameRules.spectatorsSeeCards;
-
-  // Dead players with permission see all card-types
-  return isCurrentPlayerDead && spectatorsCanSeeAll;
+  return false;
 };
 
-export const filterPlayerView = (G: IGameState, players: IPlayers, playerID?: string | null): IPlayers => {
-  const canSeeAllCards = shouldSeeAllCards(G, players, playerID);
+export const filterPlayerView = (game: TheGame): IPlayers => {
+  const canSeeAllCards = shouldSeeAllCards(game);
 
   const view: IPlayers = {};
-  Object.entries(players).forEach(([id, pdata]) => {
-    if (canSeeAllCards || id === playerID) {
+  game.players.allPlayers.forEach(value => {
+    const id = value.id;
+    const pdata = game.players.getPlayer(id)._state;
+    if (canSeeAllCards || id === game.players.actingPlayerId) {
       view[id] = createFullPlayerView(pdata);
     } else {
       view[id] = createLimitedPlayerView(pdata);
     }
-  });
+  })
 
   return view;
 };

@@ -1,4 +1,4 @@
-import {ICard, Player, TheGame} from '../../common';
+import {ICard, IPlayerAPI, IPlayers, Player, TheGame} from '../../common';
 import { IContext } from '../../common';
 import {Card} from "../../common/entities/card.ts";
 import {NAME_NOPE} from "../../common/constants/cards.ts";
@@ -30,7 +30,8 @@ export class TheGameClient extends TheGame {
     isMultiplayer: boolean
   ) {
     super(context);
-    
+    this.setPlayers((this.context.player as IPlayerAPI & { data: { players: IPlayers } }).data.players);
+
     this.moves = moves;
     this.matchID = matchID;
     this.selfPlayerId = playerID;
@@ -57,7 +58,7 @@ export class TheGameClient extends TheGame {
   }
 
   get isSelfCurrentPlayer(): boolean {
-    return this.selfPlayerId === this.players.currentPlayer.id;
+    return this.selfPlayerId === this.players.currentPlayerId;
   }
 
   isSelf(player: Player | PlayerID | MatchPlayer | null) {

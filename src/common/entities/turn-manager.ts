@@ -17,6 +17,10 @@ export class TurnManager {
     return this.context.ctx.playOrder;
   }
 
+  get playOrderPos(): number {
+    return this.context.ctx.playOrderPos;
+  }
+
   get activePlayers(): Record<string, string> | null {
     return this.context.ctx.activePlayers as Record<string, string> | null;
   }

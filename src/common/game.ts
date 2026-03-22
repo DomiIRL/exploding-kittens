@@ -26,6 +26,8 @@ export const ExplodingKittens: Game<IGameState, IPluginAPIs> = {
   disableUndo: true,
 
   playerView: ({G, ctx, playerID}) => {
+    // Cannot use the game api because not the whole context is passed through.
+
     // The player plugin's playerView will handle filtering the player data
     // We need to pass G through so it's available
 
@@ -85,13 +87,15 @@ export const ExplodingKittens: Game<IGameState, IPluginAPIs> = {
     play: {
       turn: {
         order: turnOrder,
-        onEnd: ({G}: any) => {
+        onEnd: (context: IContext) => {
+          const game = new TheGame(context);
+
           // Decrement the turns remaining counter
-          G.turnsRemaining = G.turnsRemaining - 1;
+          game.turnManager.turnsRemaining = game.turnManager.turnsRemaining - 1;
 
           // If we're moving to the next player, reset the counter
-          if (G.turnsRemaining <= 0) {
-            G.turnsRemaining = 1;
+          if (game.turnManager.turnsRemaining <= 0) {
+            game.turnManager.turnsRemaining = 1;
           }
         },
         stages: {
@@ -171,14 +175,13 @@ export const ExplodingKittens: Game<IGameState, IPluginAPIs> = {
           return {next: GAME_OVER};
         }
       },
-      onEnd: ({G, player}) => {
-        // Find the last alive player
-        const alivePlayers = Object.entries(player.state).filter(
-          ([_, p]) => p.isAlive
-        );
+      onEnd: (context: IContext) => {
+        const game = new TheGame(context);
 
-        if (alivePlayers.length === 1) {
-          G.winner = alivePlayers[0][0];
+        // Find the last alive player
+        const players = game.players.alivePlayers;
+        if (players.length === 1) {
+          game.players.winner = players[0];
         }
       },
     },

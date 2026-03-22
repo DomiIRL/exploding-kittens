@@ -9,7 +9,7 @@ import {NAME_NOPE} from "../constants/cards";
 export class Player {
   constructor(
     private game: TheGame,
-    private _state: IPlayer,
+    public _state: IPlayer,
     public readonly id: PlayerID
   ) {}
 
@@ -35,7 +35,7 @@ export class Player {
   }
 
   get isCurrentPlayer(): boolean {
-    return this.game.players.currentPlayer.id === this.id;
+    return this.game.players.currentPlayerId === this.id;
   }
 
   get isActingPlayer(): boolean {
