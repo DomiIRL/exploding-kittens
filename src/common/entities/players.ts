@@ -23,6 +23,17 @@ export class Players {
     return new Player(this.game, playerData, id);
   }
 
+  getPlayerOptional(id: PlayerID | null | undefined): Player | null {
+    if (!id) {
+      return null;
+    }
+    const playerData = this.players?.[id];
+    if (!playerData) {
+      return null;
+    }
+    return new Player(this.game, playerData, id);
+  }
+
   /**
    * Get a wrapper for the current player based on context.currentPlayer
    */
@@ -44,6 +55,10 @@ export class Players {
       throw new Error('No playerID found in context; cannot determine acting player');
     }
     return this.getPlayer(id);
+  }
+
+  get actingPlayerOptional(): Player | null {
+    return this.getPlayerOptional(this.game.context.playerID);
   }
 
   get actingPlayerId(): PlayerID {

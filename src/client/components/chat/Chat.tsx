@@ -1,20 +1,13 @@
 import { useState, useEffect, useRef } from 'react';
 import './Chat.css';
 import {useMatchDetails} from "../../context/MatchDetailsContext.tsx";
+import {useGame} from "../../context/GameContext.tsx";
 
-interface ChatProps {
-  playerID: string | null;
-  chatMessages?: Array<{
-    id: string;
-    sender: string;
-    payload: any;
-  }>;
-  sendChatMessage?: (message: any) => void;
-  isOpen?: boolean;
-  onToggle?: () => void;
-}
+export const Chat = () => {
+  const game = useGame();
 
-export const Chat = ({ playerID, chatMessages = [], sendChatMessage, isOpen: defaultOpen = false }: ChatProps) => {
+  const chatMessages = game.chatMessages;
+  const playerId = game.selfPlayerId;
 
   const { matchDetails } = useMatchDetails();
 
@@ -23,7 +16,7 @@ export const Chat = ({ playerID, chatMessages = [], sendChatMessage, isOpen: def
     return acc;
   }, {} as Record<string, string>) || {};
 
-  const [isOpen, setIsOpen] = useState(defaultOpen);
+  const [isOpen, setIsOpen] = useState(false);
   const [message, setMessage] = useState('');
   const [unreadCount, setUnreadCount] = useState(0);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -52,8 +45,8 @@ export const Chat = ({ playerID, chatMessages = [], sendChatMessage, isOpen: def
 
   const handleSend = (e: React.FormEvent) => {
     e.preventDefault();
-    if (message.trim() && sendChatMessage) {
-      sendChatMessage(message.trim());
+    if (message.trim() && game.sendChatMessage) {
+      game.sendChatMessage(message.trim());
       setMessage('');
     }
   };
@@ -63,7 +56,7 @@ export const Chat = ({ playerID, chatMessages = [], sendChatMessage, isOpen: def
     if (!isOpen) setUnreadCount(0);
   };
 
-  if (!sendChatMessage && chatMessages.length === 0) return null;
+  if (!game.sendChatMessage && chatMessages.length === 0) return null;
 
   return (
     <div className={`chat-container ${isOpen ? 'open' : ''}`}>
@@ -79,7 +72,7 @@ export const Chat = ({ playerID, chatMessages = [], sendChatMessage, isOpen: def
               <div className="chat-empty">No messages yet...</div>
             ) : (
               chatMessages.map((msg) => {
-                const isSelf = msg.sender === playerID;
+                const isSelf = msg.sender === playerId;
                 const senderName = playerNames[msg.sender] || `Player ${msg.sender}`;
                 return (
                   <div key={msg.id} className={`chat-message ${isSelf ? 'self' : 'other'}`}>
@@ -99,11 +92,11 @@ export const Chat = ({ playerID, chatMessages = [], sendChatMessage, isOpen: def
               type="text"
               value={message}
               onChange={(e) => setMessage(e.target.value)}
-              placeholder={playerID ? "Type a message..." : "Spectators can't chat"}
-              disabled={!playerID}
+              placeholder={playerId ? "Type a message..." : "Spectators can't chat"}
+              disabled={!playerId}
               className="chat-input"
             />
-            <button type="submit" disabled={!message.trim() || !playerID} className="chat-send-btn">
+            <button type="submit" disabled={!message.trim() || !playerId} className="chat-send-btn">
               ➤
             </button>
           </form>

@@ -1,16 +1,12 @@
 import './Board.css';
 import {useCardAnimations} from '../../hooks/useCardAnimations';
-import {useGameState} from '../../hooks/useGameState';
-import {GameContext, PlayerStateBundle} from '../../types/component-props';
 import Table from './table/Table';
 import PlayerList from './player/player-list/PlayerList';
 import BoardOverlays from './overlay/BoardOverlays.tsx';
-import LobbyOverlay from './overlay/lobby-overlay/LobbyOverlay';
 import GameStatusList from './game-status/GameStatusList';
 import {useEffect} from 'react';
 import {Chat} from '../chat/Chat';
 import {useMatchDetails} from "../../context/MatchDetailsContext.tsx";
-import {IClientContext} from "../../types/client-context.ts";
 import type { BoardProps } from 'boardgame.io/react';
 import {IContext, IGameState} from "../../../common";
 import {TheGameClient} from "../../entities/game-client.ts";
@@ -39,47 +35,20 @@ export default function ExplodingKittensBoard(props: BoardProps<IGameState> & { 
     props.isMultiplayer
   );
 
-  // Create clientContext from BoardProps
-  const clientContext: IClientContext = {
-    ...props,
-    plugins: props.plugins,
-    player: props.plugins?.player?.data || {},
-  };
-
-  const {
-    ctx,
-    G,
-    moves,
-    playerID,
-    chatMessages,
-    sendChatMessage
-  } = clientContext;
-  const { matchDetails, setPollingInterval } = useMatchDetails();
+  const { setPollingInterval } = useMatchDetails();
 
   useEffect(() => {
     setPollingInterval(game.isLobbyPhase() ? 500 : 3000);
   }, [game.isLobbyPhase(), setPollingInterval]);
 
-  // Bundle game context
-  const gameContext: GameContext = {
-    ctx,
-    G,
-    moves,
-    playerID: playerID ?? null,
-    matchData: matchDetails?.players
-  };
-
-  // Derive game state properties
-  const gameState = useGameState(ctx, G, game.players.players, playerID ?? null);
-
   useEffect(() => {
-    if (!gameState.isInNowCardStage || !game.piles.pendingCard || !moves.resolvePendingCard) {
+    if (!game.piles.pendingCard || !game.piles.pendingCard || !game.moves.resolvePendingCard) {
       return;
     }
 
     const checkAndResolve = () => {
       if (game.piles.pendingCard && Date.now() >= game.piles.pendingCard.expiresAtMs) {
-        moves.resolvePendingCard();
+        game.moves.resolvePendingCard();
       }
     };
 
@@ -96,32 +65,13 @@ export default function ExplodingKittensBoard(props: BoardProps<IGameState> & { 
       window.clearInterval(intervalId);
     };
   }, [
-    gameState.isInNowCardStage,
+    game.piles.pendingCard,
     game.piles.pendingCard?.expiresAtMs,
-    moves,
+    game.moves,
   ]);
-
-  // Bundle player state
-  const playerState: PlayerStateBundle = {
-    allPlayers: game.players.players,
-    selfPlayerId: gameState.selfPlayerId,
-    currentPlayer: gameState.currentPlayer,
-    isSelfDead: gameState.isSelfDead,
-    isSelfSpectator: gameState.isSelfSpectator,
-    isSelfTurn: gameState.selfPlayerId === gameState.currentPlayer
-  };
 
   // Handle card animations
   const {AnimationLayer} = useCardAnimations(game);
-
-  /**
-   * Handle starting the game from lobby
-   */
-  const handleStartGame = () => {
-    if (moves.startGame) {
-      moves.startGame();
-    }
-  };
 
   return (
     <>
@@ -136,24 +86,8 @@ export default function ExplodingKittensBoard(props: BoardProps<IGameState> & { 
         </div>
 
         <BoardOverlays />
-
-        {game.isLobbyPhase() && (
-          <LobbyOverlay
-            playerID={playerID}
-            onStartGame={handleStartGame}
-          />
-        )}
-
-        <GameStatusList
-          gameContext={gameContext}
-          playerState={playerState}
-        />
-
-        <Chat
-          playerID={playerID ?? null}
-          chatMessages={chatMessages}
-          sendChatMessage={sendChatMessage}
-        />
+        <GameStatusList />
+        <Chat />
       </GameProvider>
     </>
   );

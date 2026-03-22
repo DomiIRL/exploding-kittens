@@ -2,12 +2,13 @@ import './LobbyOverlay.css';
 import {useMatchDetails} from "../../../../context/MatchDetailsContext.tsx";
 import {useGame} from "../../../../context/GameContext.tsx";
 
-interface LobbyOverlayProps {
-  onStartGame?: () => void;
-}
 
-export default function LobbyOverlay({onStartGame}: LobbyOverlayProps) {
+export default function LobbyOverlay() {
   const game = useGame();
+
+  if (!game.isLobbyPhase()) {
+    return null;
+  }
 
   const { matchDetails } = useMatchDetails();
   const { players, numPlayers } = matchDetails || {players: [], numPlayers: 1};
@@ -17,6 +18,12 @@ export default function LobbyOverlay({onStartGame}: LobbyOverlayProps) {
 
   const copyLink = () => {
     navigator.clipboard.writeText(window.location.href);
+  };
+
+  const handStartButton = () => {
+    if (game.moves.startGame) {
+      game.moves.startGame();
+    }
   };
 
   return (
@@ -72,8 +79,8 @@ export default function LobbyOverlay({onStartGame}: LobbyOverlayProps) {
           })}
         </div>
 
-        {allPlayersFilled && onStartGame && (
-          <button className="game-lobby-start-btn" onClick={onStartGame}>
+        {allPlayersFilled && (
+          <button className="game-lobby-start-btn" onClick={handStartButton}>
             🚀 Start Game
           </button>
         )}

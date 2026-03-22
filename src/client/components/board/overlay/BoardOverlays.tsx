@@ -8,6 +8,7 @@ import {
   CHOOSE_PLAYER_TO_REQUEST_FROM,
   CHOOSE_PLAYER_TO_STEAL_FROM
 } from "../../../../common/constants/stages.ts";
+import LobbyOverlay from "./lobby-overlay/LobbyOverlay.tsx";
 
 /**
  * Manages and renders all game overlays
@@ -25,6 +26,7 @@ export default function BoardOverlays() {
 
   return (
     <>
+      <LobbyOverlay />
       {selectionMessage && (
         <SpecialActionOverlay message={selectionMessage} />)
       }

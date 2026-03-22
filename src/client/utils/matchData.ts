@@ -3,7 +3,7 @@
  */
 
 export interface MatchPlayer {
-  id: number;
+  id: string;
   name?: string;
   isConnected?: boolean;
 }
@@ -13,13 +13,11 @@ export interface MatchPlayer {
  * Returns "Player X" if matchData is not available
  * Returns "Empty Seat" if matchData is available but player name is missing
  */
-export function getPlayerName(playerID: string | null, matchData?: MatchPlayer[]): string {
-  if (!playerID) return 'Unknown Player';
-
-  const playerId = parseInt(playerID);
+export function getPlayerName(playerId: string | null, matchData?: MatchPlayer[]): string {
+  if (!playerId) return 'Unknown Player';
 
   if (!matchData || matchData.length === 0) {
-    return `Player ${playerId + 1}`;
+    return `Player`;
   }
 
   const player = matchData.find(p => p.id === playerId);

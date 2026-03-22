@@ -32,10 +32,10 @@ const shouldSeeAllCards = (game: TheGame): boolean => {
   if (game.gameRules.openCards) return true;
 
   // Spectators (no playerID) see all card-types ONLY if rule allows
-  if (!game.players.actingPlayerId || !game.players.actingPlayer.isAlive) {
+  const player = game.players.actingPlayerOptional;
+  if (!player || !player.isAlive) {
     return game.gameRules.spectatorsSeeCards;
   }
-
   return false;
 };
 
