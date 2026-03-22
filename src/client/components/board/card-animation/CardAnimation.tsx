@@ -1,6 +1,7 @@
 import './CardAnimation.css';
 import React, {useEffect, useState} from 'react';
 import {ICard} from '../../../../common';
+import {TheGameClient} from "../../../entities/game-client.ts";
 
 export interface CardAnimationData {
   id: string;
@@ -18,9 +19,7 @@ interface CardAnimationProps {
 
 export default function CardAnimation({animation, onComplete}: CardAnimationProps) {
   const [isVisible, setIsVisible] = useState(false);
-  const cardImage = animation.card
-    ? `/assets/cards/${animation.card.name}/${animation.card.index}.png`
-    : '/assets/card-types/back/0.jpg';
+  const cardImage = TheGameClient.getCardTexture(animation.card);
 
   useEffect(() => {
     // Start animation immediately

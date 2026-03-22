@@ -3,6 +3,7 @@ import './PendingPlayStack.css';
 import {useRef, useState} from 'react';
 import CardPreview from '../../CardPreview.tsx';
 import {useGame} from "../../../../context/GameContext.tsx";
+import {TheGameClient} from "../../../../entities/game-client.ts";
 
 export default function PendingPlayStack() {
   const game = useGame();
@@ -15,7 +16,7 @@ export default function PendingPlayStack() {
   const [isHovered, setIsHovered] = useState(false);
   const pileRef = useRef<HTMLDivElement>(null);
 
-  const cardImage = `/assets/cards/${targetCard.name}/${targetCard.index}.png`;
+  const cardImage = TheGameClient.getCardTexture(targetCard);
 
   return (
     <div className="pending-stack-container">

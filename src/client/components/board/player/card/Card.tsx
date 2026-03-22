@@ -1,11 +1,11 @@
 import './Card.css';
-import back from '/assets/cards/back/0.jpg';
 import {CSSProperties, useRef, useState} from 'react';
 import CardPreview from '../../CardPreview.tsx';
 import {useResponsive} from "../../../../context/ResponsiveContext.tsx";
 import {useGame} from "../../../../context/GameContext.tsx";
 import {Player} from "../../../../../common";
 import {CardWithServerIndex} from "../player-cards/PlayerCards.tsx";
+import {TheGameClient} from "../../../../entities/game-client.ts";
 
 interface CardProps {
   owner: Player,
@@ -32,7 +32,7 @@ export default function Card({
   const [isSelected, setIsSelected] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
 
-  const cardImage = card ? `/assets/cards/${card.name}/${card.index}.png` : back;
+  const cardImage = TheGameClient.getCardTexture(card);
 
   const couldBePlayed = game.isSelf(owner) && ((card?.serverIndex && game.canPlayCard(card?.serverIndex)) || game.canGiveCard());
 

@@ -9,6 +9,7 @@ import {
 } from "../../common/constants/stages.ts";
 import {MatchPlayer} from "../utils/matchData.ts";
 import {PlayerID} from "boardgame.io";
+import back from "/assets/cards/back/0.jpg";
 
 export class TheGameClient extends TheGame {
   public readonly moves: Record<string, (...args: any[]) => void>;
@@ -172,7 +173,7 @@ export class TheGameClient extends TheGame {
 
   static getCardTexture(card: Card | ICard | null): string {
     if (!card) {
-      return "/assets/cards/backside.png";
+      return back;
     }
     return `/assets/cards/${card.name}/${card.index}.png`;
   }

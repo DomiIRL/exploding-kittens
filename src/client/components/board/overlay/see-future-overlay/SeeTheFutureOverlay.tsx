@@ -2,6 +2,7 @@ import './SeeTheFutureOverlay.css';
 import {useGame} from "../../../../context/GameContext.tsx";
 import {VIEWING_FUTURE} from "../../../../../common/constants/stages.ts";
 import {Card} from "../../../../../common/entities/card.ts";
+import {TheGameClient} from "../../../../entities/game-client.ts";
 
 export default function SeeTheFutureOverlay() {
   const game = useGame();
@@ -38,7 +39,7 @@ export default function SeeTheFutureOverlay() {
               <div
                 className="see-future-card"
                 style={{
-                  backgroundImage: `url(/assets/cards/${card.name}/${card.index}.png)`,
+                  backgroundImage: TheGameClient.getCardTexture(card),
                 }}
               />
             </div>
