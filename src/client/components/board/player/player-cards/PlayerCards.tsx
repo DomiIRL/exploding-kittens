@@ -1,7 +1,7 @@
-import Card from '../card/Card';
+import Card from '../card/Card.tsx';
 import '../card/Card.css';
-import {ICard, Player, sortCards} from "../../../../common";
-import {useGame} from "../../../context/GameContext.tsx";
+import {ICard, Player, sortCards} from "../../../../../common";
+import {useGame} from "../../../../context/GameContext.tsx";
 
 export interface CardWithServerIndex extends ICard {
   serverIndex: number;

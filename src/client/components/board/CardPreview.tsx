@@ -1,7 +1,7 @@
 import {createPortal} from 'react-dom';
 import {useEffect, useState, CSSProperties, RefObject} from 'react';
-import './Card.css';
-import {useResponsive} from "../../../context/ResponsiveContext.tsx";
+import './player/card/Card.css';
+import {useResponsive} from "../../context/ResponsiveContext.tsx";
 
 interface HoverCardPreviewProps {
   // Common props
@@ -19,7 +19,7 @@ interface HoverCardPreviewProps {
   onClose?: () => void;
 }
 
-export default function HoverCardPreview({ 
+export default function CardPreview({
   cardImage, 
   anchorRef, 
   isVisible,

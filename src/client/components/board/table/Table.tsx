@@ -2,9 +2,9 @@ import back from '/assets/cards/back/0.jpg';
 import './Table.css';
 import {useEffect, useState, useRef} from "react";
 import PendingPlayStack from './pending/PendingPlayStack.tsx';
-import TurnBadge from '../turn-badge/TurnBadge';
-import '../card/Card.css';
-import HoverCardPreview from '../card/HoverCardPreview';
+import TurnBadge from './turn-badge/TurnBadge';
+import '../player/card/Card.css';
+import CardPreview from '../CardPreview.tsx';
 import {useResponsive} from "../../../context/ResponsiveContext.tsx";
 import {NAME_SHUFFLE} from "../../../../common/constants/cards.ts";
 import {useGame} from "../../../context/GameContext.tsx";
@@ -128,7 +128,7 @@ export default function Table() {
                     if (isMobile) setIsDiscardPileSelected(true);
                   }}
                 />
-                <HoverCardPreview 
+                <CardPreview
                   cardImage={game.getDiscardCardTexture()}
                   anchorRef={discardPileRef}
                   isVisible={isDiscardPileSelected && !!discardCard}

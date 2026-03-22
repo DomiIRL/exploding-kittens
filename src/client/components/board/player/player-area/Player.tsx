@@ -1,14 +1,14 @@
 import './Player.css';
-import PlayerCards from '../player-cards/PlayerCards';
-import {MatchPlayer, getPlayerName} from "../../../utils/matchData";
-import {PlayerPosition} from "../../../types/component-props";
-import {useGame} from "../../../context/GameContext.tsx";
-import {Player as PlayerModel} from "../../../../common";
+import PlayerCards from '../player-cards/PlayerCards.tsx';
+import {MatchPlayer, getPlayerName} from "../../../../utils/matchData.ts";
+import {PlayerPosition} from "../../../../types/component-props.ts";
+import {useGame} from "../../../../context/GameContext.tsx";
+import {Player as PlayerModel} from "../../../../../common";
 import {
   CHOOSE_CARD_TO_GIVE,
   CHOOSE_PLAYER_TO_REQUEST_FROM,
   CHOOSE_PLAYER_TO_STEAL_FROM
-} from "../../../../common/constants/stages.ts";
+} from "../../../../../common/constants/stages.ts";
 
 interface PlayerAreaProps {
   player: PlayerModel;

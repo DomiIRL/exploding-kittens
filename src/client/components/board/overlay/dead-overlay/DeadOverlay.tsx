@@ -1,5 +1,5 @@
 import './DeadOverlay.css';
-import {useGame} from "../../../context/GameContext.tsx";
+import {useGame} from "../../../../context/GameContext.tsx";
 
 export default function DeadOverlay() {
   const game = useGame();

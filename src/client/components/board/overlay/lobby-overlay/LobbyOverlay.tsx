@@ -1,13 +1,12 @@
 import './LobbyOverlay.css';
-import {useMatchDetails} from "../../../context/MatchDetailsContext.tsx";
-import {useGame} from "../../../context/GameContext.tsx";
+import {useMatchDetails} from "../../../../context/MatchDetailsContext.tsx";
+import {useGame} from "../../../../context/GameContext.tsx";
 
 interface LobbyOverlayProps {
-  playerID?: string | null;
   onStartGame?: () => void;
 }
 
-export default function LobbyOverlay({playerID, onStartGame}: LobbyOverlayProps) {
+export default function LobbyOverlay({onStartGame}: LobbyOverlayProps) {
   const game = useGame();
 
   const { matchDetails } = useMatchDetails();

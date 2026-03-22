@@ -1,5 +1,5 @@
 import './TurnBadge.css';
-import {useGame} from "../../../context/GameContext.tsx";
+import {useGame} from "../../../../context/GameContext.tsx";
 
 /**
  * Visual badge showing how many turns the current player has remaining

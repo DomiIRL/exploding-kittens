@@ -1,6 +1,6 @@
 import './WinnerOverlay.css';
-import {getPlayerName} from '../../../utils/matchData.ts';
-import {useGame} from "../../../context/GameContext.tsx";
+import {getPlayerName} from '../../../../utils/matchData.ts';
+import {useGame} from "../../../../context/GameContext.tsx";
 
 export default function WinnerOverlay() {
   const game = useGame();

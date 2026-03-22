@@ -1,10 +1,10 @@
 import './Card.css';
 import back from '/assets/cards/back/0.jpg';
 import {CSSProperties, useRef, useState} from 'react';
-import HoverCardPreview from './HoverCardPreview';
-import {useResponsive} from "../../../context/ResponsiveContext.tsx";
-import {useGame} from "../../../context/GameContext.tsx";
-import {Player} from "../../../../common";
+import CardPreview from '../../CardPreview.tsx';
+import {useResponsive} from "../../../../context/ResponsiveContext.tsx";
+import {useGame} from "../../../../context/GameContext.tsx";
+import {Player} from "../../../../../common";
 import {CardWithServerIndex} from "../player-cards/PlayerCards.tsx";
 
 interface CardProps {
@@ -68,7 +68,7 @@ export default function Card({
         onMouseLeave={() => setIsHovered(false)}
         onClick={handleClick}
       />
-      <HoverCardPreview 
+      <CardPreview
         cardImage={cardImage} 
         anchorRef={cardRef} 
         isVisible={(isMobile ? isSelected : isHovered) && !!card}

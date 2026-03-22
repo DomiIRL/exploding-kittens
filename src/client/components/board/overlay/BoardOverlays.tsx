@@ -1,7 +1,7 @@
-import WinnerOverlay from '../../overlay/winner-overlay/WinnerOverlay';
-import DeadOverlay from '../../overlay/dead-overlay/DeadOverlay';
-import SpecialActionOverlay from '../../overlay/special-action-overlay/SpecialActionOverlay.tsx';
-import SeeTheFutureOverlay from '../../overlay/see-future-overlay/SeeTheFutureOverlay';
+import WinnerOverlay from './winner-overlay/WinnerOverlay.tsx';
+import DeadOverlay from './dead-overlay/DeadOverlay.tsx';
+import SpecialActionOverlay from './special-action-overlay/SpecialActionOverlay.tsx';
+import SeeTheFutureOverlay from './see-future-overlay/SeeTheFutureOverlay.tsx';
 import {useGame} from "../../../context/GameContext.tsx";
 import {
   CHOOSE_CARD_TO_GIVE,
@@ -12,7 +12,7 @@ import {
 /**
  * Manages and renders all game overlays
  */
-export default function OverlayManager() {
+export default function BoardOverlays() {
   const game = useGame();
 
   // Determine the overlay message based on the current stage

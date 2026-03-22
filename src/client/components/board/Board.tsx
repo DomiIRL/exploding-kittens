@@ -3,9 +3,9 @@ import {useCardAnimations} from '../../hooks/useCardAnimations';
 import {useGameState} from '../../hooks/useGameState';
 import {GameContext, PlayerStateBundle} from '../../types/component-props';
 import Table from './table/Table';
-import PlayerList from './player-list/PlayerList';
-import OverlayManager from './overlay-manager/OverlayManager';
-import LobbyOverlay from './lobby-overlay/LobbyOverlay';
+import PlayerList from './player/player-list/PlayerList';
+import BoardOverlays from './overlay/BoardOverlays.tsx';
+import LobbyOverlay from './overlay/lobby-overlay/LobbyOverlay';
 import GameStatusList from './game-status/GameStatusList';
 import {useEffect} from 'react';
 import {Chat} from '../chat/Chat';
@@ -135,7 +135,7 @@ export default function ExplodingKittensBoard(props: BoardProps<IGameState> & { 
           </div>
         </div>
 
-        <OverlayManager />
+        <BoardOverlays />
 
         {game.isLobbyPhase() && (
           <LobbyOverlay

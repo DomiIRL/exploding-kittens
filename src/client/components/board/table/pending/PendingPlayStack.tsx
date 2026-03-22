@@ -1,7 +1,7 @@
-import '../../card/Card.css';
+import '../../player/card/Card.css';
 import './PendingPlayStack.css';
 import {useRef, useState} from 'react';
-import HoverCardPreview from '../../card/HoverCardPreview.tsx';
+import CardPreview from '../../CardPreview.tsx';
 import {useGame} from "../../../../context/GameContext.tsx";
 
 export default function PendingPlayStack() {
@@ -30,7 +30,7 @@ export default function PendingPlayStack() {
         onMouseLeave={() => setIsHovered(false)}
       />
       
-      <HoverCardPreview 
+      <CardPreview
         cardImage={cardImage} 
         anchorRef={pileRef} 
         isVisible={isHovered} 

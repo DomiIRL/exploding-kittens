@@ -60,7 +60,7 @@ export class TheGameClient extends TheGame {
     return this.selfPlayerId === this.players.currentPlayer.id;
   }
 
-  isSelf(player: Player | PlayerID | string | null) {
+  isSelf(player: Player | PlayerID | MatchPlayer | null) {
     if (!this.selfPlayerId || !player) {
       return false;
     }

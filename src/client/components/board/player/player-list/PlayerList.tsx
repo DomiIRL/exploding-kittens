@@ -1,7 +1,7 @@
-import Player from '../player-area/Player';
-import { calculatePlayerPositions } from '../../../utils/playerPositioning';
+import Player from '../player-area/Player.tsx';
+import { calculatePlayerPositions } from '../../../../utils/playerPositioning.ts';
 import './PlayerList.css';
-import { useGame } from '../../../context/GameContext.tsx';
+import { useGame } from '../../../../context/GameContext.tsx';
 
 export default function PlayerList() {
   const game = useGame();
