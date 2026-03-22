@@ -57,7 +57,6 @@ export class OriginalDeck extends DeckType {
     }
 
     // add amount of players minus one exploding kitten
-
     for (let i = 0; i < playerCount - 1; i++) {
       // after index 3 restart at 0, since there are only 4 unique exploding kitten cards
       const cardIndex = (playerCount - 1 + i) % 4;
