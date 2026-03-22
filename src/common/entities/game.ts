@@ -2,8 +2,7 @@ import {IContext, IGameState, IPlayerAPI, IPlayers} from '../models';
 import {Piles} from './piles';
 import {Players} from './players';
 import {TurnManager} from './turn-manager';
-import {IPendingCardPlay, IGameRules} from '../models';
-import {Card} from "./card";
+import {IGameRules} from '../models';
 import {RandomAPI} from "boardgame.io/dist/types/src/plugins/random/random";
 import {EventsAPI} from "boardgame.io/dist/types/src/plugins/events/events";
 import {Ctx} from "boardgame.io";
@@ -33,7 +32,7 @@ export class TheGame {
       this,
       this.context.player.state ?? (this.context.player as IPlayerAPI & { data: { players: IPlayers } }).data.players
     );
-    this.turnManager = new TurnManager(this);
+    this.turnManager = new TurnManager(this.context);
   }
 
   get phase(): string {
@@ -44,43 +43,7 @@ export class TheGame {
     return this.phase === LOBBY;
   }
 
-  /**
-   * Get pending card play
-   */
-  get pendingCardPlay(): IPendingCardPlay | null {
-    return this.gameState.pendingCardPlay;
-  }
-
-  set pendingCardPlay(pending: IPendingCardPlay | null) {
-    this.gameState.pendingCardPlay = pending;
-  }
-
   get gameRules(): IGameRules {
     return this.gameState.gameRules;
-  }
-
-  /**
-   * Resolve any pending card play if the window (timer) has expired.
-   */
-  resolvePendingCard(): void {
-    const pendingCardPlay = this.pendingCardPlay;
-
-    if (!pendingCardPlay) {
-      return;
-    }
-
-    // Check if the timer has expired
-    if (Date.now() < pendingCardPlay.expiresAtMs) {
-      return;
-    }
-
-    this.pendingCardPlay = null;
-
-    const card = new Card(this, pendingCardPlay.card);
-    card.type.cleanupPendingState(this);
-
-    if (!pendingCardPlay.isNoped) {
-      card.play();
-    }
   }
 }

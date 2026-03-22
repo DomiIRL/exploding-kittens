@@ -34,15 +34,23 @@ export class Player {
     return this._state.hand.length;
   }
 
+  get isCurrentPlayer(): boolean {
+    return this.game.players.currentPlayer.id === this.id;
+  }
+
+  get isActingPlayer(): boolean {
+    return this.game.players.actingPlayer.id === this.id;
+  }
+
   get canNope(): boolean {
     if (!this.hand.some(c => c.name === NAME_NOPE)) {
       return false;
     }
-    if (!this.game.pendingCardPlay) {
+    if (!this.game.piles.pendingCard) {
       return false;
     }
 
-    const pending = this.game.pendingCardPlay;
+    const pending = this.game.piles.pendingCard;
 
     // Player cannot nope their own card play if it hasn't been noped yet
     // If it HAS been noped, they can re-nope (un-nope) it, unless they were the last person to nope it
@@ -69,6 +77,11 @@ export class Player {
 
   findCardIndex(cardName: string): number {
     return this._state.hand.findIndex(c => c.name === cardName);
+  }
+
+  getCardAt(index: number): Card | null {
+    if (index < 0 || index >= this._state.hand.length) return null;
+    return new Card(this.game, this._state.hand[index]);
   }
 
   /**
@@ -152,6 +165,12 @@ export class Player {
     this._state.isAlive = false;
     // put all hand card-types in discard pile
     this._state.hand.forEach(card => this.game.piles.discardCard(card));
+    if (this.isActingPlayer) {
+      this.game.turnManager.endStage(); // could also involve other players but better than being stuck
+    }
+    if (this.isCurrentPlayer) {
+      this.game.turnManager.endTurn();
+    }
   }
 
   /**
@@ -167,6 +186,10 @@ export class Player {
   }
 
   playCard(cardIndex: number): void {
+    if (this.game.piles.pendingCard) {
+      throw new Error("Cannot play a card while another card play is pending resolution");
+    }
+
     if (cardIndex < 0 || cardIndex >= this.hand.length) {
        throw new Error(`Invalid card index: ${cardIndex}`);
     }
@@ -174,7 +197,8 @@ export class Player {
     const card = this.hand[cardIndex];
     
     if (!card.type.canBePlayed(this.game, card)) {
-       throw new Error(`Card cannot be played: ${card.name}`);
+      // todo: client feedback and should ideally be prevented by UI, but just ignore invalid play for now
+      return;
     }
 
     // Remove card from hand
@@ -191,7 +215,7 @@ export class Player {
 
     // Setup pending state
     const startedAtMs = Date.now();
-    this.game.pendingCardPlay = {
+    this.game.piles.pendingCard = {
         card: {...playedCard.data},
         playedBy: this.id,
         startedAtMs, 
@@ -208,7 +232,11 @@ export class Player {
       if (!this.isAlive) throw new Error("Dead player cannot draw");
 
       const cardData = this.game.piles.drawCard();
-      if (!cardData) throw new Error("No cards left to draw");
+      if (!cardData) {
+        console.error("Draw pile is empty, cannot draw");
+        this.eliminate();
+        return;
+      }
 
       this.addCard(cardData);
 
@@ -218,7 +246,6 @@ export class Player {
               this.game.turnManager.setStage(DEFUSE_EXPLODING_KITTEN);
           } else {
               this.eliminate();
-              this.game.turnManager.endTurn();
           }
       } else {
           this.game.turnManager.endTurn();
@@ -236,8 +263,6 @@ export class Player {
       if (!defuseCard || !kittenCard) {
           // Should not happen if UI is correct, but safer to eliminate
           this.eliminate();
-          this.game.turnManager.endStage();
-          this.game.turnManager.endTurn();
           return;
       }
 

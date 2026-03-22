@@ -1,22 +1,22 @@
 import './TurnBadge.css';
-
-interface TurnBadgeProps {
-  turnsRemaining: number;
-  isCurrentPlayer: boolean;
-}
+import {useGame} from "../../../context/GameContext.tsx";
 
 /**
  * Visual badge showing how many turns the current player has remaining
  * Prominently displayed when player has multiple turns (attacked)
  */
-export default function TurnBadge({ turnsRemaining, isCurrentPlayer }: TurnBadgeProps) {
+export default function TurnBadge() {
+  const game = useGame();
+
+  const turnsRemaining = (game.turnManager.turnsRemaining || 1) - 1;
+
   // Don't show anything if only 1 turn remaining (normal gameplay)
   if (turnsRemaining <= 1) {
     return null;
   }
 
   return (
-    <div className={`turn-badge ${isCurrentPlayer ? 'is-self' : 'is-other'}`}>
+    <div className={`turn-badge ${game.isSelfCurrentPlayer ? 'is-self' : 'is-other'}`}>
       <div className="turn-badge-content">
         <div className="turn-badge-icon">⚔️</div>
         <div className="turn-badge-text">
@@ -26,7 +26,7 @@ export default function TurnBadge({ turnsRemaining, isCurrentPlayer }: TurnBadge
           </div>
         </div>
       </div>
-      {isCurrentPlayer && (
+      {game.isSelfCurrentPlayer && (
         <div className="turn-badge-message">
           You were attacked! Complete {turnsRemaining} turns.
         </div>

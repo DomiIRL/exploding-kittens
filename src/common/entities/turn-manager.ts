@@ -1,30 +1,30 @@
-import {TheGame} from "./game";
+import {IContext} from "../models";
 
 export class TurnManager {
-  constructor(private game: TheGame) {}
+  constructor(private context: IContext) {}
 
   get turnsRemaining(): number {
-    return this.game.context.G.turnsRemaining;
+    return this.context.G.turnsRemaining;
   }
 
   set turnsRemaining(value: number) {
-    this.game.context.G.turnsRemaining = value;
+    this.context.G.turnsRemaining = value;
   }
 
   endTurn(arg?: any): void {
-    this.game.context.events.endTurn(arg);
+    this.context.events.endTurn(arg);
   }
 
   setStage(stage: string): void {
-    this.game.context.events.setStage(stage);
+    this.context.events.setStage(stage);
   }
 
   endStage(): void {
-    this.game.context.events.endStage();
+    this.context.events.endStage();
   }
 
   setActivePlayers(arg: any): void {
-    this.game.context.events.setActivePlayers(arg);
+    this.context.events.setActivePlayers(arg);
   }
 }
 

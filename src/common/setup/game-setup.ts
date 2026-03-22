@@ -13,10 +13,10 @@ export const setupGame = (_context: any, setupData?: SetupData): IGameState => {
   return {
     winner: null,
     piles: {
-        drawPile: [],
-        discardPile: [],
+      drawPile: [],
+      discardPile: [],
+      pendingCardPlay: null,
     },
-    pendingCardPlay: null,
     turnsRemaining: 1,
     gameRules: {
       spectatorsSeeCards: setupData?.spectatorsSeeCards ?? false,

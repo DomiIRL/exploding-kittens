@@ -24,12 +24,12 @@ export interface IPendingCardPlay {
 export interface IPiles {
   drawPile: ICard[];
   discardPile: ICard[];
+  pendingCardPlay: IPendingCardPlay | null;
 }
 
 export interface IGameState {
   winner: PlayerID | null;
   piles: IPiles;
-  pendingCardPlay: IPendingCardPlay | null;
   turnsRemaining: number;
   gameRules: IGameRules;
   deckType: string;

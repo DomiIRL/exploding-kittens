@@ -1,44 +1,28 @@
 import back from '/assets/cards/back/0.jpg';
 import './Table.css';
 import {useEffect, useState, useRef} from "react";
-import {GameContext} from "../../../types/component-props";
-import PendingPlayStack from './PendingPlayStack';
+import PendingPlayStack from './pending/PendingPlayStack.tsx';
 import TurnBadge from '../turn-badge/TurnBadge';
-
-// Import CSS for card preview to be modular
 import '../card/Card.css';
 import HoverCardPreview from '../card/HoverCardPreview';
 import {useResponsive} from "../../../context/ResponsiveContext.tsx";
-import {NAME_NOPE, NAME_SHUFFLE} from "../../../../common/constants/cards.ts";
+import {NAME_SHUFFLE} from "../../../../common/constants/cards.ts";
 import {useGame} from "../../../context/GameContext.tsx";
 
-interface TableProps {
-  gameContext: GameContext;
-}
 
-export default function Table({gameContext}: TableProps) {
+export default function Table() {
   const game = useGame()
   const { isMobile } = useResponsive();
 
-  const {G, moves, ctx} = gameContext;
   const [isDrawing, setIsDrawing] = useState(false);
   const [isShuffling, setIsShuffling] = useState(false);
-  const [lastDrawPileLength, setLastDrawPileLength] = useState(G.client.drawPileLength);
-  const [lastDiscardPileLength, setLastDiscardPileLength] = useState(G.piles.discardPile.length);
+  const [lastDrawPileLength, setLastDrawPileLength] = useState(game.piles.drawPile.size);
+  const [lastDiscardPileLength, setLastDiscardPileLength] = useState(game.piles.discardPile.size);
   const [isHoveringDrawPile, setIsHoveringDrawPile] = useState(false);
   const [isDiscardPileSelected, setIsDiscardPileSelected] = useState(false);
   const discardPileRef = useRef<HTMLDivElement>(null);
 
   const discardCard = game.piles.discardPile.topCard;
-  const discardImage = discardCard ? `/assets/cards/${discardCard.name}/${discardCard.index}.png` : "None";
-
-  const canNope = game.selfPlayer?.canNope || false;
-
-  const handlePlayNope = () => {
-    if (canNope && moves.playNowCard) {
-       moves.playNowCard(game.selfPlayer?.findCardIndex(NAME_NOPE));
-    }
-  };
 
   // Detect when a card is drawn
   useEffect(() => {
@@ -50,11 +34,11 @@ export default function Table({gameContext}: TableProps) {
   }, [game.piles.drawPile.size, lastDrawPileLength]);
 
   // Detect when a shuffle card is played
-  const pendingCardRef = useRef(game.pendingCardPlay);
+  const pendingCardRef = useRef(game.piles.pendingCard);
   useEffect(() => {
     // If there is an active pending play, do not trigger shuffle yet
-    if (game.pendingCardPlay) {
-      pendingCardRef.current = game.pendingCardPlay;
+    if (game.piles.pendingCard) {
+      pendingCardRef.current = game.piles.pendingCard;
       return;
     }
 
@@ -81,63 +65,59 @@ export default function Table({gameContext}: TableProps) {
       }
     }
     
-    if (!G.pendingCardPlay) {
-        setLastDiscardPileLength(G.piles.discardPile.length);
+    if (!game.piles.pendingCard) {
+        setLastDiscardPileLength(game.piles.discardPile.size);
     }
-  }, [G.piles.discardPile.length, lastDiscardPileLength, G.piles.discardPile, G.pendingCardPlay]);
+  }, [game.piles.discardPile.size, lastDiscardPileLength, game.piles.discardPile, game.piles.pendingCard]);
 
   const handleDrawClick = () => {
+    // wait for previous draw animation to finish before allowing another draw
     if (!isDrawing) {
-      moves.drawCard();
+      game.playDrawCard();
     }
   };
 
   // Timer calculation
   const [timeLeftMs, setTimeLeftMs] = useState(0);
   useEffect(() => {
-    if (!G.pendingCardPlay) {
+    if (!game.piles.pendingCard) {
       setTimeLeftMs(0);
       return;
     }
-    const update = () => setTimeLeftMs(Math.max(0, G.pendingCardPlay!.expiresAtMs - Date.now()));
+    const update = () => setTimeLeftMs(Math.max(0, game.piles.pendingCard!.expiresAtMs - Date.now()));
     update();
     const i = setInterval(update, 50);
     return () => clearInterval(i);
-  }, [G.pendingCardPlay?.expiresAtMs, G.pendingCardPlay?.startedAtMs]);
+  }, [game.piles.pendingCard?.expiresAtMs, game.piles.pendingCard?.startedAtMs]);
 
   // Calculate generic progress 0-1
-  const windowDuration = G.pendingCardPlay ? (G.pendingCardPlay.expiresAtMs - G.pendingCardPlay.startedAtMs) : 3000;
-  const progressRatio = G.pendingCardPlay ? (timeLeftMs / windowDuration) : 0;
+  const windowDuration = game.piles.pendingCard ? (game.piles.pendingCard.expiresAtMs - game.piles.pendingCard.startedAtMs) : 3000;
+  const progressRatio = game.piles.pendingCard ? (timeLeftMs / windowDuration) : 0;
   const degrees = progressRatio * 360;
 
-  const turnsRemaining = (G.turnsRemaining || 1) - 1;
-  const isCurrentPlayer = ctx.currentPlayer === (gameContext.playerID || '');
 
-  const isNoped = G.pendingCardPlay?.isNoped ?? false;
+  const isNoped = game.piles.pendingCard?.isNoped ?? false;
 
   return (
     <div className="table">
       <div 
-        className={`table-center ${G.pendingCardPlay ? 'has-pending-play' : ''} ${isNoped ? 'is-noped' : ''}`}
+        className={`table-center ${game.piles.pendingCard ? 'has-pending-play' : ''} ${isNoped ? 'is-noped' : ''}`}
         style={{
           '--timer-deg': `${degrees}deg`,
-          '--timer-opacity': G.pendingCardPlay ? 1 : 0
+          '--timer-opacity': game.piles.pendingCard ? 1 : 0
         } as any}
       >
         <div className="table-timer-overlay" />
         <div className="center-stack">
-          {/* Turns remaining badge (for attack) */}
-          <TurnBadge turnsRemaining={turnsRemaining} isCurrentPlayer={isCurrentPlayer} />
-
-          {/* Nope Button moved to PendingPlayStack */}
+          <TurnBadge />
 
           <div className="card-piles">
-            {!G.pendingCardPlay && (
+            {!game.piles.pendingCard && (
               <>
                 <div
                   ref={discardPileRef}
                   className={`pile discard-pile ${!discardCard ? 'empty' : ''}`}
-                  style={{backgroundImage: discardCard ? `url(${discardImage})` : 'none'}}
+                  style={{backgroundImage: discardCard ? `url(${game.getDiscardCardTexture()})` : 'none'}}
                   data-animation-id="discard-pile"
                   onMouseEnter={() => {
                     if (!isMobile) setIsDiscardPileSelected(true);
@@ -150,7 +130,7 @@ export default function Table({gameContext}: TableProps) {
                   }}
                 />
                 <HoverCardPreview 
-                  cardImage={discardImage}
+                  cardImage={game.getDiscardCardTexture()}
                   anchorRef={discardPileRef}
                   isVisible={isDiscardPileSelected && !!discardCard}
                   onClose={() => setIsDiscardPileSelected(false)}
@@ -158,13 +138,9 @@ export default function Table({gameContext}: TableProps) {
               </>
             )}
             
-            {G.pendingCardPlay && (
-               /* Replaces discard pile */
-               <PendingPlayStack 
-                 pendingPlay={G.pendingCardPlay!}
-                 canNope={canNope}
-                 onNope={handlePlayNope}
-               />
+            {game.piles.pendingCard && (
+               /* Replaces discard pile during pending card play */
+               <PendingPlayStack />
             )}
 
             <div
@@ -175,9 +151,9 @@ export default function Table({gameContext}: TableProps) {
               onMouseLeave={() => setIsHoveringDrawPile(false)}
               data-animation-id="draw-pile"
             >
-              {isHoveringDrawPile && G.client.drawPileLength > 0 && (
+              {isHoveringDrawPile && game.piles.drawPile.size > 0 && (
                 <div className="card-counter">
-                  {G.client.drawPileLength}
+                  {game.piles.drawPile.size}
                 </div>
               )}
             </div>

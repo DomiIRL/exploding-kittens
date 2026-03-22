@@ -1,7 +1,6 @@
 import {CardType} from '../card-type';
 import {TheGame} from '../game';
 import {Card} from '../card';
-import {validateNope} from '../../utils/action-validation';
 
 export class NopeCard extends CardType {
 
@@ -14,12 +13,11 @@ export class NopeCard extends CardType {
   }
 
   canBePlayed(game: TheGame, _card: Card): boolean {
-    const {G, playerID} = game.context;
-    return validateNope(G, playerID);
+    return game.players.actingPlayer.canNope
   }
 
   onPlayed(game: TheGame, _card: Card) {
-    const pendingCardPlay = game.pendingCardPlay;
+    const pendingCardPlay = game.piles.pendingCard;
     const player = game.players.actingPlayer;
 
     if (!pendingCardPlay) {

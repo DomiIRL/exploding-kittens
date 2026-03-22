@@ -73,17 +73,17 @@ export default function ExplodingKittensBoard(props: BoardProps<IGameState> & { 
   const gameState = useGameState(ctx, G, game.players.players, playerID ?? null);
 
   useEffect(() => {
-    if (!gameState.isInNowCardStage || !G.pendingCardPlay || !moves.resolvePendingCard) {
+    if (!gameState.isInNowCardStage || !game.piles.pendingCard || !moves.resolvePendingCard) {
       return;
     }
 
     const checkAndResolve = () => {
-      if (G.pendingCardPlay && Date.now() >= G.pendingCardPlay.expiresAtMs) {
+      if (game.piles.pendingCard && Date.now() >= game.piles.pendingCard.expiresAtMs) {
         moves.resolvePendingCard();
       }
     };
 
-    const remainingMs = Math.max(0, G.pendingCardPlay.expiresAtMs - Date.now());
+    const remainingMs = Math.max(0, game.piles.pendingCard.expiresAtMs - Date.now());
 
     // Primary trigger
     const timeoutId = window.setTimeout(checkAndResolve, remainingMs);
@@ -97,7 +97,7 @@ export default function ExplodingKittensBoard(props: BoardProps<IGameState> & { 
     };
   }, [
     gameState.isInNowCardStage,
-    G.pendingCardPlay?.expiresAtMs,
+    game.piles.pendingCard?.expiresAtMs,
     moves,
   ]);
 
@@ -171,7 +171,7 @@ export default function ExplodingKittensBoard(props: BoardProps<IGameState> & { 
 
         <div className={`board-container ${playerState.isSelfSpectator ? 'hand-interactable' : ''} ${playerState.isSelfDead ? 'dimmed' : ''} ${game.isLobbyPhase() ? 'pointer-events-none' : ''}`}>
           <div className={"game-elements"}>
-            <Table gameContext={gameContext} />
+            <Table />
 
             <PlayerList
               alivePlayersSorted={gameState.alivePlayersSorted}

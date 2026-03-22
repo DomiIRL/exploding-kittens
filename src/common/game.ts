@@ -52,14 +52,15 @@ export const ExplodingKittens: Game<IGameState, IPluginAPIs> = {
       onEnd: (context: IContext) => {
         const game = new TheGame(context)
 
-        // Deal card-types when leaving lobby phase
+        // Initialize the hands and piles
         const deck = new OriginalDeck();
-        const pile: ICard[] = deck.buildBaseDeck().sort(() => Math.random() - 0.5);
+        const pile: ICard[] = deck.buildBaseDeck();
 
         dealHands(pile, game.context.player.state, deck); // TODO: use api wrapper
         deck.addPostDealCards(pile, Object.keys(game.context.ctx.playOrder).length);
 
-        game.piles.cards.drawPile = pile.sort(() => Math.random() - 0.5);
+        game.piles.drawPile = pile;
+        game.piles.drawPile.shuffle();
       },
       turn: {
         activePlayers: {

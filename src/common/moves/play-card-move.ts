@@ -3,7 +3,12 @@ import {TheGame} from "../entities/game";
 
 export const playCard = (context: IContext, cardIndex: number) => {
   const game = new TheGame(context);
-  game.players.actingPlayer.playCard(cardIndex);
+  try {
+    game.players.actingPlayer.playCard(cardIndex);
+  } catch (e) {
+    console.error(e);
+    return;
+  }
 };
 
 export const playNowCard = (context: IContext, cardIndex: number) => {
@@ -12,6 +17,6 @@ export const playNowCard = (context: IContext, cardIndex: number) => {
 
 export const resolvePendingCard = (context: IContext) => {
   const game = new TheGame(context);
-  game.resolvePendingCard();
+  game.piles.resolvePendingCard();
 };
 

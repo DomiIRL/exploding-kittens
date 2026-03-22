@@ -1,18 +1,17 @@
-import {IPendingCardPlay} from '../../../../common';
-import '../card/Card.css'; // Import the shared card styles
+import '../../card/Card.css';
 import './PendingPlayStack.css';
 import {useRef, useState} from 'react';
-import HoverCardPreview from '../card/HoverCardPreview';
+import HoverCardPreview from '../../card/HoverCardPreview.tsx';
+import {useGame} from "../../../../context/GameContext.tsx";
 
-interface PendingPlayStackProps {
-  pendingPlay: IPendingCardPlay;
-  canNope: boolean;
-  onNope: () => void;
-}
+export default function PendingPlayStack() {
+  const game = useGame();
 
-export default function PendingPlayStack({pendingPlay, canNope, onNope}: PendingPlayStackProps) {
-  const targetCard = pendingPlay.card;
-  const isNoped = pendingPlay.isNoped;
+  const pendingCard = game.piles.pendingCard;
+  if (!pendingCard) return null;
+
+  const targetCard = pendingCard.card;
+  const isNoped = pendingCard.isNoped;
   const [isHovered, setIsHovered] = useState(false);
   const pileRef = useRef<HTMLDivElement>(null);
 
@@ -38,17 +37,17 @@ export default function PendingPlayStack({pendingPlay, canNope, onNope}: Pending
       />
 
       {/*Only show when at least one nope card been played*/}
-      {pendingPlay.nopeCount > 0 && (
+      {pendingCard.nopeCount > 0 && (
         <div className={`status-badge ${isNoped ? 'noped' : 'active'}`}>
           {isNoped ? 'Noped' : 'Un-Noped'}
         </div>
       )}
 
       {/* Nope Button */}
-      {canNope && (
+      {game.selfPlayer?.canNope && (
         <button 
           className="nope-button-inline"
-          onClick={onNope}
+          onClick={game.playNope}
         >
           {isNoped ? 'Un-Nope!' : 'NOPE!'}
         </button>
