@@ -11,8 +11,8 @@ export default function SeeTheFutureOverlay() {
     return null;
   }
 
-  // Get the top 3 card-types from the draw pile for the see the future overlay
-  const cards: Card[] = game.piles.drawPile.peek(3);
+  // Get the top ard-types from the draw pile for the see the future overlay that are visible
+  const cards: Card[] = game.piles.drawPile.allCards;
 
   if (!cards || cards.length === 0) {
     console.error("No cards available to see in the future! This shouldn't happen.");

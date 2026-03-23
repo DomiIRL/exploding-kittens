@@ -34,7 +34,7 @@ export default function Card({
 
   const cardImage = TheGameClient.getCardTexture(card);
 
-  const couldBePlayed = game.isSelf(owner) && ((card?.serverIndex && game.canPlayCard(card?.serverIndex)) || game.canGiveCard());
+  const couldBePlayed = game.isSelf(owner) && ((card && game.canPlayCard(card.serverIndex)) || game.canGiveCard());
 
   const handleAction = () => {
     if (!card) {

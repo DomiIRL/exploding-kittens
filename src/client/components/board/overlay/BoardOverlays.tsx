@@ -1,14 +1,14 @@
-import WinnerOverlay from './winner-overlay/WinnerOverlay.tsx';
-import DeadOverlay from './dead-overlay/DeadOverlay.tsx';
-import SpecialActionOverlay from './special-action-overlay/SpecialActionOverlay.tsx';
-import SeeTheFutureOverlay from './see-future-overlay/SeeTheFutureOverlay.tsx';
+import WinnerOverlay from './winner/WinnerOverlay.tsx';
+import DeadOverlay from './dead/DeadOverlay.tsx';
+import SpecialActionOverlay from './special-action/SpecialActionOverlay.tsx';
+import SeeTheFutureOverlay from './see-future/SeeTheFutureOverlay.tsx';
 import {useGame} from "../../../context/GameContext.tsx";
 import {
   CHOOSE_CARD_TO_GIVE,
   CHOOSE_PLAYER_TO_REQUEST_FROM,
   CHOOSE_PLAYER_TO_STEAL_FROM
 } from "../../../../common/constants/stages.ts";
-import LobbyOverlay from "./lobby-overlay/LobbyOverlay.tsx";
+import LobbyOverlay from "./lobby/LobbyOverlay.tsx";
 
 /**
  * Manages and renders all game overlays

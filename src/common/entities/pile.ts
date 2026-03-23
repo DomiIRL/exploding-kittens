@@ -9,6 +9,10 @@ export class Pile {
     this.cards = state.cards;
   }
 
+  get allCards(): Card[] {
+    return this.cards.map(iCard => new Card(this.game, iCard));
+  }
+
   addCard(card: Card | ICard): void {
     const cardData: ICard = {name: card.name, index: card.index};
 
