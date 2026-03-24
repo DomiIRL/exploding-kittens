@@ -41,7 +41,7 @@ export default function ExplodingKittensBoard(props: BoardProps<IGameState> & { 
   }, [game.isLobbyPhase(), setPollingInterval]);
 
   useEffect(() => {
-    if (!game.piles.pendingCard || !game.piles.pendingCard || !game.moves.resolvePendingCard) {
+    if (!game.piles.pendingCard || !game.moves.resolvePendingCard) {
       return;
     }
 
