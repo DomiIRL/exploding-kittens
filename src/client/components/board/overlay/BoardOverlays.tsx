@@ -2,6 +2,7 @@ import WinnerOverlay from './winner/WinnerOverlay.tsx';
 import DeadOverlay from './dead/DeadOverlay.tsx';
 import SpecialActionOverlay from './special-action/SpecialActionOverlay.tsx';
 import SeeTheFutureOverlay from './see-future/SeeTheFutureOverlay.tsx';
+import DefuseOverlay from './defuse/DefuseOverlay.tsx';
 import {useGame} from "../../../context/GameContext.tsx";
 import {
   CHOOSE_CARD_TO_GIVE,
@@ -26,6 +27,8 @@ export default function BoardOverlays() {
 
   return (
     <>
+      <WinnerOverlay />
+      <DeadOverlay />
       <LobbyOverlay />
       {selectionMessage && (
         <SpecialActionOverlay message={selectionMessage} />)
@@ -34,8 +37,7 @@ export default function BoardOverlays() {
         <SpecialActionOverlay message="You were chosen to gift a card. Pick one." />
       )}
       <SeeTheFutureOverlay />
-      <DeadOverlay />
-      <WinnerOverlay/>
+      <DefuseOverlay />
     </>
   );
 }

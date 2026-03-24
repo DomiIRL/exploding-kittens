@@ -62,7 +62,7 @@ export default function Card({
           position: 'absolute',
           '--base-transform': `translate(${offsetX}%, ${offsetY}%) rotate(${angle}deg)`,
           transformOrigin: 'center 200%',
-          zIndex: owner.cardCount - index,
+          zIndex: owner.handSize - index,
         } as CSSProperties}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}

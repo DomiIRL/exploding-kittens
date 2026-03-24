@@ -3,6 +3,7 @@ import type {DeckType} from '../entities/deck-type';
 import {cardTypeRegistry} from "../registries/card-registry";
 import {CardType} from "../entities/card-type";
 import {TheGame} from "../entities/game";
+import {NAME_EXPLODING_KITTEN} from "../constants/cards";
 
 export const createPlayerState = (): IPlayer => ({
   hand: [],
@@ -17,11 +18,11 @@ const createFullPlayerView = (player: IPlayer): IPlayer => player;
 
 /**
  * Create a limited view of a player (used for opponent views)
+ * Show exploding kittens but remove the other cards
  */
 const createLimitedPlayerView = (player: IPlayer): IPlayer => ({
-  hand: [],
-  handSize: player.hand.length,
-  isAlive: player.isAlive
+  ...player,
+  hand: player.hand.filter(c => c.name === NAME_EXPLODING_KITTEN)
 });
 
 /**

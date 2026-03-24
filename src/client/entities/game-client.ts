@@ -76,6 +76,12 @@ export class TheGameClient extends TheGame {
     }
   }
 
+  playDefuse(index: number) {
+    if (this.selfPlayer && this.moves.defuseExplodingKitten) {
+      this.moves.defuseExplodingKitten(index);
+    }
+  }
+
   selectCard(cardIndex: number) {
     if (!this.selfPlayer) {
       console.error("No self player found");

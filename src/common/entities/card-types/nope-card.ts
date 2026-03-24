@@ -37,6 +37,6 @@ export class NopeCard extends CardType {
   }
 
   sortOrder(): number {
-    return 6;
+    return 99;
   }
 }

@@ -11,7 +11,7 @@ export default function SeeTheFutureOverlay() {
     return null;
   }
 
-  // Get the top ard-types from the draw pile for the see the future overlay that are visible
+  // Get the top cards from the draw pile that are visible
   const cards: Card[] = game.piles.drawPile.allCards;
 
   if (!cards || cards.length === 0) {

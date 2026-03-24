@@ -4,7 +4,7 @@ import {useGame} from "../../../../context/GameContext.tsx";
 export default function DeadOverlay() {
   const game = useGame();
 
-  if (game.isSelfAlive) {
+  if (game.isSelfAlive || !game.selfPlayer) {
     return null;
   }
 

@@ -14,6 +14,6 @@ export class DefuseCard extends CardType {
 
 
   sortOrder(): number {
-    return 99;
+    return 100;
   }
 }

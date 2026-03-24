@@ -53,7 +53,8 @@ export class OriginalDeck extends DeckType {
     const remaining = Math.min(TOTAL_DEFUSE_CARDS - playerCount, MAX_DECK_DEFUSE_CARDS);
 
     for (let i = 0; i < remaining; i++) {
-      pile.push(DEFUSE.createCard(playerCount - 1 + i));
+      const cardIndex = (playerCount - 1 + i) % 5;
+      pile.push(DEFUSE.createCard(cardIndex));
     }
 
     // add amount of players minus one exploding kitten

@@ -2,7 +2,7 @@ import {ICard, IPlayer} from '../models';
 import {TheGame} from "./game";
 import {Card} from "./card";
 import {EXPLODING_KITTEN, DEFUSE} from "../registries/card-registry";
-import {CHOOSE_PLAYER_TO_REQUEST_FROM} from "../constants/stages";
+import {CHOOSE_PLAYER_TO_REQUEST_FROM, DEFUSE_EXPLODING_KITTEN} from "../constants/stages";
 import {PlayerID} from "boardgame.io";
 import {NAME_NOPE} from "../constants/cards";
 
@@ -30,7 +30,7 @@ export class Player {
   /**
    * Get the count of card-types in hand
    */
-  get cardCount(): number {
+  get handSize(): number {
     return this._state.handSize;
   }
 
@@ -43,7 +43,7 @@ export class Player {
   }
 
   get isValidCardTarget(): boolean {
-    return this.isAlive && this.cardCount > 0;
+    return this.isAlive && this.handSize > 0;
   }
 
   get canNope(): boolean {
@@ -252,18 +252,21 @@ export class Player {
 
     this.addCard(cardData);
 
-    if (cardData.name === EXPLODING_KITTEN.name) {
-      const hasDefuse = this.hasCard(DEFUSE.name);
-      if (hasDefuse) {
-        const insertIndex = Math.floor(this.game.random.Number() * (this.game.piles.drawPile.size));
-        this.game.players.actingPlayer.defuseExplodingKitten(insertIndex); // for now put at random location
-        // this.game.turnManager.setStage(DEFUSE_EXPLODING_KITTEN); // TODO: implement stage clientside
-      } else {
-        this.eliminate();
-      }
-    } else {
+    if (cardData.name !== EXPLODING_KITTEN.name) {
       this.game.turnManager.endTurn();
+      return;
     }
+
+    if (!this.hasCard(DEFUSE.name)) {
+      this.eliminate();
+      return;
+    }
+
+    if (this.game.piles.drawPile.size <= 0) {
+      this.defuseExplodingKitten(0); // if no cards left, just put it back on top since it doesn't matter
+      return;
+    }
+    this.game.turnManager.setStage(DEFUSE_EXPLODING_KITTEN);
   }
 
   defuseExplodingKitten(insertIndex: number): void {
@@ -288,7 +291,7 @@ export class Player {
   }
 
   stealRandomCardFrom(target: Player): Card {
-    const count = target.cardCount;
+    const count = target.handSize;
     if (count === 0) throw new Error("Target has no cards");
 
     // Use game context random

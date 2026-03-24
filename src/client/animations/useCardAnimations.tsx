@@ -12,7 +12,7 @@ const takeSnapshot = (game: TheGameClient, selfPlayerId: string | null): StateSn
   drawSize:     game.piles.drawPile.size,
   discardSize:  game.piles.discardPile.size,
   discardTop:   game.piles.discardPile.topCard,
-  handCounts:   Object.fromEntries(game.players.allPlayers.map(p => [p.id, p.cardCount])),
+  handCounts:   Object.fromEntries(game.players.allPlayers.map(p => [p.id, p.handSize])),
   selfHand:     [...(game.players.allPlayers.find(p => p.id === selfPlayerId)?.hand ?? [])],
 });
 
@@ -54,7 +54,7 @@ export const useCardAnimations = (game: TheGameClient) => {
 
   // Fine-grained dependency keys so the effect fires even when
   // game.players is the same object reference but hand contents changed
-  const handCountKey = game.players.allPlayers.map(p => `${p.id}:${p.cardCount}`).join(',');
+  const handCountKey = game.players.allPlayers.map(p => `${p.id}:${p.handSize}`).join(',');
   const selfHandKey  = game.players.allPlayers
     .find(p => p.id === selfPlayerId)?.hand
     .map(c => `${c.name}:${c.index}`).join(',') ?? '';

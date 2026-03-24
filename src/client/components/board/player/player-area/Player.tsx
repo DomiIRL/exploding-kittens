@@ -74,7 +74,7 @@ export default function Player({
         }}
         onClick={handleInteract}
         data-player-id={playerId}
-        data-hand-count={player.cardCount}
+        data-hand-count={player.handSize}
         data-animation-id={`player-${playerId}`}
       >
         <div className="player-info flex flex-col items-center">
@@ -83,7 +83,7 @@ export default function Player({
             {isSelf && ' (You)'}
           </div>
           <div className="player-hand border-2 border-black bg-white p-2 rounded">
-            Cards: {player.cardCount}
+            Cards: {player.handSize}
           </div>
         </div>
       </div>

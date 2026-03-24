@@ -55,6 +55,6 @@ export class CatCard extends CardType {
   }
 
   sortOrder(): number {
-    return 98;
+    return 6;
   }
 }

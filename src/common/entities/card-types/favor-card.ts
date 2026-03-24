@@ -18,7 +18,7 @@ export class FavorCard extends CardType {
     const { ctx } = game.context;
 
     const candidates = game.players.allPlayers.filter((target) => {
-      return target.id !== ctx.currentPlayer && target.isAlive && target.cardCount > 0;
+      return target.id !== ctx.currentPlayer && target.isAlive && target.handSize > 0;
     });
 
     if (candidates.length === 1) {

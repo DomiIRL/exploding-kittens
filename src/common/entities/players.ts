@@ -93,7 +93,7 @@ export class Players {
    * Get all alive players who have at least one card in hand
    */
   get playersWithCards(): Player[] {
-    return this.alivePlayers.filter(player => player.cardCount > 0);
+    return this.alivePlayers.filter(player => player.handSize > 0);
   }
 
   /**

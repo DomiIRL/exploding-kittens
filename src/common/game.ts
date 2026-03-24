@@ -53,8 +53,8 @@ export const ExplodingKittens: Game<IGameState, IPluginAPIs> = {
         const deck = new OriginalDeck();
         const pile: ICard[] = deck.buildBaseDeck().sort(() => Math.random() - 0.5);
 
-        dealHands(pile, game.context.player.state, deck); // TODO: use api wrapper
-        deck.addPostDealCards(pile, Object.keys(game.context.ctx.playOrder).length); // TODO: use api wrapper
+        dealHands(pile, game.context.player.state, deck);
+        deck.addPostDealCards(pile, Object.keys(game.players.playerCount).length);
 
         game.piles.drawPile = pile;
         game.piles.drawPile.shuffle();
@@ -100,7 +100,6 @@ export const ExplodingKittens: Game<IGameState, IPluginAPIs> = {
             moves: {
               defuseExplodingKitten: {
                 move: inGame(defuseExplodingKitten),
-                client: false
               },
             }
           },
@@ -116,7 +115,6 @@ export const ExplodingKittens: Game<IGameState, IPluginAPIs> = {
             moves: {
               requestCard: {
                 move: inGame(requestCard),
-                client: false
               },
             },
           },

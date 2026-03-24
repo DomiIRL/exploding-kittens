@@ -16,7 +16,7 @@ export default function PlayerCards({
 }: PlayerCardsProps) {
   const game = useGame();
 
-  const cardCount = player.cardCount;
+  const cardCount = player.handSize;
   const fanSpread = game.isSpectator || game.isSelf(player) ? Math.min(cardCount * 6, 60) : Math.min(cardCount * 4, 40);
   const angleStep = cardCount > 1 ? fanSpread / (cardCount - 1) : 0;
   const baseOffset = cardCount > 1 ? -fanSpread / 2 : 0;
