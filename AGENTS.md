@@ -11,9 +11,9 @@ This project implements Exploding Kittens using **React** (frontend) and **board
 
 ### Game State Management
 The project uses a custom wrapper pattern over standard `boardgame.io` state (`G` and `ctx`):
-- **`TheGame` Class** (`src/common/entities/game.ts`): Wraps the raw context. Always instantiate this to interact with game state.
+- **`TheGame` Class** (`src/common/entities/exploding-kittens.ts`): Wraps the raw context. Always instantiate this to interact with game state.
 - **`IGameState`** (`src/common/models/game-state.model.ts`): Defines the shape of `G` (piles, deck type, etc.).
-- **Moves with `inGame` HOC**: All game moves are wrapped with the `inGame` higher-order function (`src/common/moves/in-game.ts`).
+- **Moves with `inGame` HOC**: All game moves are wrapped with the `inGame` higher-order function (`src/common/moves/in-exploding-kittens.ts`).
   - *Pattern*: Define moves as `(game: TheGame, ...args) => void`. The HOC handles context injection.
   - *Example*: See `src/common/moves/draw-move.ts`.
 
@@ -43,7 +43,7 @@ When implementing game moves (actions):
 1. Create a function in `src/common/moves/`.
 2. Function signature must be `(game: TheGame, ...args)`.
 3. Mutate state via `game.piles`, `game.players`, or `game.gameState`.
-4. Register the move in `src/common/game.ts` using `inGame(yourMove)`.
+4. Register the move in `src/common/exploding-kittens.ts` using `inGame(yourMove)`.
 
 **Example Move:**
 ```typescript

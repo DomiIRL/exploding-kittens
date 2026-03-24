@@ -1,5 +1,5 @@
 // Main game export
-export {ExplodingKittens} from './game';
+export {ExplodingKittens} from './exploding-kittens.ts';
 
 // Models
 export * from './models';
