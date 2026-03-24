@@ -27,7 +27,6 @@ export default function PlayerList() {
             player={player}
             key={player.id}
             position={{ cardPosition, infoPosition }}
-            matchData={game.matchData}
           />
         );
       })}

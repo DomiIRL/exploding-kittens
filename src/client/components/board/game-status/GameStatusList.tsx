@@ -3,6 +3,7 @@ import { useState } from 'react';
 import './GameStatusList.css';
 import { useResponsive } from '../../../context/ResponsiveContext';
 import {useGame} from "../../../context/GameContext.tsx";
+import {getPlayerName} from "../../../utils/matchData.ts";
 
 export default function GameStatusList() {
   const game = useGame();
@@ -49,7 +50,6 @@ export default function GameStatusList() {
               const matchInfo = matchPlayers.find(p => p.id === player.id);
               const isEmpty = !(matchInfo && matchInfo.name)
               const isConnected = matchInfo ? (matchInfo.isConnected ?? true) : false;
-              const name = isEmpty ? 'Empty Seat' : matchInfo.name;
 
               return (
                 <div
@@ -72,7 +72,7 @@ export default function GameStatusList() {
                 ></span>
 
                   <span className="player-name">
-                  {name} {game.isSelf(player) ? '(You)' : ''}
+                  {getPlayerName(matchInfo)} {game.isSelf(player) ? '(You)' : ''}
                 </span>
 
                   {!player.isAlive && (

@@ -1,6 +1,6 @@
 import './Player.css';
 import PlayerCards from '../player-cards/PlayerCards.tsx';
-import {MatchPlayer, getPlayerName} from "../../../../utils/matchData.ts";
+import {getPlayerName} from "../../../../utils/matchData.ts";
 import {PlayerPosition} from "../../../../types/component-props.ts";
 import {useGame} from "../../../../context/GameContext.tsx";
 import {Player as PlayerModel} from "../../../../../common";
@@ -13,13 +13,11 @@ import {
 interface PlayerAreaProps {
   player: PlayerModel;
   position: PlayerPosition;
-  matchData?: MatchPlayer[];
 }
 
 export default function Player({
   player,
   position,
-  matchData,
 }: PlayerAreaProps) {
   const game = useGame();
   const selfPlayer = game.selfPlayer;
@@ -36,7 +34,7 @@ export default function Player({
   const { cardPosition, infoPosition } = position;
 
   const cardRotation = cardPosition.angle - 90;
-  const playerName = getPlayerName(playerId, matchData);
+  const playerName = getPlayerName(playerId);
 
   const extraClasses = `${isSelf ? 'hand-interactable self' : ''} ${isTurn ? 'turn' : ''} ${isSelectable ? 'selectable' : ''} ${isWaitingOn ? 'waiting-on' : ''}`
 
