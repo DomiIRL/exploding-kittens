@@ -1,5 +1,4 @@
 import './Board.css';
-import {useCardAnimations} from '../../animations/useCardAnimations';
 import Table from './table/Table';
 import PlayerList from './player/player-list/PlayerList';
 import BoardOverlays from './overlay/BoardOverlays.tsx';
@@ -70,14 +69,9 @@ export default function ExplodingKittensBoard(props: BoardProps<IGameState> & { 
     game.moves,
   ]);
 
-  // Handle card animations
-  const {AnimationLayer} = useCardAnimations(game);
-
   return (
     <>
       <GameProvider game={game}>
-        <AnimationLayer />
-
         <div className={`board-container ${game.isSpectator ? 'hand-interactable' : ''} ${!game.selfPlayer?.isAlive ? 'dimmed' : ''} ${game.isLobbyPhase() ? 'pointer-events-none' : ''}`}>
           <div className={"game-elements"}>
             <Table />
