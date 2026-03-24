@@ -54,7 +54,7 @@ export const ExplodingKittens: Game<IGameState, IPluginAPIs> = {
         const pile: ICard[] = deck.buildBaseDeck().sort(() => Math.random() - 0.5);
 
         dealHands(pile, game.context.player.state, deck);
-        deck.addPostDealCards(pile, Object.keys(game.players.playerCount).length);
+        deck.addPostDealCards(pile, game.players.playerCount);
 
         game.piles.drawPile = pile;
         game.piles.drawPile.shuffle();

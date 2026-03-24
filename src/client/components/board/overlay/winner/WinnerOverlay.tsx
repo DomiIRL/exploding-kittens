@@ -1,17 +1,14 @@
-import './WinnerOverlay.css';
-import {getPlayerName} from '../../../../utils/matchData.ts';
-import {useGame} from "../../../../context/GameContext.tsx";
+import React from 'react';
+import {useGame} from '../../../../context/GameContext';
+import {getPlayerName} from '../../../../utils/matchData';
 
-export default function WinnerOverlay() {
+const WinnerOverlay: React.FC = () => {
   const game = useGame();
-
   const winner = game.players.winner;
-  if (!game.isGameOver() || !winner) {
-    return null;
-  }
 
-  const isSelfWinner = game.selfPlayerId === winner.id;
-  const winnerName = getPlayerName(winner.id, game.matchData);
+  if (!game.isGameOver() || !winner) return null;
+
+  const winnerName = getPlayerName(winner.id);
 
   return (
     <div className="winner-overlay">
@@ -19,10 +16,10 @@ export default function WinnerOverlay() {
         <div className="winner-trophy">🏆</div>
         <div className="winner-title">Game Over!</div>
         <div className="winner-name">
-          {isSelfWinner ? 'You Win!' : `${winnerName} Wins!`}
+          {game.selfPlayerId === winner.id ? 'You Win!' : `${winnerName} Wins!`}
         </div>
         <div className="winner-subtitle">
-          {isSelfWinner
+          {game.selfPlayerId === winner.id
             ? 'Congratulations!'
             : 'Better luck next time!'}
         </div>
@@ -31,3 +28,4 @@ export default function WinnerOverlay() {
   );
 }
 
+export default WinnerOverlay;
