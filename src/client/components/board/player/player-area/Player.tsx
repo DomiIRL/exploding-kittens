@@ -55,6 +55,7 @@ export default function Player({
           transform: `translate(-50%, -50%) rotate(${cardRotation}deg)`,
           zIndex: isSelf ? 2 : 1,
         }}
+        data-animation-id={`player-${playerId}`}
       >
         <PlayerCards
           player={player}
@@ -73,7 +74,6 @@ export default function Player({
         onClick={handleInteract}
         data-player-id={playerId}
         data-hand-count={player.handSize}
-        data-animation-id={`player-${playerId}`}
       >
         <div className="player-info flex flex-col items-center">
           <div className="player-id mt-2 font-bold">
