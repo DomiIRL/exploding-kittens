@@ -14,8 +14,8 @@ export default function Table() {
   const game = useGame()
   const { isMobile } = useResponsive();
 
-  const discardPileAnimRef = useAnimationNode('discard-pile');
-  const drawPileAnimRef = useAnimationNode('draw-pile');
+  const discardPileAnimRef = useAnimationNode('discard');
+  const drawPileAnimRef = useAnimationNode('draw');
 
   const [isDrawing, setIsDrawing] = useState(false);
   const [isShuffling, setIsShuffling] = useState(false);
