@@ -6,10 +6,11 @@ import GameStatusList from './game-status/GameStatusList';
 import {useEffect} from 'react';
 import {Chat} from '../chat/Chat';
 import {useMatchDetails} from "../../context/MatchDetailsContext.tsx";
-import type { BoardProps } from 'boardgame.io/react';
-import {IContext, IGameState} from "../../../common";
+import {AnimationOverlay} from '../animations/AnimationOverlay.tsx';
 import {TheGameClient} from "../../entities/game-client.ts";
 import {GameProvider} from "../../context/GameContext.tsx";
+import type { BoardProps } from 'boardgame.io/react';
+import {IContext, IGameState} from "../../../common";
 
 export default function ExplodingKittensBoard(props: BoardProps<IGameState> & { plugins: any }) {
 
@@ -82,6 +83,7 @@ export default function ExplodingKittensBoard(props: BoardProps<IGameState> & { 
         <BoardOverlays />
         <GameStatusList />
         <Chat />
+        <AnimationOverlay />
       </GameProvider>
     </>
   );
