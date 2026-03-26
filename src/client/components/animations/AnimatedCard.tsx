@@ -22,11 +22,11 @@ export function AnimatedCard({ animation }: { animation: CardAnimation }) {
     const getTargetWidth = (el: Element, rect: DOMRect) => {
       // If it's explicitly a card or a pile, it has valid dimensions
       if (el.classList.contains('pile') || el.classList.contains('card')) {
-        return rect.width;
+        return (el as HTMLElement).offsetWidth || rect.width;
       }
       // If targeting a badge/generic element, assume standard player card size
-      const sampleCard = document.querySelector('.card:not(.pile):not(.animated-card)');
-      return sampleCard ? sampleCard.getBoundingClientRect().width : 80;
+      const sampleCard = document.querySelector('.card:not(.pile):not(.animated-card)') as HTMLElement;
+      return sampleCard ? sampleCard.offsetWidth : 80;
     };
 
     const fromWidth = getTargetWidth(fromEl, fromRect);
