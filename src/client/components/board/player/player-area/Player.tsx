@@ -4,6 +4,7 @@ import {getPlayerName} from "../../../../utils/matchData.ts";
 import {PlayerPosition} from "../../../../types/component-props.ts";
 import {useGame} from "../../../../context/GameContext.tsx";
 import {Player as PlayerModel} from "../../../../../common";
+import {useAnimationNode} from "../../../../context/AnimationContext.tsx";
 import {
   CHOOSE_CARD_TO_GIVE,
   CHOOSE_PLAYER_TO_REQUEST_FROM,
@@ -23,6 +24,8 @@ export default function Player({
   const selfPlayer = game.selfPlayer;
 
   const playerId = player.id;
+  const playerAnimRef = useAnimationNode(`player-${playerId}`);
+
   const isSelf = game.isSelf(playerId);
   const isTurn = player.isCurrentPlayer;
   const isSelectable =
@@ -47,6 +50,7 @@ export default function Player({
   return (
     <>
       <div
+        ref={playerAnimRef}
         className={`player-cards-container ${extraClasses}`}
         style={{
           position: 'absolute',
@@ -55,7 +59,6 @@ export default function Player({
           transform: `translate(-50%, -50%) rotate(${cardRotation}deg)`,
           zIndex: isSelf ? 2 : 1,
         }}
-        data-animation-id={`player-${playerId}`}
       >
         <PlayerCards
           player={player}

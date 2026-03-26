@@ -9,6 +9,7 @@ import {useMatchDetails} from "../../context/MatchDetailsContext.tsx";
 import {AnimationOverlay} from '../animations/AnimationOverlay.tsx';
 import {TheGameClient} from "../../entities/game-client.ts";
 import {GameProvider} from "../../context/GameContext.tsx";
+import {AnimationProvider} from "../../context/AnimationContext.tsx";
 import type { BoardProps } from 'boardgame.io/react';
 import {IContext, IGameState} from "../../../common";
 
@@ -73,17 +74,19 @@ export default function ExplodingKittensBoard(props: BoardProps<IGameState> & { 
   return (
     <>
       <GameProvider game={game}>
-        <div className={`board-container ${game.isSpectator ? 'hand-interactable' : ''} ${!game.selfPlayer?.isAlive ? 'dimmed' : ''} ${game.isLobbyPhase() ? 'pointer-events-none' : ''}`}>
-          <div className={"game-elements"}>
-            <Table />
-            <PlayerList />
+        <AnimationProvider>
+          <div className={`board-container ${game.isSpectator ? 'hand-interactable' : ''} ${!game.selfPlayer?.isAlive ? 'dimmed' : ''} ${game.isLobbyPhase() ? 'pointer-events-none' : ''}`}>
+            <div className={"game-elements"}>
+              <Table />
+              <PlayerList />
+            </div>
           </div>
-        </div>
 
-        <BoardOverlays />
-        <GameStatusList />
-        <Chat />
-        <AnimationOverlay />
+          <BoardOverlays />
+          <GameStatusList />
+          <Chat />
+          <AnimationOverlay />
+        </AnimationProvider>
       </GameProvider>
     </>
   );
