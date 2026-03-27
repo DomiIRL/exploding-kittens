@@ -7,6 +7,7 @@ import {RandomAPI} from "boardgame.io/dist/types/src/plugins/random/random";
 import {EventsAPI} from "boardgame.io/dist/types/src/plugins/events/events";
 import {Ctx} from "boardgame.io";
 import {GAME_OVER, LOBBY, PLAY} from "../constants/phases";
+import {AnimationQueue} from "./animation-queue.ts";
 
 
 export class TheGame {
@@ -19,6 +20,7 @@ export class TheGame {
   public readonly piles: Piles;
   public readonly turnManager: TurnManager;
   public players: Players;
+  public animationsQueue: AnimationQueue;
 
   constructor(context: IContext) {
     this.context = context;
@@ -29,6 +31,7 @@ export class TheGame {
 
     this.piles = new Piles(this, this.gameState.piles);
     this.turnManager = new TurnManager(this.context);
+    this.animationsQueue = new AnimationQueue(this.gameState.animationsQueue);
 
     if (this.context?.player?.state) {
       this.players = new Players(this, this.gameState, this.context.player.state);

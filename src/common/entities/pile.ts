@@ -5,7 +5,7 @@ import {Card} from "./card";
 export class Pile {
   public cards: ICard[];
 
-  constructor(private game: TheGame, public state: IPile) {
+  constructor(public readonly name: string, private game: TheGame, public state: IPile) {
     this.cards = state.cards;
   }
 

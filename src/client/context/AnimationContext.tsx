@@ -1,5 +1,5 @@
-import { createContext, useContext, useRef, useState, ReactNode, useCallback } from 'react';
-import { CardAnimation } from '../components/animations/AnimationManager';
+import {createContext, ReactNode, useCallback, useContext, useRef, useState} from 'react';
+import {CardAnimation} from '../components/animations/AnimationManager';
 
 interface AnimationContextValue {
   animations: CardAnimation[];
@@ -87,7 +87,7 @@ export function useAnimationNode(id: string) {
   const { registerNode } = useAnimationState();
   const ref = useRef<HTMLElement | null>(null);
 
-  const setRef = useCallback((node: HTMLElement | null) => {
+  return useCallback((node: HTMLElement | null) => {
     if (node) {
       ref.current = node;
       registerNode(id, node);
@@ -96,6 +96,4 @@ export function useAnimationNode(id: string) {
       ref.current = null;
     }
   }, [id, registerNode]);
-
-  return setRef;
 }

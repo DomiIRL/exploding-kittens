@@ -24,7 +24,7 @@ export default function Player({
   const selfPlayer = game.selfPlayer;
 
   const playerId = player.id;
-  const playerAnimRef = useAnimationNode(`player-${playerId}`);
+  const playerAnimRef = useAnimationNode(`${playerId}`);
 
   const isSelf = game.isSelf(playerId);
   const isTurn = player.isCurrentPlayer;
