@@ -1,12 +1,18 @@
-import {createContext, ReactNode, useCallback, useContext, useRef, useState} from 'react';
-import {CardAnimation} from '../components/animations/AnimationManager';
+import { createContext, useContext, useRef, useState, ReactNode, useCallback } from 'react';
+import {IAnimation, ICard} from "../../common";
 
 interface AnimationContextValue {
   animations: CardAnimation[];
-  playAnimation: (fromId: string, toId: string, card: { name: string; index: number } | null, durationMs?: number) => void;
+  playAnimation: (id: number, animation: IAnimation) => void;
+  playManualAnimation: (fromId: string, toId: string, card: ICard | null, durationMs?: number) => void;
   // Node Ref Registry
   registerNode: (id: string, ref: HTMLElement | null) => void;
   getNode: (id: string) => HTMLElement | null;
+}
+
+export interface CardAnimation {
+  id: number;
+  metadata: IAnimation
 }
 
 const AnimationContext = createContext<AnimationContextValue | null>(null);
@@ -38,32 +44,47 @@ export function AnimationProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const playAnimation = useCallback((
-    fromId: string,
-    toId: string,
-    card: { name: string; index: number } | null = null,
-    durationMs = 500
+    id: number,
+    animation: IAnimation
   ) => {
-    const id = `anim_${animationCounter.current++}`;
-    const newAnim: CardAnimation = { id, fromId, toId, card, durationMs };
-    
-    setAnimations(prev => [...prev, newAnim]);
+    const newAnimation = { id, metadata: animation };
+
+    setAnimations(prev => [...prev, newAnimation]);
 
     setTimeout(() => {
       setAnimations(prev => prev.filter(a => a.id !== id));
-    }, durationMs + 50);
+    }, animation.durationMs + 50);
+
+  }, [])
+
+  const playManualAnimation = useCallback((
+    fromId: string,
+    toId: string,
+    card: ICard | null = null,
+    durationMs = 500
+  ) => {
+    animationCounter.current++;
+    const id = animationCounter.current;
+    playAnimation(id, {
+      from: fromId,
+      to: toId,
+      card: card,
+      durationMs: durationMs
+    });
   }, []);
 
   // Expose global window command for dev testing
   if (typeof window !== 'undefined') {
     (window as any).playAnimation = (fromId: string, toId: string, cardName?: string, cardIndex?: number, durationMs = 500) => {
       const card = cardName ? { name: cardName, index: cardIndex ?? 0 } : null;
-      playAnimation(fromId, toId, card, durationMs);
+      playManualAnimation(fromId, toId, card, durationMs);
     };
   }
 
   const value = {
     animations,
-    playAnimation,
+    playManualAnimation: playManualAnimation,
+    playAnimation: playAnimation,
     registerNode,
     getNode
   };
@@ -87,7 +108,7 @@ export function useAnimationNode(id: string) {
   const { registerNode } = useAnimationState();
   const ref = useRef<HTMLElement | null>(null);
 
-  return useCallback((node: HTMLElement | null) => {
+  const setRef = useCallback((node: HTMLElement | null) => {
     if (node) {
       ref.current = node;
       registerNode(id, node);
@@ -96,4 +117,6 @@ export function useAnimationNode(id: string) {
       ref.current = null;
     }
   }, [id, registerNode]);
+
+  return setRef;
 }

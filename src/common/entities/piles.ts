@@ -2,7 +2,7 @@ import {ICard, IPendingCardPlay, IPiles} from '../models';
 import {TheGame} from "./game";
 import {Card} from "./card";
 import {Pile} from "./pile";
-import {DISCARD, DRAW} from "../constants/piles.ts";
+import {DISCARD, DRAW} from "../constants/piles";
 
 export class Piles {
   constructor(private game: TheGame, private piles: IPiles) {

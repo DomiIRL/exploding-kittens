@@ -29,6 +29,7 @@ export const setupGame = (_context: any, setupData?: SetupData): IGameState => {
       openCards: setupData?.openCards ?? false,
       pendingTimerMs: 3000,
     },
-    deckType: setupData?.deckType ?? 'original'
+    deckType: setupData?.deckType ?? 'original',
+    animationsQueue: {}
   };
 };

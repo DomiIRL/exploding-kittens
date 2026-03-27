@@ -1,7 +1,7 @@
 import {IAnimation, IAnimationQueue, ICard} from "../models";
-import {Player} from "./player.ts";
-import {Pile} from "./pile.ts";
-import {Card} from "./card.ts";
+import {Player} from "./player";
+import {Pile} from "./pile";
+import {Card} from "./card";
 
 export class AnimationQueue {
 
@@ -31,5 +31,5 @@ export class AnimationQueue {
   getAnimations(): IAnimation[] {
     return Object.values(this.queue);
   }
-  
+
 }

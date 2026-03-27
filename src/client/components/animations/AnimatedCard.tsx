@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
-import { CardAnimation } from './AnimationManager';
 import { TheGameClient } from '../../entities/game-client';
-import { useAnimationState } from '../../context/AnimationContext';
+import {CardAnimation, useAnimationState} from '../../context/AnimationContext';
 
 export function AnimatedCard({ animation }: { animation: CardAnimation }) {
   const { getNode } = useAnimationState();
@@ -9,13 +8,13 @@ export function AnimatedCard({ animation }: { animation: CardAnimation }) {
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
-    const fromEl = getNode(animation.fromId);
-    const toEl = getNode(animation.toId);
+    const fromEl = getNode(String(animation.metadata.from));
+    const toEl = getNode(String(animation.metadata.to));
 
     if (!fromEl || !toEl || !cardRef.current) {
       console.warn(`Card Animation Failed!
-fromId (${animation.fromId}):`, fromEl, `
-toId (${animation.toId}):`, toEl, `
+fromId (${animation.metadata.from}):`, fromEl, `
+toId (${animation.metadata.to}):`, toEl, `
 cardRef:`, cardRef.current);
       return;
     }
@@ -44,7 +43,7 @@ cardRef:`, cardRef.current);
     cardRef.current.style.left = `${fromRect.left + fromRect.width / 2}px`;
     cardRef.current.style.top = `${fromRect.top + fromRect.height / 2}px`;
     cardRef.current.style.width = `${fromWidth}px`;
-    cardRef.current.style.backgroundImage = `url(${TheGameClient.getCardTexture(animation.card as any)})`;
+    cardRef.current.style.backgroundImage = `url(${TheGameClient.getCardTexture(animation.metadata.card as any)})`;
     
     // Unhide securely
     setIsVisible(true);
@@ -53,7 +52,7 @@ cardRef:`, cardRef.current);
     const frame1 = requestAnimationFrame(() => {
       const frame2 = requestAnimationFrame(() => {
         if (!cardRef.current) return;
-        cardRef.current.style.transition = `all ${animation.durationMs}ms cubic-bezier(0.25, 0.8, 0.25, 1)`;
+        cardRef.current.style.transition = `all ${animation.metadata.durationMs}ms cubic-bezier(0.25, 0.8, 0.25, 1)`;
         cardRef.current.style.left = `${toRect.left + toRect.width / 2}px`;
         cardRef.current.style.top = `${toRect.top + toRect.height / 2}px`;
         cardRef.current.style.width = `${toWidth}px`;

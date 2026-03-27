@@ -7,7 +7,7 @@ import {RandomAPI} from "boardgame.io/dist/types/src/plugins/random/random";
 import {EventsAPI} from "boardgame.io/dist/types/src/plugins/events/events";
 import {Ctx} from "boardgame.io";
 import {GAME_OVER, LOBBY, PLAY} from "../constants/phases";
-import {AnimationQueue} from "./animation-queue.ts";
+import {AnimationQueue} from "./animation-queue";
 
 
 export class TheGame {
