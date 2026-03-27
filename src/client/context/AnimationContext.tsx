@@ -1,5 +1,6 @@
-import {createContext, ReactNode, useCallback, useContext, useRef, useState} from 'react';
+import {createContext, ReactNode, useCallback, useContext, useEffect, useRef, useState} from 'react';
 import {IAnimation, ICard} from "../../common";
+import {useGame} from "./GameContext.tsx";
 
 interface AnimationContextValue {
   animations: CardAnimation[];
@@ -18,6 +19,8 @@ export interface CardAnimation {
 const AnimationContext = createContext<AnimationContextValue | null>(null);
 
 export function AnimationProvider({ children }: { children: ReactNode }) {
+  const game = useGame();
+
   const [animations, setAnimations] = useState<CardAnimation[]>([]);
   const animationCounter = useRef(0);
   
@@ -43,10 +46,25 @@ export function AnimationProvider({ children }: { children: ReactNode }) {
     return nodeRefs.current.get(id) || null;
   }, []);
 
+  useEffect(() => {
+    if (!game.animationsQueue?.queue) {
+      return;
+    }
+
+    for (let id in game.animationsQueue.queue) {
+      const animation = game.animationsQueue.queue[id];
+      playAnimation(Number(id), animation);
+    }
+  }, [game.animationsQueue]);
+
   const playAnimation = useCallback((
     id: number,
     animation: IAnimation
   ) => {
+    if (animations.some(value1 => value1.id === id)) {
+      return
+    }
+
     const newAnimation = { id, metadata: animation };
 
     setAnimations(prev => [...prev, newAnimation]);

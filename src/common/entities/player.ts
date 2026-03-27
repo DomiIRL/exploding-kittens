@@ -251,6 +251,7 @@ export class Player {
     }
 
     this.addCard(cardData);
+    this.game.animationsQueue.enqueue(cardData, this.game.piles.drawPile, this);
 
     if (cardData.name !== EXPLODING_KITTEN.name) {
       this.game.turnManager.endTurn();
