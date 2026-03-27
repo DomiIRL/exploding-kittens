@@ -1,6 +1,7 @@
 import React from 'react';
 import {useGame} from '../../../../context/GameContext';
 import {getPlayerName} from '../../../../utils/matchData';
+import "./WinnerOverlay.css"
 
 const WinnerOverlay: React.FC = () => {
   const game = useGame();
