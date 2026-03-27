@@ -92,7 +92,7 @@ export function useAnimationNode(id: string) {
       ref.current = node;
       registerNode(id, node);
     } else {
-      registerNode(id, null, ref.current);
+      registerNode(id, null);
       ref.current = null;
     }
   }, [id, registerNode]);
