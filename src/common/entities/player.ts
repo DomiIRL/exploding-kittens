@@ -271,7 +271,9 @@ export class Player {
   }
 
   defuseExplodingKitten(insertIndex: number): void {
-    if (insertIndex < 0 || insertIndex > this.game.piles.drawPile.size) {
+    const drawPile = this.game.piles.drawPile;
+
+    if (insertIndex < 0 || insertIndex > drawPile.size) {
       throw new Error('Invalid insert index');
     }
 
@@ -284,8 +286,11 @@ export class Player {
       return;
     }
 
-    this.game.piles.discardCard(defuseCard);
-    this.game.piles.drawPile.insertCard(kittenCard, insertIndex);
+    const discardPile = this.game.piles.discardPile;
+    discardPile.addCard(defuseCard);
+    this.game.animationsQueue.enqueue(defuseCard, this, discardPile)
+    drawPile.insertCard(kittenCard, insertIndex);
+    this.game.animationsQueue.enqueue(kittenCard, this, drawPile)
 
     this.game.turnManager.endStage();
     this.game.turnManager.endTurn();

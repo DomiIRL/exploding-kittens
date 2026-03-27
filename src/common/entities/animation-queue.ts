@@ -20,12 +20,14 @@ export class AnimationQueue {
 
   enqueueAnimation(animation: IAnimation) {
     // generate a number unique id
-    const id = Date.now().toString() + Math.random().toString(36).substring(2);
-    this.queue[id] = animation;
+    const id = Date.now() + Math.random();
+    this.queue[id.toString()] = animation;
   }
 
-  clear(animationId: string) {
-    delete this.queue[animationId];
+  clear() {
+    for (let id in this.queue) {
+      delete this.queue[id];
+    }
   }
 
   getAnimations(): IAnimation[] {

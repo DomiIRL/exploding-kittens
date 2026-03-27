@@ -22,7 +22,7 @@ export function AnimationProvider({ children }: { children: ReactNode }) {
   const game = useGame();
 
   const [animations, setAnimations] = useState<CardAnimation[]>([]);
-  const animationCounter = useRef(0);
+  const lastAnimationTime = useRef(Date.now());
   
   // Ref map resolving 'string ids' -> DOM Elements
   const nodeRefs = useRef<Map<string, HTMLElement>>(new Map());
@@ -46,23 +46,16 @@ export function AnimationProvider({ children }: { children: ReactNode }) {
     return nodeRefs.current.get(id) || null;
   }, []);
 
-  useEffect(() => {
-    if (!game.animationsQueue?.queue) {
-      return;
-    }
-
-    for (let id in game.animationsQueue.queue) {
-      const animation = game.animationsQueue.queue[id];
-      playAnimation(Number(id), animation);
-    }
-  }, [game.animationsQueue]);
-
   const playAnimation = useCallback((
     id: number,
     animation: IAnimation
   ) => {
     if (animations.some(value1 => value1.id === id)) {
       return
+    }
+
+    if (id > lastAnimationTime.current) {
+      lastAnimationTime.current = id;
     }
 
     const newAnimation = { id, metadata: animation };
@@ -73,7 +66,7 @@ export function AnimationProvider({ children }: { children: ReactNode }) {
       setAnimations(prev => prev.filter(a => a.id !== id));
     }, animation.durationMs + 50);
 
-  }, [])
+  }, [animations])
 
   const playManualAnimation = useCallback((
     fromId: string,
@@ -81,15 +74,29 @@ export function AnimationProvider({ children }: { children: ReactNode }) {
     card: ICard | null = null,
     durationMs = 500
   ) => {
-    animationCounter.current++;
-    const id = animationCounter.current;
+    const id = Date.now() + Math.random();
     playAnimation(id, {
       from: fromId,
       to: toId,
       card: card,
       durationMs: durationMs
     });
-  }, []);
+  }, [playAnimation]);
+
+  useEffect(() => {
+    if (!game.animationsQueue?.queue) {
+      return;
+    }
+
+    const currentAnimations = game.animationsQueue.queue;
+    for (let idStr in currentAnimations) {
+      const id = Number(idStr);
+      if (id > lastAnimationTime.current) {
+        const animation = currentAnimations[idStr];
+        playAnimation(id, animation);
+      }
+    }
+  }, [game.animationsQueue, playAnimation]);
 
   // Expose global window command for dev testing
   if (typeof window !== 'undefined') {
