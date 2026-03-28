@@ -1,5 +1,4 @@
 import './Board.css';
-import {useCardAnimations} from '../../animations/useCardAnimations';
 import Table from './table/Table';
 import PlayerList from './player/player-list/PlayerList';
 import BoardOverlays from './overlay/BoardOverlays.tsx';
@@ -7,10 +6,12 @@ import GameStatusList from './game-status/GameStatusList';
 import {useEffect} from 'react';
 import {Chat} from '../chat/Chat';
 import {useMatchDetails} from "../../context/MatchDetailsContext.tsx";
-import type { BoardProps } from 'boardgame.io/react';
-import {IContext, IGameState} from "../../../common";
+import {AnimationOverlay} from '../animations/AnimationOverlay.tsx';
 import {TheGameClient} from "../../entities/game-client.ts";
 import {GameProvider} from "../../context/GameContext.tsx";
+import {AnimationProvider} from "../../context/AnimationContext.tsx";
+import type { BoardProps } from 'boardgame.io/react';
+import {IContext, IGameState} from "../../../common";
 
 export default function ExplodingKittensBoard(props: BoardProps<IGameState> & { plugins: any }) {
 
@@ -42,7 +43,7 @@ export default function ExplodingKittensBoard(props: BoardProps<IGameState> & { 
   }, [game.isLobbyPhase(), setPollingInterval]);
 
   useEffect(() => {
-    if (!game.piles.pendingCard || !game.piles.pendingCard || !game.moves.resolvePendingCard) {
+    if (!game.piles.pendingCard || !game.moves.resolvePendingCard) {
       return;
     }
 
@@ -70,24 +71,22 @@ export default function ExplodingKittensBoard(props: BoardProps<IGameState> & { 
     game.moves,
   ]);
 
-  // Handle card animations
-  const {AnimationLayer} = useCardAnimations(game);
-
   return (
     <>
       <GameProvider game={game}>
-        <AnimationLayer />
-
-        <div className={`board-container ${game.isSpectator ? 'hand-interactable' : ''} ${!game.selfPlayer?.isAlive ? 'dimmed' : ''} ${game.isLobbyPhase() ? 'pointer-events-none' : ''}`}>
-          <div className={"game-elements"}>
-            <Table />
-            <PlayerList />
+        <AnimationProvider>
+          <div className={`board-container ${game.isSpectator ? 'hand-interactable' : ''} ${!game.selfPlayer?.isAlive ? 'dimmed' : ''} ${game.isLobbyPhase() ? 'pointer-events-none' : ''}`}>
+            <div className={"game-elements"}>
+              <Table />
+              <PlayerList />
+            </div>
           </div>
-        </div>
 
-        <BoardOverlays />
-        <GameStatusList />
-        <Chat />
+          <BoardOverlays />
+          <GameStatusList />
+          <Chat />
+          <AnimationOverlay />
+        </AnimationProvider>
       </GameProvider>
     </>
   );

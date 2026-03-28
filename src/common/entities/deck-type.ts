@@ -1,4 +1,5 @@
 import type {ICard} from '../models';
+import {TheGame} from './game';
 
 export abstract class DeckType {
   name: string;
@@ -8,18 +9,17 @@ export abstract class DeckType {
   }
 
   /** Cards that form the base deck before dealing */
-  abstract buildBaseDeck(): ICard[];
+  abstract buildBaseDeck(game: TheGame): void;
 
   /** How many card-types each player starts with */
   abstract startingHandSize(): number;
 
   /** Cards automatically added to each player's hand */
-  startingHandForcedCards(_player_index: number): ICard[] {
+  startingHandForcedCards(_game: TheGame, _player_index: number): ICard[] {
     return [];
   }
 
   /** Extra card-types added after the players are dealt */
-  addPostDealCards(_pile: ICard[], _playerCount: number): void {
+  addPostDealCards(_game: TheGame): void {
   }
 }
-

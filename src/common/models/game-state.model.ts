@@ -17,15 +17,27 @@ export interface IPendingCardPlay {
   isNoped: boolean;
 }
 
+export interface IPiles {
+  drawPile: IPile;
+  discardPile: IPile;
+  pendingCardPlay: IPendingCardPlay | null;
+}
+
 export interface IPile {
   cards: ICard[];
   size: number;
 }
 
-export interface IPiles {
-  drawPile: IPile;
-  discardPile: IPile;
-  pendingCardPlay: IPendingCardPlay | null;
+export interface IAnimationQueue {
+  [key: number]: IAnimation[];
+}
+
+export interface IAnimation {
+  from: number | string;
+  to: number | string;
+  card: ICard | null;
+  visibleTo: PlayerID[];
+  durationMs: number;
 }
 
 export interface IGameState {
@@ -34,4 +46,6 @@ export interface IGameState {
   turnsRemaining: number;
   gameRules: IGameRules;
   deckType: string;
+  animationsQueue: IAnimationQueue;
+  nextCardId: number;
 }

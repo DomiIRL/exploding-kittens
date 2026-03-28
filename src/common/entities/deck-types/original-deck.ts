@@ -1,5 +1,6 @@
 import {DeckType} from '../deck-type';
 import type {ICard} from '../../models';
+import {TheGame} from '../game';
 
 import {
   ATTACK,
@@ -24,44 +25,44 @@ export class OriginalDeck extends DeckType {
     return STARTING_HAND_SIZE;
   }
 
-  startingHandForcedCards(index: number): ICard[] {
-    return [DEFUSE.createCard(index)];
+  startingHandForcedCards(game: TheGame, index: number): ICard[] {
+    return [DEFUSE.createCard(index, game)];
   }
 
-  buildBaseDeck(): ICard[] {
-    const pile: ICard[] = [];
+  buildBaseDeck(game: TheGame): void {
+    const drawPile = game.piles.drawPile;
 
     for (let i = 0; i < 4; i++) {
-      pile.push(ATTACK.createCard(i));
-      pile.push(SKIP.createCard(i));
-      pile.push(SHUFFLE.createCard(i));
-      pile.push(FAVOR.createCard(i));
-      pile.push(NOPE.createCard(i));
+      drawPile.addCard(ATTACK.createCard(i, game));
+      drawPile.addCard(SKIP.createCard(i, game));
+      drawPile.addCard(SHUFFLE.createCard(i, game));
+      drawPile.addCard(FAVOR.createCard(i, game));
+      drawPile.addCard(NOPE.createCard(i, game));
       for (let j = 0; j < 5; j++) {
-        pile.push(CAT_CARD.createCard(i));
+        drawPile.addCard(CAT_CARD.createCard(i, game));
       }
     }
 
     for (let i = 0; i < 5; i++) {
-      pile.push(SEE_THE_FUTURE.createCard(i));
+      drawPile.addCard(SEE_THE_FUTURE.createCard(i, game));
     }
-
-    return pile;
   }
 
-  addPostDealCards(pile: ICard[], playerCount: number): void {
+  addPostDealCards(game: TheGame): void {
+    const playerCount = game.players.playerCount;
     const remaining = Math.min(TOTAL_DEFUSE_CARDS - playerCount, MAX_DECK_DEFUSE_CARDS);
+    const drawPile = game.piles.drawPile;
 
     for (let i = 0; i < remaining; i++) {
       const cardIndex = (playerCount + i) % TOTAL_DEFUSE_CARDS;
-      pile.push(DEFUSE.createCard(cardIndex));
+      drawPile.addCard(DEFUSE.createCard(cardIndex, game));
     }
 
     // add amount of players minus one exploding kitten
     for (let i = 0; i < playerCount - 1; i++) {
       // after index 3 restart at 0, since there are only 4 unique exploding kitten cards
       const cardIndex = i % 4;
-      pile.push(EXPLODING_KITTEN.createCard(cardIndex));
+      drawPile.addCard(EXPLODING_KITTEN.createCard(cardIndex, game));
     }
   }
 }

@@ -2,13 +2,14 @@ import {ICard, IPendingCardPlay, IPiles} from '../models';
 import {TheGame} from "./game";
 import {Card} from "./card";
 import {Pile} from "./pile";
+import {DISCARD, DRAW} from "../constants/piles";
 
 export class Piles {
   constructor(private game: TheGame, private piles: IPiles) {
   }
 
   get drawPile(): Pile {
-    return new Pile(this.game, this.piles.drawPile);
+    return new Pile(DRAW, this.game, this.piles.drawPile);
   }
 
   set drawPile(pile: ICard[]) {
@@ -16,7 +17,7 @@ export class Piles {
   }
 
   get discardPile(): Pile {
-    return new Pile(this.game, this.piles.discardPile);
+    return new Pile(DISCARD, this.game, this.piles.discardPile);
   }
 
   set discardPile(pile: ICard[]) {

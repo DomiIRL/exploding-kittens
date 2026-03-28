@@ -11,6 +11,7 @@ interface SetupData {
 export const setupGame = (_context: any, setupData?: SetupData): IGameState => {
   // Don't deal card-types yet - will be done when lobby phase ends
   return {
+    nextCardId: 1,
     winner: null,
     piles: {
       drawPile: {
@@ -29,6 +30,7 @@ export const setupGame = (_context: any, setupData?: SetupData): IGameState => {
       openCards: setupData?.openCards ?? false,
       pendingTimerMs: 3000,
     },
-    deckType: setupData?.deckType ?? 'original'
+    deckType: setupData?.deckType ?? 'original',
+    animationsQueue: {},
   };
 };

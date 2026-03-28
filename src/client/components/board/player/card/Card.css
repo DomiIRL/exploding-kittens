@@ -148,7 +148,7 @@
 
 .hand-interactable .card:hover,
 .hand-interactable .card.selected {
-  z-index: 35;
+  z-index: 25;
   transform: var(--base-transform) translateY(calc(var(--scale) * -2)) scale(1.2) rotate(0deg);
 }
 
@@ -156,7 +156,7 @@
 .hand-interactable .card.selected::after {
   content: '';
   position: absolute;
-  z-index: 35;
+  z-index: 25;
   top: 0;
   left: 0;
   right: 0;
@@ -185,7 +185,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  z-index: 50;
+  z-index: 70;
   display: flex;
   align-items: center;
   justify-content: flex-start;
@@ -246,7 +246,7 @@ body.mobile-view .card-preview-overlay {
   height: 100%;
   background: rgba(0, 0, 0, 0.85);
   backdrop-filter: blur(5px);
-  z-index: 50;
+  z-index: 70;
   display: flex;
   flex-direction: column;
   align-items: center;

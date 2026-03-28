@@ -11,13 +11,24 @@ export default function DefuseOverlay() {
   const trackRef = useRef<HTMLDivElement>(null);
   
   const cardAmount = game.piles.drawPile.size;
+  const isDefusing = game.selfPlayer?.isInStage(DEFUSE_EXPLODING_KITTEN);
 
-  // Set initial random position once
+  // Set initial random position when entering the defuse stage
   useEffect(() => {
-    if (insertIndex === null) {
-      setInsertIndex(Math.floor(Math.random() * (cardAmount + 1)));
+    if (isDefusing) {
+      const min = Math.ceil(cardAmount * 0.25);
+      const max = Math.floor(cardAmount * 0.75);
+      
+      if (max >= min) {
+        const range = max - min + 1;
+        setInsertIndex(min + Math.floor(Math.random() * range));
+      } else {
+        setInsertIndex(Math.floor(Math.random() * (cardAmount + 1)));
+      }
+    } else {
+      setInsertIndex(null);
     }
-  }, [cardAmount, insertIndex]);
+  }, [isDefusing]);
 
   const handleDefuse = () => {
     if (insertIndex !== null) {
@@ -99,7 +110,7 @@ export default function DefuseOverlay() {
     };
   }, [isDragging, cardAmount]);
 
-  if (!game.selfPlayer?.isInStage(DEFUSE_EXPLODING_KITTEN)) {
+  if (!isDefusing) {
       return null;
   }
 

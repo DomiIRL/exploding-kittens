@@ -1,9 +1,11 @@
 import '../../player/card/Card.css';
 import './PendingPlayStack.css';
-import {useRef, useState} from 'react';
+import {useRef, useState, useCallback} from 'react';
 import CardPreview from '../../CardPreview.tsx';
 import {useGame} from "../../../../context/GameContext.tsx";
 import {TheGameClient} from "../../../../entities/game-client.ts";
+import {useAnimationNode} from "../../../../context/AnimationContext.tsx";
+import {DISCARD} from "../../../../../common/constants/piles.ts";
 
 export default function PendingPlayStack() {
   const game = useGame();
@@ -15,18 +17,25 @@ export default function PendingPlayStack() {
   const isNoped = pendingCard.isNoped;
   const [isHovered, setIsHovered] = useState(false);
   const pileRef = useRef<HTMLDivElement>(null);
+  const discardPileAnimRef = useAnimationNode(DISCARD);
+
+  const setDiscardRef = useCallback((node: HTMLDivElement | null) => {
+    if (pileRef) {
+      (pileRef as any).current = node;
+    }
+    discardPileAnimRef(node);
+  }, [discardPileAnimRef]);
 
   const cardImage = TheGameClient.getCardTexture(targetCard);
 
   return (
     <div className="pending-stack-container">
       <div
-        ref={pileRef}
+        ref={setDiscardRef}
         className="pile"
         style={{
           backgroundImage: `url(${cardImage})`,
         }}
-        data-animation-id="discard-pile"
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       />

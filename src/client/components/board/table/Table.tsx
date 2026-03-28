@@ -1,6 +1,6 @@
 import back from '/assets/cards/back/0.jpg';
 import './Table.css';
-import {useEffect, useState, useRef} from "react";
+import {useEffect, useState, useRef, useCallback} from "react";
 import PendingPlayStack from './pending/PendingPlayStack.tsx';
 import TurnBadge from './turn-badge/TurnBadge';
 import '../player/card/Card.css';
@@ -8,11 +8,15 @@ import CardPreview from '../CardPreview.tsx';
 import {useResponsive} from "../../../context/ResponsiveContext.tsx";
 import {NAME_SHUFFLE} from "../../../../common/constants/cards.ts";
 import {useGame} from "../../../context/GameContext.tsx";
-
+import {useAnimationNode} from "../../../context/AnimationContext.tsx";
+import {DISCARD, DRAW} from "../../../../common/constants/piles.ts";
 
 export default function Table() {
   const game = useGame()
   const { isMobile } = useResponsive();
+
+  const discardPileAnimRef = useAnimationNode(DISCARD);
+  const drawPileAnimRef = useAnimationNode(DRAW);
 
   const [isDrawing, setIsDrawing] = useState(false);
   const [isShuffling, setIsShuffling] = useState(false);
@@ -21,6 +25,13 @@ export default function Table() {
   const [isHoveringDrawPile, setIsHoveringDrawPile] = useState(false);
   const [isDiscardPileSelected, setIsDiscardPileSelected] = useState(false);
   const discardPileRef = useRef<HTMLDivElement>(null);
+
+  const setDiscardRef = useCallback((node: HTMLDivElement | null) => {
+    if (discardPileRef) {
+      (discardPileRef as any).current = node;
+    }
+    discardPileAnimRef(node);
+  }, [discardPileAnimRef]);
 
   const discardCard = game.piles.discardPile.topCard;
 
@@ -114,10 +125,9 @@ export default function Table() {
             {!game.piles.pendingCard && (
               <>
                 <div
-                  ref={discardPileRef}
+                  ref={setDiscardRef}
                   className={`pile discard-pile ${!discardCard ? 'empty' : ''}`}
                   style={{backgroundImage: discardCard ? `url(${game.getDiscardCardTexture()})` : 'none'}}
-                  data-animation-id="discard-pile"
                   onMouseEnter={() => {
                     if (!isMobile) setIsDiscardPileSelected(true);
                   }}
@@ -138,17 +148,16 @@ export default function Table() {
             )}
             
             {game.piles.pendingCard && (
-               /* Replaces discard pile during pending card play */
                <PendingPlayStack />
             )}
 
             <div
+              ref={drawPileAnimRef}
               className={`pile draw-pile ${isDrawing ? 'drawing' : ''} ${isShuffling ? 'shuffling' : ''}`}
               style={{backgroundImage: `url(${back})`}}
               onClick={handleDrawClick}
               onMouseEnter={() => setIsHoveringDrawPile(true)}
               onMouseLeave={() => setIsHoveringDrawPile(false)}
-              data-animation-id="draw-pile"
             >
               {isHoveringDrawPile && game.piles.drawPile.size > 0 && (
                 <div className="card-counter">

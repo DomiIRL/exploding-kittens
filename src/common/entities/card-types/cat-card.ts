@@ -45,13 +45,14 @@ export class CatCard extends CardType {
    */
   afterPlay(game: TheGame, card: Card) {
     const player = game.players.actingPlayer;
-    const secondCard = player.removeCard(card.name);
-
-    if (!secondCard) {
+    // Just find the card but don't remove it directly, use moveTo to ensure logic flows properly
+    const matchingCards = player.getMatchingCards(card);
+    if (matchingCards.length === 0) {
       console.log("Error: Expected to find a second cat card to consume, but none found.");
       return;
     }
-    game.piles.discardCard(secondCard);
+    const secondCard = matchingCards[0];
+    secondCard.moveTo(game.piles.discardPile, { delayMs: 150 });
   }
 
   sortOrder(): number {

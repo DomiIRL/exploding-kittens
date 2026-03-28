@@ -1,4 +1,4 @@
-import {IContext, IGameState, IPlayers} from '../models';
+import {IContext, IGameState, IPlayers, ICard} from '../models';
 import {Piles} from './piles';
 import {Players} from './players';
 import {TurnManager} from './turn-manager';
@@ -7,6 +7,7 @@ import {RandomAPI} from "boardgame.io/dist/types/src/plugins/random/random";
 import {EventsAPI} from "boardgame.io/dist/types/src/plugins/events/events";
 import {Ctx} from "boardgame.io";
 import {GAME_OVER, LOBBY, PLAY} from "../constants/phases";
+import {AnimationQueue} from "./animation-queue";
 
 
 export class TheGame {
@@ -19,6 +20,7 @@ export class TheGame {
   public readonly piles: Piles;
   public readonly turnManager: TurnManager;
   public players: Players;
+  public animationsQueue: AnimationQueue;
 
   constructor(context: IContext) {
     this.context = context;
@@ -29,6 +31,7 @@ export class TheGame {
 
     this.piles = new Piles(this, this.gameState.piles);
     this.turnManager = new TurnManager(this.context);
+    this.animationsQueue = new AnimationQueue(this.gameState.animationsQueue);
 
     if (this.context?.player?.state) {
       this.players = new Players(this, this.gameState, this.context.player.state);
@@ -39,6 +42,26 @@ export class TheGame {
 
   setPlayers(players: IPlayers) {
     this.players = new Players(this, this.gameState, players);
+  }
+
+  findAndRemoveCardById(id: number): { card: ICard, source: string } | null {
+    for (const player of this.players.allPlayers) {
+      const removed = player.removeCardById(id);
+      if (removed) return { card: removed.data, source: player.id };
+    }
+
+    let removed = this.piles.drawPile.removeCardById(id);
+    if (removed) return { card: removed.data, source: this.piles.drawPile.name };
+
+    removed = this.piles.discardPile.removeCardById(id);
+    if (removed) return { card: removed.data, source: this.piles.discardPile.name };
+
+    // Assuming pending play might not be a source but keeping it clean
+    return null;
+  }
+
+  generateCardId(): number {
+    return this.gameState.nextCardId++;
   }
 
   get phase(): string {

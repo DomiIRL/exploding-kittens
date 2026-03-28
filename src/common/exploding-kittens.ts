@@ -1,7 +1,7 @@
 import {Game} from 'boardgame.io';
 import {createPlayerPlugin} from './plugins/player-plugin';
 import {setupGame} from './setup/game-setup';
-import type {ICard, IContext, IGameState, IPluginAPIs} from './models';
+import type {IContext, IGameState, IPluginAPIs} from './models';
 import {drawCard} from "./moves/draw-move";
 import {playCard, resolvePendingCard} from "./moves/play-card-move";
 import {requestCard, giveCard} from "./moves/favor-card-move";
@@ -15,6 +15,7 @@ import {TheGame} from "./entities/game";
 import {stealCard} from "./moves/steal-card-move";
 import {GAME_OVER, PLAY} from "./constants/phases";
 import {VIEWING_FUTURE, WAITING_FOR_START} from "./constants/stages";
+import {EXPLODING_KITTEN} from "./registries/card-registry";
 
 export const ExplodingKittens: Game<IGameState, IPluginAPIs> = {
   name: "Exploding-Kittens",
@@ -26,8 +27,25 @@ export const ExplodingKittens: Game<IGameState, IPluginAPIs> = {
   disableUndo: true,
 
   playerView: ({ G, ctx, playerID }) => {
-    const isViewingFuture = playerID != null && ctx.activePlayers?.[playerID] === VIEWING_FUTURE;
+    const isSpectator = playerID == null;
+    const canSeeCards = isSpectator && G.gameRules?.spectatorsSeeCards;
+    const isViewingFuture = !isSpectator && ctx.activePlayers?.[playerID] === VIEWING_FUTURE;
     const drawPileCards = G.piles?.drawPile?.cards ?? [];
+
+    const animationsQueue = { ...G.animationsQueue };
+    if (!G.gameRules?.openCards) {
+      for (const timeKey in animationsQueue) {
+        animationsQueue[timeKey] = animationsQueue[timeKey].map(anim => {
+          const isGloballyVisible = anim.visibleTo.length == 0;
+          const isVisible = playerID != null && anim.visibleTo?.includes(playerID);
+
+          if (!canSeeCards && !isGloballyVisible && !isVisible) {
+            return { ...anim, card: null };
+          }
+          return anim;
+        });
+      }
+    }
 
     return {
       ...G,
@@ -38,6 +56,7 @@ export const ExplodingKittens: Game<IGameState, IPluginAPIs> = {
           cards: isViewingFuture ? drawPileCards.slice(0, 3) : [],
         },
       },
+      animationsQueue
     };
   },
   moves: {},
@@ -51,13 +70,16 @@ export const ExplodingKittens: Game<IGameState, IPluginAPIs> = {
 
         // Initialize the hands and piles
         const deck = new OriginalDeck();
-        const pile: ICard[] = deck.buildBaseDeck().sort(() => Math.random() - 0.5);
-
-        dealHands(pile, game.context.player.state, deck);
-        deck.addPostDealCards(pile, game.players.playerCount);
-
-        game.piles.drawPile = pile;
+        
+        deck.buildBaseDeck(game);
         game.piles.drawPile.shuffle();
+
+        dealHands(game, deck);
+        deck.addPostDealCards(game);
+
+        game.piles.drawPile.shuffle();
+        game.piles.drawPile.insertCard(EXPLODING_KITTEN.createCard(0, game), 0)
+        game.piles.drawPile.insertCard(EXPLODING_KITTEN.createCard(0, game), -1)
       },
       turn: {
         activePlayers: {
@@ -183,4 +205,3 @@ export const ExplodingKittens: Game<IGameState, IPluginAPIs> = {
     gameOver: {},
   },
 };
-
