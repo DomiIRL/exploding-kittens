@@ -10,7 +10,6 @@ export function AnimationOverlay() {
 
   return (
     <>
-      <div className="animation-interaction-blocker" />
       {animations.map((anim: any) => <AnimatedCard key={anim.id} animation={anim} />)}
     </>
   );

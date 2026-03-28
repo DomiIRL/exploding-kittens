@@ -1,11 +1,3 @@
-.animation-interaction-blocker {
-  position: fixed;
-  inset: 0;
-  z-index: 60; /* Below moving cards but above the board */
-  cursor: not-allowed;
-  pointer-events: all; /* Explicitly block all pointer events passing through to elements underneath */
-}
-
 .animated-card {
   position: absolute !important; /* Using JS to apply left/top, so use explicit positioning */
   transition-property: all;

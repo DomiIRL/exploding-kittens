@@ -1,7 +1,7 @@
 import {IPile} from '../models';
 import {TheGame} from "./game";
 import {Card} from "./card";
-import {CardHolder} from "./card-holder.ts";
+import {CardHolder} from "./card-holder";
 
 export class Pile extends CardHolder {
 

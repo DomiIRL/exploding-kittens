@@ -15,7 +15,6 @@ import {TheGame} from "./entities/game";
 import {stealCard} from "./moves/steal-card-move";
 import {GAME_OVER, PLAY} from "./constants/phases";
 import {VIEWING_FUTURE, WAITING_FOR_START} from "./constants/stages";
-import {EXPLODING_KITTEN} from "./registries/card-registry";
 
 export const ExplodingKittens: Game<IGameState, IPluginAPIs> = {
   name: "Exploding-Kittens",
@@ -78,8 +77,6 @@ export const ExplodingKittens: Game<IGameState, IPluginAPIs> = {
         deck.addPostDealCards(game);
 
         game.piles.drawPile.shuffle();
-        game.piles.drawPile.insertCard(EXPLODING_KITTEN.createCard(0, game), 0)
-        game.piles.drawPile.insertCard(EXPLODING_KITTEN.createCard(0, game), -1)
       },
       turn: {
         activePlayers: {
