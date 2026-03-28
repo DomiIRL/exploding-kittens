@@ -9,13 +9,14 @@ import {useResponsive} from "../../../context/ResponsiveContext.tsx";
 import {NAME_SHUFFLE} from "../../../../common/constants/cards.ts";
 import {useGame} from "../../../context/GameContext.tsx";
 import {useAnimationNode} from "../../../context/AnimationContext.tsx";
+import {DISCARD, DRAW} from "../../../../common/constants/piles.ts";
 
 export default function Table() {
   const game = useGame()
   const { isMobile } = useResponsive();
 
-  const discardPileAnimRef = useAnimationNode('discard');
-  const drawPileAnimRef = useAnimationNode('draw');
+  const discardPileAnimRef = useAnimationNode(DISCARD);
+  const drawPileAnimRef = useAnimationNode(DRAW);
 
   const [isDrawing, setIsDrawing] = useState(false);
   const [isShuffling, setIsShuffling] = useState(false);

@@ -5,6 +5,7 @@ import CardPreview from '../../CardPreview.tsx';
 import {useGame} from "../../../../context/GameContext.tsx";
 import {TheGameClient} from "../../../../entities/game-client.ts";
 import {useAnimationNode} from "../../../../context/AnimationContext.tsx";
+import {DISCARD} from "../../../../../common/constants/piles.ts";
 
 export default function PendingPlayStack() {
   const game = useGame();
@@ -16,7 +17,7 @@ export default function PendingPlayStack() {
   const isNoped = pendingCard.isNoped;
   const [isHovered, setIsHovered] = useState(false);
   const pileRef = useRef<HTMLDivElement>(null);
-  const discardPileAnimRef = useAnimationNode('discard-pile');
+  const discardPileAnimRef = useAnimationNode(DISCARD);
 
   const setDiscardRef = useCallback((node: HTMLDivElement | null) => {
     if (pileRef) {
