@@ -42,7 +42,7 @@ cardRef:`, cardRef.current);
     cardRef.current.style.left = `${fromRect.left + fromRect.width / 2}px`;
     cardRef.current.style.top = `${fromRect.top + fromRect.height / 2}px`;
     cardRef.current.style.width = `${fromWidth}px`;
-    cardRef.current.style.backgroundImage = `url(${TheGameClient.getCardTexture(animation.metadata.card as any)})`;
+    cardRef.current.style.backgroundImage = `url(${TheGameClient.getCardTexture(animation.metadata.card)})`;
     cardRef.current.style.display = 'flex';
     
     // Force a synchronous DOM reflow to ensure the browser registers the start position
