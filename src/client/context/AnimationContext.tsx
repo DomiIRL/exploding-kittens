@@ -74,7 +74,7 @@ export function AnimationProvider({ children }: { children: ReactNode }) {
     card: ICard | null = null,
     durationMs = 500
   ) => {
-    const id = Date.now() + Math.random();
+    const id = Date.now();
     playAnimation(id, {
       from: fromId,
       to: toId,
@@ -89,22 +89,21 @@ export function AnimationProvider({ children }: { children: ReactNode }) {
     }
 
     const currentAnimations = game.animationsQueue.queue;
-    for (let idStr in currentAnimations) {
-      const id = Number(idStr);
+    for (let id of currentAnimations.keys()) {
       if (id > lastAnimationTime.current) {
-        const animation = currentAnimations[idStr];
-        playAnimation(id, animation);
+        const animations = currentAnimations.get(id);
+        if (animations) {
+          animations.forEach(anim => playAnimation(id, anim))
+        }
       }
     }
   }, [game.animationsQueue, playAnimation]);
 
   // Expose global window command for dev testing
-  if (typeof window !== 'undefined') {
-    (window as any).playAnimation = (fromId: string, toId: string, cardName?: string, cardIndex?: number, durationMs = 500) => {
-      const card = cardName ? { name: cardName, index: cardIndex ?? 0 } : null;
-      playManualAnimation(fromId, toId, card, durationMs);
-    };
-  }
+  (window as any).playAnimation = (fromId: string, toId: string, cardName?: string, cardIndex?: number, durationMs = 500) => {
+    const card = cardName ? { name: cardName, index: cardIndex ?? 0 } : null;
+    playManualAnimation(fromId, toId, card, durationMs);
+  };
 
   const value = {
     animations,

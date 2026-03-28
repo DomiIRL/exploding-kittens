@@ -20,18 +20,33 @@ export class AnimationQueue {
 
   enqueueAnimation(animation: IAnimation) {
     // generate a number unique id
-    const id = Date.now() + Math.random();
-    this.queue[id.toString()] = animation;
+    const id = Date.now();
+    let currentQueue = this.queue.get(id);
+    if (!currentQueue) {
+      currentQueue = []
+      this.queue.set(id, [])
+    }
+    currentQueue.push(animation)
+  }
+
+  getAnimationsToPlay(lastTimePlayed: number): [number, IAnimation[]] {
+    const animationsToPlay: IAnimation[] = []
+    let highestTime: number = lastTimePlayed
+    for (let id of this.queue.keys()) {
+      if (id > lastTimePlayed) {
+        const animations = this.queue.get(id);
+        if (animations) {
+          if (id > highestTime) {
+            highestTime = id;
+          }
+          animations.forEach(anim => animationsToPlay.push(anim));
+        }
+      }
+    }
+    return [highestTime, animationsToPlay]
   }
 
   clear() {
-    for (let id in this.queue) {
-      delete this.queue[id];
-    }
+    this.queue.clear();
   }
-
-  getAnimations(): IAnimation[] {
-    return Object.values(this.queue);
-  }
-
 }
