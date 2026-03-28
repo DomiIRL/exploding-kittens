@@ -1,6 +1,7 @@
 import {CardType} from '../card-type';
 import {TheGame} from '../game';
 import {Card} from '../card';
+import {findNextAlivePlayer} from "../../utils/turn-order";
 
 export class AttackCard extends CardType {
 
@@ -19,10 +20,14 @@ export class AttackCard extends CardType {
     const remaining = turnManager.turnsRemaining;
     turnManager.turnsRemaining = remaining + 3;
 
-    // End turn and force move to next player
-    const nextPlayer = ctx.playOrderPos + 1;
-    const nextPlayerIndex = nextPlayer % ctx.numPlayers;
-    turnManager.endTurn({ next: nextPlayerIndex + "" });
+    // End turn and force move to next alive player
+    const nextPlayerIndex = findNextAlivePlayer(game, ctx.playOrderPos + 1);
+
+    if (nextPlayerIndex !== undefined) {
+      turnManager.endTurn({ next: turnManager.playOrder[nextPlayerIndex] });
+    } else {
+      turnManager.endTurn();
+    }
   }
 
 

@@ -1,7 +1,7 @@
 import {IContext} from '../models';
 import {TheGame} from "../entities/game";
 
-const findNextAlivePlayer = (game: TheGame, startPos: number): number | undefined => {
+export const findNextAlivePlayer = (game: TheGame, startPos: number): number | undefined => {
   const numPlayers = game.players.playerCount;
   let currentPos = startPos % numPlayers;
 
