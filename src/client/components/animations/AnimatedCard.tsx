@@ -1,11 +1,10 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { TheGameClient } from '../../entities/game-client';
 import {CardAnimation, useAnimationState} from '../../context/AnimationContext';
 
 export function AnimatedCard({ animation }: { animation: CardAnimation }) {
   const { getNode } = useAnimationState();
   const cardRef = useRef<HTMLDivElement>(null);
-  const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
     const fromEl = getNode(String(animation.metadata.from));
@@ -44,20 +43,18 @@ cardRef:`, cardRef.current);
     cardRef.current.style.top = `${fromRect.top + fromRect.height / 2}px`;
     cardRef.current.style.width = `${fromWidth}px`;
     cardRef.current.style.backgroundImage = `url(${TheGameClient.getCardTexture(animation.metadata.card as any)})`;
+    cardRef.current.style.display = 'flex';
     
-    // Unhide securely
-    setIsVisible(true);
+    // Force a synchronous DOM reflow to ensure the browser registers the start position
+    void cardRef.current.offsetHeight;
 
     // 2. Play transition explicitly targeting 'to' rect in next animation frames
     const frame1 = requestAnimationFrame(() => {
-      const frame2 = requestAnimationFrame(() => {
-        if (!cardRef.current) return;
-        cardRef.current.style.transition = `all ${animation.metadata.durationMs}ms cubic-bezier(0.25, 0.8, 0.25, 1)`;
-        cardRef.current.style.left = `${toRect.left + toRect.width / 2}px`;
-        cardRef.current.style.top = `${toRect.top + toRect.height / 2}px`;
-        cardRef.current.style.width = `${toWidth}px`;
-      });
-      return () => cancelAnimationFrame(frame2);
+      if (!cardRef.current) return;
+      cardRef.current.style.transition = `all ${animation.metadata.durationMs}ms cubic-bezier(0.25, 0.8, 0.25, 1)`;
+      cardRef.current.style.left = `${toRect.left + toRect.width / 2}px`;
+      cardRef.current.style.top = `${toRect.top + toRect.height / 2}px`;
+      cardRef.current.style.width = `${toWidth}px`;
     });
 
     return () => cancelAnimationFrame(frame1);
@@ -66,13 +63,13 @@ cardRef:`, cardRef.current);
   return (
     <div 
       ref={cardRef}
-      className={`animated-card card ${isVisible ? '' : 'hidden'}`} 
+      className={`animated-card card`} 
       style={{
         position: 'fixed',
         transform: 'translate(-50%, -50%) scale(1)',
         zIndex: 65,
         pointerEvents: 'none',
-        display: isVisible ? 'flex' : 'none'
+        display: 'none'
       }}
     />
   );
