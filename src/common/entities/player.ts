@@ -250,10 +250,12 @@ export class Player {
       return;
     }
 
-    this.addCard(cardData);
-    this.game.animationsQueue.enqueue(cardData, this.game.piles.drawPile, this);
+    const explodingKittenDrawn = cardData.name === EXPLODING_KITTEN.name;
 
-    if (cardData.name !== EXPLODING_KITTEN.name) {
+    this.addCard(cardData);
+    this.game.animationsQueue.enqueue(cardData, this.game.piles.drawPile, this, explodingKittenDrawn ? [] : [this]);
+
+    if (!explodingKittenDrawn) {
       this.game.turnManager.endTurn();
       return;
     }

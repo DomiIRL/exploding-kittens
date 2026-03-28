@@ -36,6 +36,7 @@ export interface IAnimation {
   from: number | string;
   to: number | string;
   card: ICard | null;
+  visibleTo: PlayerID[];
   durationMs: number;
 }
 

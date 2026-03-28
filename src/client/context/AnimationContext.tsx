@@ -75,7 +75,8 @@ export function AnimationProvider({ children }: { children: ReactNode }) {
       from: fromId,
       to: toId,
       card: card,
-      durationMs: durationMs
+      durationMs: durationMs,
+      visibleTo: []
     });
   }, [playAnimation]);
 

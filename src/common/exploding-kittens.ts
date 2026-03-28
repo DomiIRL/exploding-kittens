@@ -27,8 +27,25 @@ export const ExplodingKittens: Game<IGameState, IPluginAPIs> = {
   disableUndo: true,
 
   playerView: ({ G, ctx, playerID }) => {
-    const isViewingFuture = playerID != null && ctx.activePlayers?.[playerID] === VIEWING_FUTURE;
+    const isSpectator = playerID == null;
+    const canSeeCards = isSpectator && G.gameRules?.spectatorsSeeCards;
+    const isViewingFuture = !isSpectator && ctx.activePlayers?.[playerID] === VIEWING_FUTURE;
     const drawPileCards = G.piles?.drawPile?.cards ?? [];
+
+    const animationsQueue = { ...G.animationsQueue };
+    if (!G.gameRules?.openCards) {
+      for (const timeKey in animationsQueue) {
+        animationsQueue[timeKey] = animationsQueue[timeKey].map(anim => {
+          const isGloballyVisible = anim.visibleTo.length == 0;
+          const isVisible = playerID != null && anim.visibleTo?.includes(playerID);
+
+          if (!canSeeCards && !isGloballyVisible && !isVisible) {
+            return { ...anim, card: null };
+          }
+          return anim;
+        });
+      }
+    }
 
     return {
       ...G,
@@ -39,6 +56,7 @@ export const ExplodingKittens: Game<IGameState, IPluginAPIs> = {
           cards: isViewingFuture ? drawPileCards.slice(0, 3) : [],
         },
       },
+      animationsQueue
     };
   },
   moves: {},
