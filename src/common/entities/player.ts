@@ -116,7 +116,7 @@ export class Player {
    * Add a card to the player's hand
    */
   addCard(card: Card | ICard): void {
-    const cardData: ICard = {name: card.name, index: card.index};
+    const cardData: ICard = {id: card.id, name: card.name, index: card.index};
 
     // Clone to avoid Proxy issues
     this._state.hand.push({...cardData});
@@ -144,6 +144,11 @@ export class Player {
     return this.removeCardAt(index);
   }
 
+  removeCardById(id: number): Card | undefined {
+    const index = this._state.hand.findIndex(c => c.id === id);
+    if (index === -1) return undefined;
+    return this.removeCardAt(index);
+  }
 
   /**
    * Remove all card-types of a specific type
@@ -195,11 +200,11 @@ export class Player {
    * Transfers a card at specific index to another playerWrapper
    */
   giveCard(cardIndex: number, recipient: Player): Card {
-    const card = this.removeCardAt(cardIndex);
+    const card = this.getCardAt(cardIndex);
     if (!card) {
       throw new Error("Card not found or invalid index");
     }
-    recipient.addCard(card);
+    card.moveTo(recipient);
     return card;
   }
 
@@ -214,12 +219,11 @@ export class Player {
       throw new Error(`Cannot play card: ${card.name}`);
     }
 
-    // Remove card from hand
-    const playedCard = this.removeCardAt(cardIndex);
-    if (!playedCard) return; // Should not happen
+    const cardData = {...card.data}; // save before moveTo
 
-    this.game.piles.discardPile.addCard(playedCard);
-    this.game.animationsQueue.enqueue(playedCard, this, this.game.piles.discardPile);
+    // Move to discard
+    card.moveTo(this.game.piles.discardPile);
+    
     card.afterPlay();
 
     if (card.type.isNowCard()) {
@@ -230,7 +234,7 @@ export class Player {
     // Setup pending state
     const startedAtMs = Date.now();
     this.game.piles.pendingCard = {
-      card: {...playedCard.data},
+      card: cardData,
       playedBy: this.id,
       startedAtMs,
       expiresAtMs: startedAtMs + (this.game.gameRules.pendingTimerMs || 5000),
@@ -245,17 +249,17 @@ export class Player {
   draw(): void {
     if (!this.isAlive) throw new Error("Dead player cannot draw");
 
-    const cardData = this.game.piles.drawCard();
-    if (!cardData) {
+    const cards = this.game.piles.drawPile.allCards;
+    if (cards.length === 0) {
       console.error("Draw pile is empty, cannot draw");
       this.eliminate();
       return;
     }
+    const card = cards[0];
 
-    const explodingKittenDrawn = cardData.name === EXPLODING_KITTEN.name;
+    const explodingKittenDrawn = card.name === EXPLODING_KITTEN.name;
 
-    this.addCard(cardData);
-    this.game.animationsQueue.enqueue(cardData, this.game.piles.drawPile, this, explodingKittenDrawn ? [] : [this]);
+    card.moveTo(this, { visibleTo: explodingKittenDrawn ? [] : [this.id] });
 
     if (!explodingKittenDrawn) {
       this.game.turnManager.endTurn();
@@ -281,20 +285,23 @@ export class Player {
       throw new Error('Invalid insert index');
     }
 
-    const defuseCard = this.removeCard(DEFUSE.name);
-    const kittenCard = this.removeCard(EXPLODING_KITTEN.name);
+    // We can't just removeCard anymore, we need the Card object to move it
+    const defuseCardIdx = this.findCardIndex(DEFUSE.name);
+    const kittenCardIdx = this.findCardIndex(EXPLODING_KITTEN.name);
 
-    if (!defuseCard || !kittenCard) {
+    if (defuseCardIdx === -1 || kittenCardIdx === -1) {
       // Should not happen if UI is correct, but safer to eliminate
       this.eliminate();
       return;
     }
 
+    const defuseCard = this.hand[defuseCardIdx];
+    const kittenCard = this.hand[kittenCardIdx];
+
     const discardPile = this.game.piles.discardPile;
-    discardPile.addCard(defuseCard);
-    this.game.animationsQueue.enqueue(defuseCard, this, discardPile)
-    drawPile.insertCard(kittenCard, insertIndex);
-    this.game.animationsQueue.enqueue(kittenCard, this, drawPile)
+    
+    defuseCard.moveTo(discardPile);
+    kittenCard.moveTo(drawPile, { insertIndex: insertIndex });
 
     this.game.turnManager.endStage();
     this.game.turnManager.endTurn();
@@ -310,7 +317,7 @@ export class Player {
     return target.giveCard(index, this);
   }
 
-  private updateHandSize() {
+  updateHandSize() {
     this._state.handSize = this._state.hand.length;
   }
 }

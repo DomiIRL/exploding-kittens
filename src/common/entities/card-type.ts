@@ -14,8 +14,12 @@ export class CardType {
     return false;
   }
 
-  createCard(index: number): ICard {
-    return {name: this.name, index};
+  createCard(index: number, game: TheGame): ICard {
+    return {
+      id: game.generateCardId(),
+      name: this.name,
+      index: index
+    };
   }
 
   canBePlayed(_game: TheGame, _card: Card): boolean {

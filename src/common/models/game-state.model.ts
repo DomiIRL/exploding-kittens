@@ -47,4 +47,5 @@ export interface IGameState {
   gameRules: IGameRules;
   deckType: string;
   animationsQueue: IAnimationQueue;
+  nextCardId: number;
 }

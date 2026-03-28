@@ -1,4 +1,4 @@
-import type {ICard, IPlayer, IPlayers} from '../models';
+import type {IPlayer, IPlayers} from '../models';
 import type {DeckType} from '../entities/deck-type';
 import {cardTypeRegistry} from "../registries/card-registry";
 import {CardType} from "../entities/card-type";
@@ -57,23 +57,30 @@ export const filterPlayerView = (game: TheGame): IPlayers => {
   return view;
 };
 
-export function dealHands(pile: ICard[], players: IPlayers, deck: DeckType) {
+export function dealHands(game: TheGame, deck: DeckType) {
   const handSize = deck.startingHandSize();
 
-  Object.values(players).forEach((player, index) => {
-    player.hand = pile.splice(0, handSize);
-    const forcedCards = deck.startingHandForcedCards(index);
+  game.players.allPlayers.forEach((player, index) => {
+    // Draw base cards from the pile
+    for (let i = 0; i < handSize; i++) {
+        const card = game.piles.drawPile.drawCard();
+        if (card) {
+            player.addCard(card);
+        }
+    }
+    
+    // Create forced initial cards outside of drawing like defuse
+    const forcedCards = deck.startingHandForcedCards(game, index);
 
     // Add any card-types that are in testing mode (e.g. for development or QA purposes)
     cardTypeRegistry.getAll().forEach((card: CardType) => {
       if (card.inTesting()) {
         for (let i = 0; i < 3; i++) {
-          forcedCards.push(card.createCard(0));
+          forcedCards.push(card.createCard(0, game));
         }
       }
     });
 
-    player.hand.push(...forcedCards);
-    player.handSize = player.hand.length;
+    forcedCards.forEach(c => player.addCard(c));
   });
 }

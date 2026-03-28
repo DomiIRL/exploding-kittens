@@ -9,7 +9,8 @@ export class AnimationQueue {
   constructor(public readonly queue: IAnimationQueue) {
   }
 
-  enqueue(card: Card | ICard, from: Player | Pile, to: Player | Pile, visibleTo: (Player | PlayerID)[] = [], durationMs: number = 500) {
+  enqueue(card: Card | ICard, from: Player | Pile, to: Player | Pile, options?: { visibleTo?: (Player | PlayerID)[], durationMs?: number }) {
+    const { visibleTo = [], durationMs = 500 } = options || {};
     const idVisibleTo: PlayerID[] = visibleTo.map(player => {
       return player instanceof Player ? player.id : player;
     });
@@ -17,22 +18,30 @@ export class AnimationQueue {
     const animation: IAnimation = {
       from: from instanceof Player ? from.id : from.name,
       to: to instanceof Player ? to.id : to.name,
-      card: {name: card.name, index: card.index},
+      card: {
+        id: 'id' in card ? card.id : -1,
+        name: card.name,
+        index: card.index
+      },
       visibleTo: idVisibleTo,
       durationMs
     };
     this.enqueueAnimation(animation);
   }
 
-  enqueueAnimation(animation: IAnimation) {
-    // generate a number unique id
-    const id = Date.now();
+  enqueueAnimationWithDelay(animation: IAnimation, options?: { delayMs?: number }) {
+    const delayMs = options?.delayMs || 0;
+    const id = Date.now() + delayMs;
     let currentQueue = this.queue[id];
     if (!currentQueue) {
       currentQueue = []
       this.queue[id] = currentQueue
     }
     currentQueue.push(animation)
+  }
+
+  enqueueAnimation(animation: IAnimation) {
+    this.enqueueAnimationWithDelay(animation, { delayMs: 0 });
   }
 
   getAnimationsToPlay(lastTimePlayed: number): [number, IAnimation[]] {

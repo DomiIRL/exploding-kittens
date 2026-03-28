@@ -14,7 +14,11 @@ export class Pile {
   }
 
   addCard(card: Card | ICard): void {
-    const cardData: ICard = {name: card.name, index: card.index};
+    const cardData: ICard = {
+      id: card.id, 
+      name: card.name, 
+      index: card.index
+    };
 
     // Clone to avoid Proxy issues
     this.cards.push({...cardData});
@@ -38,10 +42,18 @@ export class Pile {
   }
 
   insertCard(card: ICard, index: number): void {
-    const cardData: ICard = {name: card.name, index: card.index};
+    const cardData: ICard = {id: card.id, name: card.name, index: card.index};
     // Clone to avoid Proxy issues
     this.cards.splice(index, 0, {...cardData});
     this.updateSize();
+  }
+
+  removeCardById(id: number): Card | undefined {
+    const index = this.cards.findIndex(c => c.id === id);
+    if (index === -1) return undefined;
+    const [card] = this.cards.splice(index, 1);
+    this.updateSize();
+    return new Card(this.game, card);
   }
 
   get size(): number {
@@ -52,8 +64,7 @@ export class Pile {
     this.state.cards = this.game.random.Shuffle(this.cards);
   }
 
-  private updateSize(): void {
+  updateSize(): void {
     this.state.size = this.cards.length;
   }
 }
-

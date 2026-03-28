@@ -94,7 +94,11 @@ export function AnimationProvider({ children }: { children: ReactNode }) {
 
   // Expose global window command for dev testing
   (window as any).playAnimation = (fromId: string, toId: string, cardName?: string, cardIndex?: number, durationMs = 500) => {
-    const card = cardName ? { name: cardName, index: cardIndex ?? 0 } : null;
+    const card = cardName ? {
+      id: -1,
+      name: cardName,
+      index: cardIndex ?? 0
+    } : null;
     playManualAnimation(fromId, toId, card, durationMs);
   };
 
