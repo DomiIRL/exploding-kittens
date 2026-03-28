@@ -89,7 +89,21 @@ export function AnimationProvider({ children }: { children: ReactNode }) {
 
     lastAnimationTime.current = highestTime;
 
-    animationsToPlay.forEach(anim => playAnimation(highestTime, anim));
+    const now = Date.now();
+    animationsToPlay.forEach(({id, animation}) => {
+      // The base timestamp of id (floor) is the target execution time for delayMs.
+      // E.g. Date.now() + 150
+      const targetTime = Math.floor(id);
+      const delay = Math.max(0, targetTime - now);
+      
+      if (delay > 0) {
+        setTimeout(() => {
+          playAnimation(id, animation);
+        }, delay);
+      } else {
+        playAnimation(id, animation);
+      }
+    });
   }, [game.animationsQueue, playAnimation]);
 
   // Expose global window command for dev testing

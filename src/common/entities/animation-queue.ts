@@ -44,9 +44,10 @@ export class AnimationQueue {
     this.enqueueAnimationWithDelay(animation, { delayMs: 0 });
   }
 
-  getAnimationsToPlay(lastTimePlayed: number): [number, IAnimation[]] {
-    const animationsToPlay: IAnimation[] = []
+  getAnimationsToPlay(lastTimePlayed: number): [number, {id: number, animation: IAnimation}[]] {
+    const animationsToPlay: {id: number, animation: IAnimation}[] = []
     let highestTime: number = lastTimePlayed
+    let uniqueCounter = 0;
     for (let id of Object.keys(this.queue).map(Number)) {
       if (id > lastTimePlayed) {
         const animations = this.queue[id];
@@ -54,10 +55,15 @@ export class AnimationQueue {
           if (id > highestTime) {
             highestTime = id;
           }
-          animations.forEach(anim => animationsToPlay.push(anim));
+          animations.forEach(anim => {
+            animationsToPlay.push({id: id + uniqueCounter, animation: anim});
+            uniqueCounter += 0.001; // ensure unique ids even if same timestamp
+          });
         }
       }
     }
+    // Sort animations by time
+    animationsToPlay.sort((a, b) => a.id - b.id);
     return [highestTime, animationsToPlay]
   }
 
