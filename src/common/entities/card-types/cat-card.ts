@@ -52,7 +52,7 @@ export class CatCard extends CardType {
       return;
     }
     const secondCard = matchingCards[0];
-    secondCard.moveTo(game.piles.discardPile, { delayMs: 500 });
+    secondCard.moveTo(game.piles.discardPile, { delayMs: 150 });
   }
 
   sortOrder(): number {

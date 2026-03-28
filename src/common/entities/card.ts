@@ -41,14 +41,10 @@ export class Card {
     const { card: cardData, source } = removal;
 
     // Add to destination
-    if (destination instanceof Player) {
-      destination.addCard(cardData);
+    if (insertIndex !== undefined && insertIndex >= 0 && insertIndex <= destination.length) {
+      destination.insertCard(cardData, insertIndex);
     } else {
-      if (insertIndex !== undefined && insertIndex >= 0 && insertIndex <= destination.cards.length) {
-        destination.insertCard(cardData, insertIndex);
-      } else {
-        destination.addCard(cardData);
-      }
+      destination.addCard(cardData);
     }
 
     // Determine visibility

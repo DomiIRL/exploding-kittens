@@ -1,23 +1,31 @@
-import {ICard, IPlayer} from '../models';
+import {IPlayer} from '../models';
 import {TheGame} from "./game";
 import {Card} from "./card";
 import {EXPLODING_KITTEN, DEFUSE} from "../registries/card-registry";
 import {CHOOSE_PLAYER_TO_REQUEST_FROM, DEFUSE_EXPLODING_KITTEN} from "../constants/stages";
 import {PlayerID} from "boardgame.io";
 import {NAME_NOPE} from "../constants/cards";
+import {CardList} from "./card-list";
 
-export class Player {
+export class Player extends CardList {
   constructor(
-    private game: TheGame,
+    game: TheGame,
     public _state: IPlayer,
     public readonly id: PlayerID
-  ) {}
+  ) {
+    super(
+      game,
+      () => _state.hand,
+      (cards) => { _state.hand = cards; },
+      () => { _state.handSize = _state.hand.length; }
+    );
+  }
 
   /**
    * Get the player's hand of card-types
    */
   get hand(): Card[] {
-    return this._state.hand.map(c => new Card(this.game, c));
+    return this.cards;
   }
 
   /**
@@ -81,109 +89,11 @@ export class Player {
       || this.isInStage(CHOOSE_PLAYER_TO_REQUEST_FROM);
   }
 
-  /**
-   * Check if the player has at least one card of the given type
-   */
-  hasCard(cardName: string): boolean {
-    return this._state.hand.some(c => c.name === cardName);
-  }
-
-  findCardIndex(cardName: string): number {
-    return this._state.hand.findIndex(c => c.name === cardName);
-  }
-
-  getCardAt(index: number): Card | null {
-    if (index < 0 || index >= this._state.hand.length) return null;
-    return new Card(this.game, this._state.hand[index]);
-  }
-
-  /**
-   * Get all card-types of a specific type from hand, or all card-types if no type specified
-   */
-  getCards(cardName: Card | string): Card[] {
-    const name = typeof cardName === 'string' ? cardName : cardName.name;
-    return this._state.hand.filter(c => c.name === name).map(c => new Card(this.game, c));
-  }
-
-  /**
-   * Get all card-types that match both name and index of the given card.
-   */
-  getMatchingCards(card: Card): Card[] {
-    return this.getCards(card.name).filter(c => c.index === card.index);
-  }
-
-  /**
-   * Add a card to the player's hand
-   */
-  addCard(card: Card | ICard): void {
-    const cardData: ICard = {id: card.id, name: card.name, index: card.index};
-
-    // Clone to avoid Proxy issues
-    this._state.hand.push({...cardData});
-    this.updateHandSize();
-  }
-
-  /**
-   * Remove a card at a specific index
-   * @returns The removed card, or undefined if index invalid
-   */
-  removeCardAt(index: number): Card | undefined {
-    if (index < 0 || index >= this._state.hand.length) return undefined;
-    const [card] = this._state.hand.splice(index, 1);
-    this.updateHandSize();
-    return new Card(this.game, card);
-  }
-
-  /**
-   * Remove the first occurrence of a specific card type and index (if not defined as -1)
-   * @returns The removed card, or undefined if not found
-   */
-  removeCard(cardName: string, cardIndex: number = -1): Card | undefined {
-    const index = this._state.hand.findIndex(c => c.name === cardName && (cardIndex === -1 || c.index === cardIndex));
-    if (index === -1) return undefined;
-    return this.removeCardAt(index);
-  }
-
-  removeCardById(id: number): Card | undefined {
-    const index = this._state.hand.findIndex(c => c.id === id);
-    if (index === -1) return undefined;
-    return this.removeCardAt(index);
-  }
-
-  /**
-   * Remove all card-types of a specific type
-   * @returns Array of removed card-types
-   */
-  removeAllCards(cardName: string): Card[] {
-    const removed: Card[] = [];
-    // Iterate backwards to safely remove
-    for (let i = this._state.hand.length - 1; i >= 0; i--) {
-      if (this._state.hand[i].name === cardName) {
-        const [card] = this._state.hand.splice(i, 1);
-        removed.push(new Card(this.game, card));
-      }
-    }
-    if (removed.length > 0) {
-      this.updateHandSize();
-    }
-    return removed;
-  }
-
-  /**
-   * Remove all card-types from hand
-   * @returns Array of all removed card-types
-   */
-  removeAllCardsFromHand(): Card[] {
-    const removed = [...this._state.hand];
-    this._state.hand = [];
-    this.updateHandSize();
-    return removed.map(c => new Card(this.game, c));
-  }
-
   eliminate(): void {
     this._state.isAlive = false;
     // put all hand card-types in discard pile
-    this._state.hand.forEach(card => this.game.piles.discardCard(card));
+    const cards = this.removeAllCardsFromList();
+    cards.forEach(card => this.game.piles.discardCard(card));
     if (this.isActingPlayer) {
       this.game.turnManager.endStage(); // could also involve other players but better than being stuck
     }
@@ -315,9 +225,5 @@ export class Player {
     const index = Math.floor(this.game.random.Number() * count);
     // Give card from target to this player
     return target.giveCard(index, this);
-  }
-
-  updateHandSize() {
-    this._state.handSize = this._state.hand.length;
   }
 }
