@@ -135,14 +135,15 @@ export class Player {
   }
 
   /**
-   * Remove the first occurrence of a specific card type
+   * Remove the first occurrence of a specific card type and index (if not defined as -1)
    * @returns The removed card, or undefined if not found
    */
-  removeCard(cardName: string): Card | undefined {
-    const index = this._state.hand.findIndex(c => c.name === cardName);
+  removeCard(cardName: string, cardIndex: number = -1): Card | undefined {
+    const index = this._state.hand.findIndex(c => c.name === cardName && (cardIndex === -1 || c.index === cardIndex));
     if (index === -1) return undefined;
     return this.removeCardAt(index);
   }
+
 
   /**
    * Remove all card-types of a specific type
@@ -217,7 +218,8 @@ export class Player {
     const playedCard = this.removeCardAt(cardIndex);
     if (!playedCard) return; // Should not happen
 
-    this.game.piles.discardCard(playedCard);
+    this.game.piles.discardPile.addCard(playedCard);
+    this.game.animationsQueue.enqueue(playedCard, this, this.game.piles.discardPile);
     card.afterPlay();
 
     if (card.type.isNowCard()) {
