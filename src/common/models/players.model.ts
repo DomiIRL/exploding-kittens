@@ -1,5 +1,6 @@
-import type {Player} from './player.model';
+import type {IPlayer} from './player.model';
+import type {PlayerID} from 'boardgame.io';
 
-export interface Players {
-  [playerID: string]: Player;
+export interface IPlayers {
+  [playerID: PlayerID]: IPlayer;
 }

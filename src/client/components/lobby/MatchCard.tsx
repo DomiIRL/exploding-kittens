@@ -1,5 +1,5 @@
 import './MatchCard.css';
-import {MatchPlayer} from '../../utils/matchData';
+import {getPlayerName, MatchPlayer} from '../../utils/matchData';
 
 interface MatchSetupData {
   matchName: string;
@@ -41,10 +41,10 @@ export function MatchCard({matchID, matchName, players, setupData, onJoin}: Matc
               <div
                 key={i}
                 className={`player-badge ${players[i]?.isConnected ? 'player-badge-joined' : ''}`}
-                title={players[i]?.isConnected ? (players[i]?.name || "Player") : "Empty Slot"}
+                title={players[i]?.isConnected ? (players[i]?.name || "Player") : "Empty Seat"}
               >
                <span className="player-badge-name">
-                 {players[i]?.isConnected ? players[i]?.name || "Unknown" : `Empty Seat`}
+                 {getPlayerName(players[i]?.id || null)}
                </span>
               </div>
             ))}

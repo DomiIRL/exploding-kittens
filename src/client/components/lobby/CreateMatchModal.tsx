@@ -1,4 +1,4 @@
-import { Modal } from '../common/Modal';
+import { Modal } from '../common';
 import '../common/Button.css';
 import '../common/Form.css';
 import {useResponsive} from "../../context/ResponsiveContext.tsx";

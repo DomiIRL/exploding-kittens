@@ -1,0 +1,315 @@
+.card-base, .card, .pile, .card-preview, .card-preview-mobile-image {
+  aspect-ratio: 6 / 8.4;
+  background: linear-gradient(135deg, var(--color-surface-card) 0%, var(--color-surface-card-dark) 100%) no-repeat center;
+  background-size: 104%;
+}
+
+.card, .pile {
+  position: relative;
+  width: calc(var(--scale) * 8);
+  height: auto;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: calc(var(--scale) * 2);
+  font-weight: bold;
+  color: var(--color-text-dark);
+
+  border: calc(var(--scale) * 0.4) solid var(--color-border-dark);
+  border-radius: calc(var(--scale) * 0.8);
+  box-shadow: 0 2px 6px var(--color-shadow-light);
+}
+
+.pile {
+  width: calc(var(--scale) * 10);
+  transition: transform 0.2s ease;
+}
+
+/* Draw pile hover and ready state */
+.pile.draw-pile:not(.empty):hover {
+  cursor: pointer;
+  filter: brightness(1.15);
+  transform: scale(1.05);
+  box-shadow: 0 4px 16px var(--color-accent-glow-medium),
+              0 0 20px var(--color-accent-glow-light);
+}
+
+/* Empty discard pile styling */
+.pile.empty {
+  border: calc(var(--scale) * 0.4) dashed var(--color-border-medium);
+  background: linear-gradient(
+    135deg,
+    var(--color-bg-dark) 0%,
+    var(--color-bg-medium) 50%,
+    var(--color-bg-dark) 100%
+  ) !important;
+  box-shadow: inset 0 2px 8px var(--color-shadow-medium),
+              0 2px 6px var(--color-shadow-light);
+  position: relative;
+  overflow: hidden;
+}
+
+.pile.empty::before {
+  content: '♠';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: calc(var(--scale) * 6);
+  color: var(--color-bg-light);
+  opacity: 0.3;
+}
+
+/* Draw pile animations */
+.pile.draw-pile.drawing {
+  animation: cardDraw 0.4s ease;
+}
+
+@keyframes cardDraw {
+  0% {
+    transform: scale(1);
+  }
+  30% {
+    transform: scale(0.95) translateY(calc(var(--scale) * -1));
+  }
+  70% {
+    transform: scale(1.05) translateY(calc(var(--scale) * 0.5));
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Shuffle animation */
+.pile.draw-pile.shuffling {
+  animation: cardShuffle 0.8s ease;
+}
+
+@keyframes cardShuffle {
+  0%, 100% {
+    transform: scale(1) rotate(0deg);
+  }
+  10% {
+    transform: scale(1.1) rotate(-5deg);
+  }
+  20% {
+    transform: scale(0.95) rotate(5deg);
+  }
+  30% {
+    transform: scale(1.05) rotate(-3deg);
+  }
+  40% {
+    transform: scale(0.98) rotate(3deg);
+  }
+  50% {
+    transform: scale(1.02) rotate(-2deg);
+  }
+  60% {
+    transform: scale(0.99) rotate(2deg);
+  }
+  70% {
+    transform: scale(1.01) rotate(-1deg);
+  }
+  80% {
+    transform: scale(1) rotate(1deg);
+  }
+  90% {
+    transform: scale(1) rotate(0deg);
+  }
+}
+
+
+.card {
+  --base-transform: none;
+
+  position: absolute !important;
+  transform-origin: center 200%;
+
+  transform: var(--base-transform);
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  will-change: transform;
+}
+
+.hand-interactable .card {
+  width: calc(var(--scale) * 9);
+}
+
+.hand-interactable .card:hover,
+.hand-interactable .card.selected,
+.pile:not(.empty):hover {
+  cursor: pointer;
+  filter: brightness(1.1);
+  border-color: var(--color-accent);
+  box-shadow: 0 8px 24px var(--color-accent-glow-medium),
+  0 0 20px var(--color-accent-glow-light);
+}
+
+.hand-interactable .card:hover,
+.hand-interactable .card.selected {
+  z-index: 25;
+  transform: var(--base-transform) translateY(calc(var(--scale) * -2)) scale(1.2) rotate(0deg);
+}
+
+.hand-interactable .card:hover::after,
+.hand-interactable .card.selected::after {
+  content: '';
+  position: absolute;
+  z-index: 25;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: calc(var(--scale) * -4);
+  pointer-events: auto;
+}
+
+.hand-interactable .player-cards:has(.card:hover) .card,
+.hand-interactable .player-cards:has(.card.selected) .card {
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.hand-interactable .card:hover ~ .card,
+.hand-interactable .card.selected ~ .card {
+  transform: var(--base-transform) translateX(calc(var(--scale) * 2));
+}
+
+.hand-interactable .card:has(~ .card:hover),
+.hand-interactable .card:has(~ .card.selected) {
+  transform: var(--base-transform) translateX(calc(var(--scale) * -2));
+}
+
+.card-preview-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 70;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  pointer-events: none;
+}
+
+body.mobile-view .card-preview-overlay {
+  display: none !important;
+}
+
+.card-preview {
+  height: calc(var(--scale) * 50);
+  width: auto;
+
+  border: calc(var(--scale) * 0.8) solid var(--color-accent);
+  border-radius: calc(var(--scale) * 2.4);
+  box-shadow: 0 calc(var(--scale) * 2) calc(var(--scale) * 6) var(--color-shadow-dark),
+  0 0 calc(var(--scale) * 4) var(--color-accent-glow-medium);
+  background-size: 104%;
+  background-position: center;
+
+  animation: cardPreviewAppear 0.15s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Default: show on the right side of the table */
+.card-preview-overlay.show-right .card-preview {
+  margin-left: min(
+    calc(50vw + min(45vw, 45vh) + var(--scale) * 3),
+    calc(100vw - calc(var(--scale) * 40) - var(--scale) * 1)
+  );
+}
+
+/* When card is on right side: show preview on the left */
+.card-preview-overlay.show-left .card-preview {
+  margin-left: max(
+    calc(50vw - min(45vw, 45vh) - calc(var(--scale) * 40) - var(--scale) * 3),
+    calc(var(--scale) * 1)
+  );
+}
+
+@keyframes cardPreviewAppear {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Mobile Card Preview Styles */
+.card-preview-mobile-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(5px);
+  z-index: 70;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  animation: mobileOverlayFadeIn 0.2s ease-out;
+}
+
+.card-preview-mobile-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  gap: 2rem;
+}
+
+.card-preview-mobile-image {
+  width: 60vw;
+  height: auto;
+
+  animation: mobilePreviewPopIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  margin-bottom: 1rem;
+}
+
+.card-preview-mobile-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  align-items: center;
+  width: 60vw;
+}
+
+.card-preview-action-btn {
+  width: 100%;
+  padding: 1rem;
+  font-size: 1.2rem;
+  font-weight: bold;
+  background: linear-gradient(135deg, var(--color-action) 0%, var(--color-action-dark) 100%);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.card-preview-cancel-btn {
+  background: transparent;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  color: white;
+  padding: 0.8rem 2rem;
+  border-radius: 12px;
+  font-size: 1rem;
+  cursor: pointer;
+  width: 100%;
+}
+
+@keyframes mobileOverlayFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes mobilePreviewPopIn {
+  from { transform: scale(0.8) translateY(20px); opacity: 0; }
+  to { transform: scale(1) translateY(0); opacity: 1; }
+}

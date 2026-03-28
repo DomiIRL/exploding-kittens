@@ -1,24 +1,19 @@
-import {FnContext} from "../models";
+import {TheGame} from "../entities/game";
 import {PlayerID} from "boardgame.io";
-import {GameLogic} from "../wrappers/game-logic";
+import {CHOOSE_CARD_TO_GIVE} from "../constants/stages";
 
 /**
  * Request a card from a target player (favor card - first stage)
  */
-export const requestCard = (context: FnContext, targetPlayerId: PlayerID) => {
-  const {events} = context;
-  const game = new GameLogic(context);
-
+export const requestCard = (game: TheGame, targetPlayerId: PlayerID) => {
   // Validate target player
-  game.validateTarget(targetPlayerId);
+  game.players.validateTarget(targetPlayerId);
 
   // End current player's stage and set the target player to choose a card to give
-  events.endStage();
-
-  // Set target player to choose a card to give
-  events.setActivePlayers({
+  game.turnManager.endStage();
+  game.turnManager.setActivePlayers({
     value: {
-      [targetPlayerId]: 'chooseCardToGive',
+      [targetPlayerId]: CHOOSE_CARD_TO_GIVE,
     },
   });
 };
@@ -26,26 +21,27 @@ export const requestCard = (context: FnContext, targetPlayerId: PlayerID) => {
 /**
  * Give a card to the requesting player (favor card - second stage)
  */
-export const giveCard = (context: FnContext, cardIndex: number) => {
-  const {ctx, events} = context;
-  const game = new GameLogic(context);
+export const giveCard = (game: TheGame, cardIndex: number) => {
+  const {ctx} = game.context;
 
   // Find who is giving the card (the player in the chooseCardToGive stage)
   const givingPlayerId = Object.keys(ctx.activePlayers || {}).find(
-    playerId => ctx.activePlayers?.[playerId] === 'chooseCardToGive'
+    playerId => ctx.activePlayers?.[playerId] === CHOOSE_CARD_TO_GIVE
   );
 
   if (!givingPlayerId) {
     throw Error('No player is in the card giving stage');
   }
 
-  const givingPlayer = game.getPlayer(givingPlayerId);
-  const requestingPlayer = game.currentPlayer;
+  const givingPlayer = game.players.getPlayer(givingPlayerId);
+  const requestingPlayer = game.players.currentPlayer;
 
   // Transfer the card from giving player to requesting player
   givingPlayer.giveCard(cardIndex, requestingPlayer);
 
   // End all stages
-  events.endStage();
+  game.turnManager.endStage();
 };
+
+
 

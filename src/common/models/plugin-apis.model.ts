@@ -1,5 +1,5 @@
-import type {PlayerAPI} from './player-api.model';
+import type {IPlayerAPI} from './player-api.model';
 
-export type PluginAPIs = Record<string, unknown> & {
-  player: PlayerAPI;
+export type IPluginAPIs = Record<string, unknown> & {
+  player: IPlayerAPI;
 };

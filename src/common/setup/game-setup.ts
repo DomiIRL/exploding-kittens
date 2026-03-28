@@ -1,4 +1,4 @@
-import type {GameState} from '../models';
+import type {IGameState} from '../models';
 
 interface SetupData {
   matchName?: string;
@@ -8,13 +8,22 @@ interface SetupData {
   deckType?: string;
 }
 
-export const setupGame = (_context: any, setupData?: SetupData): GameState => {
-  // Don't deal cards yet - will be done when lobby phase ends
+export const setupGame = (_context: any, setupData?: SetupData): IGameState => {
+  // Don't deal card-types yet - will be done when lobby phase ends
   return {
+    nextCardId: 1,
     winner: null,
-    drawPile: [],
-    discardPile: [],
-    pendingCardPlay: null,
+    piles: {
+      drawPile: {
+        cards: [],
+        size: 0,
+      },
+      discardPile: {
+        cards: [],
+        size: 0,
+      },
+      pendingCardPlay: null,
+    },
     turnsRemaining: 1,
     gameRules: {
       spectatorsSeeCards: setupData?.spectatorsSeeCards ?? false,
@@ -22,9 +31,6 @@ export const setupGame = (_context: any, setupData?: SetupData): GameState => {
       pendingTimerMs: 3000,
     },
     deckType: setupData?.deckType ?? 'original',
-    client: {
-      drawPileLength: 0
-    },
-    lobbyReady: false,
+    animationsQueue: {},
   };
 };

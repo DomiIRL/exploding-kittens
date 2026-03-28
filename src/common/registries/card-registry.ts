@@ -1,0 +1,29 @@
+import {CardType} from '../entities/card-type';
+import {DefuseCard} from '../entities/card-types/defuse-card';
+import {CatCard} from '../entities/card-types/cat-card';
+import {ExplodingKittenCard} from '../entities/card-types/exploding-kitten-card';
+import {SkipCard} from "../entities/card-types/skip-card";
+import {ShuffleCard} from "../entities/card-types/shuffle-card";
+import {Registry} from "./registry";
+import {AttackCard} from "../entities/card-types/attack-card";
+import {NopeCard} from "../entities/card-types/nope-card";
+import {SeeTheFutureCard} from "../entities/card-types/see-the-future-card";
+import {FavorCard} from "../entities/card-types/favor-card";
+
+// Registry for card models
+export const cardTypeRegistry = new Registry<CardType>();
+
+// Card instances
+export const ATTACK = register(new AttackCard('attack'));
+export const CAT_CARD = register(new CatCard('cat_card'));
+export const SKIP = register(new SkipCard('skip'));
+export const SHUFFLE = register(new ShuffleCard('shuffle'));
+export const FAVOR = register(new FavorCard('favor'));
+export const NOPE = register(new NopeCard('nope'));
+export const SEE_THE_FUTURE = register(new SeeTheFutureCard('see_the_future'));
+export const DEFUSE = register(new DefuseCard('defuse'));
+export const EXPLODING_KITTEN = register(new ExplodingKittenCard('exploding_kitten'));
+
+function register(cardType: CardType): CardType {
+  return cardTypeRegistry.register(cardType);
+}

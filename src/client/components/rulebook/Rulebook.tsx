@@ -4,15 +4,15 @@ import './Rulebook.css';
 
 // Card Images
 const CARD_IMAGES = {
-  attack: '/assets/cards/attack/0.png',
-  skip: '/assets/cards/skip/0.png',
-  favor: '/assets/cards/favor/0.png',
-  shuffle: '/assets/cards/shuffle/0.png',
-  seeFuture: '/assets/cards/see_the_future/0.png',
-  nope: '/assets/cards/nope/0.png',
-  defuse: '/assets/cards/defuse/0.png',
-  exploding: '/assets/cards/exploding_kitten/0.png',
-  catCard: '/assets/cards/cat_card/0.png',
+  attack: '/assets/card-types/attack/0.png',
+  skip: '/assets/card-types/skip/0.png',
+  favor: '/assets/card-types/favor/0.png',
+  shuffle: '/assets/card-types/shuffle/0.png',
+  seeFuture: '/assets/card-types/see_the_future/0.png',
+  nope: '/assets/card-types/nope/0.png',
+  defuse: '/assets/card-types/defuse/0.png',
+  exploding: '/assets/card-types/exploding_kitten/0.png',
+  catCard: '/assets/card-types/cat_card/0.png',
 };
 
 export function RulebookModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {

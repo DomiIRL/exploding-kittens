@@ -7,7 +7,6 @@ export interface MatchDetails {
   players: MatchPlayer[];
   numPlayers: number;
   matchName: string;
-  gameover?: any;
 }
 
 interface MatchDetailsContextType {
@@ -40,13 +39,19 @@ export function MatchDetailsProvider({ matchID, children }: MatchDetailsProvider
     try {
       const lobbyClient = new LobbyClient({ server: SERVER_URL });
       const match = await lobbyClient.getMatch(GAME_NAME, matchID);
+
+
+      const matchPlayers: MatchPlayer[] = match.players.map((p: any) => ({
+        id: String(p.id),
+        name: p.name,
+        isConnected: p.isConnected,
+      }));
       
       setMatchDetails({
         matchID: match.matchID,
         matchName: match.setupData?.matchName || 'Match',
         numPlayers: match.setupData?.maxPlayers || match.players.length,
-        players: match.players,
-        gameover: match.gameover,
+        players: matchPlayers,
       });
       setError(null);
     } catch (err: any) {

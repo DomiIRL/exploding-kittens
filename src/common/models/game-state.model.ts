@@ -1,18 +1,14 @@
-import type {Card} from './card.model';
+import type {ICard} from './card.model';
 import type {PlayerID} from 'boardgame.io';
 
-export interface ClientGameState {
-  drawPileLength: number;
-}
-
-export interface GameRules {
+export interface IGameRules {
   spectatorsSeeCards: boolean;
   openCards: boolean;
   pendingTimerMs: number;
 }
 
-export interface PendingCardPlay {
-  card: Card;
+export interface IPendingCardPlay {
+  card: ICard;
   playedBy: PlayerID;
   startedAtMs: number;
   expiresAtMs: number;
@@ -21,14 +17,35 @@ export interface PendingCardPlay {
   isNoped: boolean;
 }
 
-export interface GameState {
+export interface IPiles {
+  drawPile: IPile;
+  discardPile: IPile;
+  pendingCardPlay: IPendingCardPlay | null;
+}
+
+export interface IPile {
+  cards: ICard[];
+  size: number;
+}
+
+export interface IAnimationQueue {
+  [key: number]: IAnimation[];
+}
+
+export interface IAnimation {
+  from: number | string;
+  to: number | string;
+  card: ICard | null;
+  visibleTo: PlayerID[];
+  durationMs: number;
+}
+
+export interface IGameState {
   winner: PlayerID | null;
-  drawPile: Card[];
-  discardPile: Card[];
-  pendingCardPlay: PendingCardPlay | null;
+  piles: IPiles;
   turnsRemaining: number;
-  gameRules: GameRules;
+  gameRules: IGameRules;
   deckType: string;
-  client: ClientGameState;
-  lobbyReady: boolean;
+  animationsQueue: IAnimationQueue;
+  nextCardId: number;
 }

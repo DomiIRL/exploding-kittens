@@ -1,9 +1,13 @@
 /**
  * Utility functions for working with matchData
  */
+import {useMatchDetails} from "../context/MatchDetailsContext.tsx";
+import {PlayerID} from "boardgame.io";
+
+const EMPTY_NAME = "Empty Seat";
 
 export interface MatchPlayer {
-  id: number;
+  id: PlayerID;
   name?: string;
   isConnected?: boolean;
 }
@@ -13,28 +17,15 @@ export interface MatchPlayer {
  * Returns "Player X" if matchData is not available
  * Returns "Empty Seat" if matchData is available but player name is missing
  */
-export function getPlayerName(playerID: string | null, matchData?: MatchPlayer[]): string {
-  if (!playerID) return 'Unknown Player';
+export function getPlayerName(player: MatchPlayer | string | null | undefined): string {
+  if (!player) return EMPTY_NAME;
 
-  const playerId = parseInt(playerID);
-
-  if (!matchData || matchData.length === 0) {
-    return `Player ${playerId + 1}`;
+  if (typeof player === 'string') {
+    const { matchDetails } = useMatchDetails();
+    const players = matchDetails?.players;
+    const playerObj = players?.find(p => p.id === player);
+    return playerObj?.name || EMPTY_NAME;
   }
 
-  const player = matchData.find(p => p.id === playerId);
-  
-  // If player object exists but has no name, it's an empty seat
-  if (player && !player.name) {
-    return "Empty Seat";
-  }
-  
-  // If player object doesn't exist in matchData (but matchData exists), it's likely an empty seat too
-  if (!player) {
-    // Check if the ID is within the bounds of matchData (if matchData represents all seats)
-    // Assuming matchData is the full list including empty seats
-    return "Empty Seat";
-  }
-
-  return player.name!;
+  return player?.name || EMPTY_NAME;
 }

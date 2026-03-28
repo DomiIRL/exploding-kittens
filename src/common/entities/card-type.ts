@@ -1,4 +1,7 @@
-import type {Card, FnContext} from '../models';
+import type {ICard} from '../models';
+import {TheGame} from './game';
+import {Card} from './card';
+import {AWAITING_NOW_CARDS, RESPOND_WITH_NOW_CARD} from "../constants/stages";
 
 export class CardType {
   name: string;
@@ -11,35 +14,41 @@ export class CardType {
     return false;
   }
 
-  createCard(index: number): Card {
-    return {name: this.name, index};
+  createCard(index: number, game: TheGame): ICard {
+    return {
+      id: game.generateCardId(),
+      name: this.name,
+      index: index
+    };
   }
 
-  canBePlayed(_context: FnContext, _card: Card): boolean {
+  canBePlayed(_game: TheGame, _card: Card): boolean {
     return true;
   }
 
-  isNowCard(_context: FnContext, _card: Card): boolean {
+  isNowCard(): boolean {
     return false;
   }
 
 
-  setupPendingState(context: FnContext) {
-    context.events.setActivePlayers({
-      currentPlayer: 'awaitingNowCards',
+  setupPendingState(game: TheGame) {
+    game.turnManager.setActivePlayers({
+      currentPlayer: AWAITING_NOW_CARDS,
       others: {
-        stage: 'respondWithNowCard',
+        stage: RESPOND_WITH_NOW_CARD,
       },
     });
   }
 
-  cleanupPendingState(context: FnContext) {
-    context.events.setActivePlayers({value: {}});
+  cleanupPendingState(game: TheGame) {
+    game.turnManager.endStage();
+    game.turnManager.setActivePlayers({value: {}});
   }
 
-  afterPlay(_context: FnContext, _card: Card): void {}
+  afterPlay(_game: TheGame, _card: Card): void {}
 
-  onPlayed(_context: FnContext, _card: Card): void {}
+  onPlayed(_game: TheGame, _card: Card): void {}
+
 
   /**
    * Returns the sort order for this card type.

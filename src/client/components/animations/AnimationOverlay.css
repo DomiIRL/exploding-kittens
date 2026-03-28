@@ -1,0 +1,5 @@
+.animated-card {
+  position: absolute !important; /* Using JS to apply left/top, so use explicit positioning */
+  transition-property: all;
+  will-change: transform, left, top, width, height;
+}
