@@ -10,8 +10,8 @@ export class AnimationQueue {
 
   enqueue(card: Card | ICard, from: Player | Pile, to: Player | Pile, durationMs: number = 500) {
     const animation: IAnimation = {
-      from: from instanceof Player ? from.id : `${from.name}`,
-      to: to instanceof Player ? to.id : `${to.name}`,
+      from: from instanceof Player ? from.id : from.name,
+      to: to instanceof Player ? to.id : to.name,
       card: {name: card.name, index: card.index},
       durationMs
     };
