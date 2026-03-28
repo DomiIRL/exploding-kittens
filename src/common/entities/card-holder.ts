@@ -2,7 +2,7 @@ import {ICard} from '../models';
 import {TheGame} from './game';
 import {Card} from './card';
 
-export class CardList {
+export class CardHolder {
   constructor(
     protected game: TheGame,
     protected _getRawCards: () => ICard[],

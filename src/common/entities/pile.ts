@@ -1,9 +1,9 @@
 import {IPile} from '../models';
 import {TheGame} from "./game";
 import {Card} from "./card";
-import {CardList} from "./card-list";
+import {CardHolder} from "./card-holder.ts";
 
-export class Pile extends CardList {
+export class Pile extends CardHolder {
 
   constructor(public readonly name: string, game: TheGame, public state: IPile) {
     super(

@@ -5,9 +5,9 @@ import {EXPLODING_KITTEN, DEFUSE} from "../registries/card-registry";
 import {CHOOSE_PLAYER_TO_REQUEST_FROM, DEFUSE_EXPLODING_KITTEN} from "../constants/stages";
 import {PlayerID} from "boardgame.io";
 import {NAME_NOPE} from "../constants/cards";
-import {CardList} from "./card-list";
+import {CardHolder} from "./card-holder.ts";
 
-export class Player extends CardList {
+export class Player extends CardHolder {
   constructor(
     game: TheGame,
     public _state: IPlayer,
