@@ -54,10 +54,6 @@ export function AnimationProvider({ children }: { children: ReactNode }) {
       return
     }
 
-    if (id > lastAnimationTime.current) {
-      lastAnimationTime.current = id;
-    }
-
     const newAnimation = { id, metadata: animation };
 
     setAnimations(prev => [...prev, newAnimation]);
@@ -88,15 +84,11 @@ export function AnimationProvider({ children }: { children: ReactNode }) {
       return;
     }
 
-    const currentAnimations = game.animationsQueue.queue;
-    for (let id of currentAnimations.keys()) {
-      if (id > lastAnimationTime.current) {
-        const animations = currentAnimations.get(id);
-        if (animations) {
-          animations.forEach(anim => playAnimation(id, anim))
-        }
-      }
-    }
+    const [highestTime, animationsToPlay] = game.animationsQueue.getAnimationsToPlay(lastAnimationTime.current);
+
+    lastAnimationTime.current = highestTime;
+
+    animationsToPlay.forEach(anim => playAnimation(highestTime, anim));
   }, [game.animationsQueue, playAnimation]);
 
   // Expose global window command for dev testing

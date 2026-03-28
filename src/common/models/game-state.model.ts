@@ -28,8 +28,8 @@ export interface IPile {
   size: number;
 }
 
-export interface IAnimationQueue extends Map<number, IAnimation[]> {
-
+export interface IAnimationQueue {
+  [key: number]: IAnimation[];
 }
 
 export interface IAnimation {

@@ -30,6 +30,6 @@ export const setupGame = (_context: any, setupData?: SetupData): IGameState => {
       pendingTimerMs: 3000,
     },
     deckType: setupData?.deckType ?? 'original',
-    animationsQueue: {}
+    animationsQueue: {},
   };
 };

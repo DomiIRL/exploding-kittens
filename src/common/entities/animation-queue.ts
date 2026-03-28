@@ -10,8 +10,8 @@ export class AnimationQueue {
 
   enqueue(card: Card | ICard, from: Player | Pile, to: Player | Pile, durationMs: number = 500) {
     const animation: IAnimation = {
-      from: from instanceof Player ? `${from.id}` : `${from.name}`,
-      to: to instanceof Player ? `${to.id}` : `${to.name}`,
+      from: from instanceof Player ? from.id : `${from.name}`,
+      to: to instanceof Player ? to.id : `${to.name}`,
       card: {name: card.name, index: card.index},
       durationMs
     };
@@ -21,10 +21,10 @@ export class AnimationQueue {
   enqueueAnimation(animation: IAnimation) {
     // generate a number unique id
     const id = Date.now();
-    let currentQueue = this.queue.get(id);
+    let currentQueue = this.queue[id];
     if (!currentQueue) {
       currentQueue = []
-      this.queue.set(id, [])
+      this.queue[id] = currentQueue
     }
     currentQueue.push(animation)
   }
@@ -32,9 +32,9 @@ export class AnimationQueue {
   getAnimationsToPlay(lastTimePlayed: number): [number, IAnimation[]] {
     const animationsToPlay: IAnimation[] = []
     let highestTime: number = lastTimePlayed
-    for (let id of this.queue.keys()) {
+    for (let id of Object.keys(this.queue).map(Number)) {
       if (id > lastTimePlayed) {
-        const animations = this.queue.get(id);
+        const animations = this.queue[id];
         if (animations) {
           if (id > highestTime) {
             highestTime = id;
@@ -47,6 +47,8 @@ export class AnimationQueue {
   }
 
   clear() {
-    this.queue.clear();
+    for (const key in this.queue) {
+      delete this.queue[key];
+    }
   }
 }
