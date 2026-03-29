@@ -9,7 +9,6 @@ interface SetupData {
 }
 
 export const setupGame = (_context: any, setupData?: SetupData): IGameState => {
-  // Don't deal card-types yet - will be done when lobby phase ends
   return {
     nextCardId: 1,
     winner: null,
