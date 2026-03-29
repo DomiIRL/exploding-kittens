@@ -1,7 +1,7 @@
 import './SeeTheFutureOverlay.css';
 import {useGame} from "../../../../context/GameContext.tsx";
-import {VIEWING_FUTURE} from "../../../../../common/constants/stages.ts";
-import {Card} from "../../../../../common/entities/card.ts";
+import {VIEWING_FUTURE} from '../../../../../common';
+import {Card} from '../../../../../common';
 import {TheGameClient} from "../../../../entities/game-client.ts";
 
 export default function SeeTheFutureOverlay() {

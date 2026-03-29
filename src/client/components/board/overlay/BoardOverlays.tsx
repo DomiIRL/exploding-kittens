@@ -8,7 +8,7 @@ import {
   CHOOSE_CARD_TO_GIVE,
   CHOOSE_PLAYER_TO_REQUEST_FROM,
   CHOOSE_PLAYER_TO_STEAL_FROM
-} from "../../../../common/constants/stages.ts";
+} from '../../../../common';
 import LobbyOverlay from "./lobby/LobbyOverlay.tsx";
 
 /**

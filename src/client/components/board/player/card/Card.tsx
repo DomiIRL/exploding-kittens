@@ -3,7 +3,7 @@ import {CSSProperties, useRef, useState} from 'react';
 import CardPreview from '../../CardPreview.tsx';
 import {useResponsive} from "../../../../context/ResponsiveContext.tsx";
 import {useGame} from "../../../../context/GameContext.tsx";
-import {Player} from "../../../../../common";
+import {Player} from '../../../../../common';
 import {CardWithServerIndex} from "../player-cards/PlayerCards.tsx";
 import {TheGameClient} from "../../../../entities/game-client.ts";
 

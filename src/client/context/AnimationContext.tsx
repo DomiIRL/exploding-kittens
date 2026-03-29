@@ -1,5 +1,5 @@
 import {createContext, ReactNode, useCallback, useContext, useEffect, useRef, useState} from 'react';
-import {IAnimation, ICard} from "../../common";
+import {IAnimation, ICard} from '../../common';
 import {useGame} from "./GameContext.tsx";
 
 interface AnimationContextValue {

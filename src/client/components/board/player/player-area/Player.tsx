@@ -3,13 +3,13 @@ import PlayerCards from '../player-cards/PlayerCards.tsx';
 import {getPlayerName} from "../../../../utils/matchData.ts";
 import {PlayerPosition} from "../../../../types/component-props.ts";
 import {useGame} from "../../../../context/GameContext.tsx";
-import {Player as PlayerModel} from "../../../../../common";
+import {Player as PlayerModel} from '../../../../../common';
 import {useAnimationNode} from "../../../../context/AnimationContext.tsx";
 import {
   CHOOSE_CARD_TO_GIVE,
   CHOOSE_PLAYER_TO_REQUEST_FROM,
   CHOOSE_PLAYER_TO_STEAL_FROM
-} from "../../../../../common/constants/stages.ts";
+} from '../../../../../common';
 
 interface PlayerAreaProps {
   player: PlayerModel;

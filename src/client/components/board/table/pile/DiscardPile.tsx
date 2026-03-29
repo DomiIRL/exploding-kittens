@@ -3,7 +3,7 @@ import { Pile } from './Pile';
 import { useGame } from '../../../../context/GameContext';
 import { useAnimationNode } from '../../../../context/AnimationContext';
 import { useResponsive } from '../../../../context/ResponsiveContext';
-import { DISCARD } from '../../../../../common/constants/piles';
+import { DISCARD } from '../../../../../common';
 import CardPreview from '../../CardPreview';
 
 export function DiscardPile() {

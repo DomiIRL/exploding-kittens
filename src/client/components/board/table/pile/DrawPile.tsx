@@ -3,8 +3,8 @@ import { Pile } from './Pile';
 import back from '/assets/cards/back/0.jpg';
 import { useGame } from '../../../../context/GameContext';
 import { useAnimationNode } from '../../../../context/AnimationContext';
-import { DRAW } from '../../../../../common/constants/piles';
-import { NAME_SHUFFLE } from '../../../../../common/constants/cards';
+import { DRAW } from '../../../../../common';
+import { NAME_SHUFFLE } from '../../../../../common';
 
 export function DrawPile() {
   const game = useGame();

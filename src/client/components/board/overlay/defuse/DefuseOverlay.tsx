@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import './DefuseOverlay.css';
 import { useGame } from '../../../../context/GameContext';
-import { DEFUSE_EXPLODING_KITTEN } from '../../../../../common/constants/stages';
+import { DEFUSE_EXPLODING_KITTEN } from '../../../../../common';
 
 export default function DefuseOverlay() {
   const game = useGame();

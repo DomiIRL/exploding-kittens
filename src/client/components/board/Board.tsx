@@ -11,7 +11,7 @@ import {TheGameClient} from "../../entities/game-client.ts";
 import {GameProvider} from "../../context/GameContext.tsx";
 import {AnimationProvider} from "../../context/AnimationContext.tsx";
 import type { BoardProps } from 'boardgame.io/react';
-import {IContext, IGameState} from "../../../common";
+import {IContext, IGameState} from '../../../common';
 
 export default function ExplodingKittensBoard(props: BoardProps<IGameState> & { plugins: any }) {
 

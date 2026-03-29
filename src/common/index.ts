@@ -11,6 +11,13 @@ export type {CatCard} from './entities/card-types/cat-card';
 export type {DefuseCard} from './entities/card-types/defuse-card';
 export type {ExplodingKittenCard} from './entities/card-types/exploding-kitten-card';
 export type {OriginalDeck} from './entities/deck-types/original-deck';
+export {Card} from './entities/card';
+
+// Constants
+export * from './constants/cards';
+export * from './constants/piles';
+export * from './constants/stages';
+export * from './constants/phases';
 
 // Constants - Card models
 export {

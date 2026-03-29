@@ -1,12 +1,12 @@
 import {ICard, IPlayerAPI, IPlayers, Player, TheGame} from '../../common';
 import { IContext } from '../../common';
-import {Card} from "../../common/entities/card.ts";
-import {NAME_NOPE} from "../../common/constants/cards.ts";
+import {Card} from '../../common';
+import {NAME_NOPE} from '../../common';
 import {
   CHOOSE_CARD_TO_GIVE,
   CHOOSE_PLAYER_TO_REQUEST_FROM,
   CHOOSE_PLAYER_TO_STEAL_FROM
-} from "../../common/constants/stages.ts";
+} from '../../common';
 import {MatchPlayer} from "../utils/matchData.ts";
 import {PlayerID} from "boardgame.io";
 import back from "/assets/cards/back/0.jpg";
