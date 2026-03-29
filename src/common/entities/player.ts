@@ -91,6 +91,7 @@ export class Player extends CardHolder {
 
   eliminate(): void {
     this._state.isAlive = false;
+    this.game.context.G.deadPlayers.push(this.id);
     // put all hand card-types in discard pile
     const cards = this.removeAllCardsFromList();
     cards.forEach(card => this.game.piles.discardCard(card));
