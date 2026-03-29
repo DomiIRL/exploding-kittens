@@ -28,15 +28,29 @@ const createLimitedPlayerView = (player: IPlayer): IPlayer => ({
 /**
  * Check if the viewing player should see all card-types (spectator or dead player)
  */
-const shouldSeeAllCards = (game: TheGame): boolean => {
+export const shouldSeeAllCards = (game: TheGame): boolean => {
   // If openCards rule is enabled, everyone sees all card-types
-  if (game.gameRules.openCards) return true;
+  if (game.gameRules?.openCards) return true;
 
-  // Spectators (no playerID) see all card-types ONLY if rule allows
-  const player = game.players.actingPlayerOptional;
-  if (!player || !player.isAlive) {
-    return game.gameRules.spectatorsSeeCards;
+  const playerID = game.context.playerID;
+  if (!playerID) {
+    return game.gameRules?.spectatorsSeeCards ?? false;
   }
+
+  // Dead players might be tracked by `player plugins` OR `G.deadPlayers` depending on context wrapper availability.
+  // Given `playerView` strips plugin data initially, we rely on `game.context.G.deadPlayers`.
+  const isDead = game.context.G.deadPlayers?.includes(playerID);
+  
+  if (isDead) {
+    return game.gameRules?.spectatorsSeeCards ?? false;
+  }
+  
+  // Fallback to checking full player wrapper if alive state is available
+  const player = game.players.getPlayerOptional(playerID);
+  if (player && !player.isAlive) {
+    return game.gameRules?.spectatorsSeeCards ?? false;
+  }
+  
   return false;
 };
 
@@ -44,10 +58,11 @@ export const filterPlayerView = (game: TheGame): IPlayers => {
   const canSeeAllCards = shouldSeeAllCards(game);
 
   const view: IPlayers = {};
+  const viewingPlayerId = game.context.playerID;
   game.players.allPlayers.forEach(value => {
     const id = value.id;
     const pdata = game.players.getPlayer(id)._state;
-    if (canSeeAllCards || id === game.players.actingPlayerId) {
+    if (canSeeAllCards || id === viewingPlayerId) {
       view[id] = createFullPlayerView(pdata);
     } else {
       view[id] = createLimitedPlayerView(pdata);

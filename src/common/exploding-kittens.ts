@@ -9,7 +9,7 @@ import {closeFutureView} from "./moves/see-future-move";
 import {inGame} from "./moves/in-game";
 import {turnOrder} from "./utils/turn-order";
 import {OriginalDeck} from './entities/deck-types/original-deck';
-import {dealHands} from './setup/player-setup';
+import {dealHands, shouldSeeAllCards} from './setup/player-setup';
 import {defuseExplodingKitten} from "./moves/defuse-exploding-kitten";
 import {TheGame} from "./entities/game";
 import {stealCard} from "./moves/steal-card-move";
@@ -26,13 +26,15 @@ export const ExplodingKittens: Game<IGameState, IPluginAPIs> = {
   disableUndo: true,
 
   playerView: ({ G, ctx, playerID }) => {
-    const isSpectator = playerID == null;
-    const canSeeCards = isSpectator && G.gameRules?.spectatorsSeeCards;
-    const isViewingFuture = !isSpectator && ctx.activePlayers?.[playerID] === VIEWING_FUTURE;
-    const drawPileCards = G.piles?.drawPile?.cards ?? [];
+    const context = { G, ctx, playerID } as IContext;
+    const game = new TheGame(context);
+    const canSeeCards = shouldSeeAllCards(game);
 
-    const animationsQueue = { ...G.animationsQueue };
-    if (!G.gameRules?.openCards) {
+    const isViewingFuture = playerID ? game.turnManager.isInStage(playerID, VIEWING_FUTURE) : false;
+    const drawPileCards = game.piles?.drawPile?.state?.cards ?? [];
+
+    const animationsQueue = { ...game.animationsQueue.queue };
+    if (!game.gameRules?.openCards) {
       for (const timeKey in animationsQueue) {
         animationsQueue[timeKey] = animationsQueue[timeKey].map(anim => {
           const isGloballyVisible = anim.visibleTo.length == 0;

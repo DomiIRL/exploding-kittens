@@ -12,6 +12,7 @@ export const setupGame = (_context: any, setupData?: SetupData): IGameState => {
   return {
     nextCardId: 1,
     winner: null,
+    deadPlayers: [],
     piles: {
       drawPile: {
         cards: [],
