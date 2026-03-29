@@ -42,6 +42,7 @@ export interface IAnimation {
 
 export interface IGameState {
   winner: PlayerID | null;
+  deadPlayers: PlayerID[];
   piles: IPiles;
   turnsRemaining: number;
   gameRules: IGameRules;

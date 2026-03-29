@@ -37,10 +37,20 @@ export const shouldSeeAllCards = (game: TheGame): boolean => {
     return game.gameRules?.spectatorsSeeCards ?? false;
   }
 
+  // Dead players might be tracked by `player plugins` OR `G.deadPlayers` depending on context wrapper availability.
+  // Given `playerView` strips plugin data initially, we rely on `game.context.G.deadPlayers`.
+  const isDead = game.context.G.deadPlayers?.includes(playerID);
+  
+  if (isDead) {
+    return game.gameRules?.spectatorsSeeCards ?? false;
+  }
+  
+  // Fallback to checking full player wrapper if alive state is available
   const player = game.players.getPlayerOptional(playerID);
   if (player && !player.isAlive) {
     return game.gameRules?.spectatorsSeeCards ?? false;
   }
+  
   return false;
 };
 

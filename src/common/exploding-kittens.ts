@@ -30,11 +30,7 @@ export const ExplodingKittens: Game<IGameState, IPluginAPIs> = {
     const game = new TheGame(context);
     const canSeeCards = shouldSeeAllCards(game);
 
-    // TODO: currently players does not properly work because the game doesn't have the player plugin available because it is not passed into this context.
-    // Possible solution: add a dead players array in the game state
-
-    const viewer = game.players.actingPlayerOptional;
-    const isViewingFuture = viewer?.isInStage(VIEWING_FUTURE) ?? false;
+    const isViewingFuture = playerID ? game.turnManager.isInStage(playerID, VIEWING_FUTURE) : false;
     const drawPileCards = game.piles?.drawPile?.state?.cards ?? [];
 
     const animationsQueue = { ...game.animationsQueue.queue };
