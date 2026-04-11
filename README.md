@@ -23,7 +23,7 @@ Access at: http://localhost:5173
 ### Run Server (Game Server)
 
 ```bash
-npm run serve
+npm run server
 ```
 
 Server runs at: http://localhost:51399
@@ -31,7 +31,7 @@ Server runs at: http://localhost:51399
 ### Watch Mode (Auto-restart on changes)
 
 ```bash
-npm run serve:watch
+npm run server:watch
 ```
 
 ### Run Both (Two Terminals)
@@ -41,7 +41,7 @@ npm run serve:watch
 npm run dev
 
 # Terminal 2
-npm run serve:watch
+npm run server:watch
 ```
 
 ## 🏗️ Production Build
