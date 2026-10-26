@@ -1,4 +1,4 @@
-import {describe, expect, it} from 'vitest';
+import {describe, expect, it, vi} from 'vitest';
 import {Client} from 'boardgame.io/client';
 import {ExplodingKittens} from '../exploding-kittens';
 import {NAME_DEFUSE, NAME_EXPLODING_KITTEN} from '../constants/cards';
@@ -44,6 +44,24 @@ describe('ExplodingKittens', () => {
     expect(after.G.piles.drawPile.cards).toHaveLength(before.G.piles.drawPile.cards.length - 1);
     if (top.name !== NAME_EXPLODING_KITTEN) {
       expect(after.ctx.currentPlayer).not.toBe(before.ctx.currentPlayer);
+    }
+  });
+
+  it('keys animations by a counter, whatever the clock says', () => {
+    const client = startedGame(2);
+    const before = (client as any).store.getState();
+    client.updatePlayerID(before.ctx.currentPlayer);
+
+    const clock = vi.spyOn(Date, 'now').mockReturnValue(4_000_000_000_000);
+    client.moves.drawCard();
+    clock.mockRestore();
+
+    const after = (client as any).store.getState();
+    const keys = Object.keys(after.G.animationsQueue).map(Number);
+    expect(keys.length).toBeGreaterThan(0);
+    for (const key of keys) {
+      expect(key).toBeGreaterThanOrEqual(before.G.nextAnimationId);
+      expect(key).toBeLessThan(after.G.nextAnimationId);
     }
   });
 });

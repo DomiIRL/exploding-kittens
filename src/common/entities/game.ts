@@ -31,7 +31,7 @@ export class TheGame {
 
     this.piles = new Piles(this, this.gameState.piles);
     this.turnManager = new TurnManager(this.context);
-    this.animationsQueue = new AnimationQueue(this.gameState.animationsQueue);
+    this.animationsQueue = new AnimationQueue(this.gameState.animationsQueue, () => this.gameState.nextAnimationId++);
 
     if (this.context?.player?.state) {
       this.players = new Players(this, this.gameState, this.context.player.state);

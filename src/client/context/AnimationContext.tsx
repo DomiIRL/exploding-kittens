@@ -22,7 +22,8 @@ export function AnimationProvider({ children }: { children: ReactNode }) {
   const game = useGame();
 
   const [animations, setAnimations] = useState<CardAnimation[]>([]);
-  const lastAnimationTime = useRef(Date.now());
+  // Key of the newest animation already handled; null until the first state arrives.
+  const lastAnimationTime = useRef<number | null>(null);
   
   // Ref map resolving 'string ids' -> DOM Elements
   const nodeRefs = useRef<Map<string, HTMLElement>>(new Map());
@@ -85,17 +86,18 @@ export function AnimationProvider({ children }: { children: ReactNode }) {
       return;
     }
 
+    if (lastAnimationTime.current === null) {
+      // Animations from before this client joined are history, not something to replay.
+      lastAnimationTime.current = game.animationsQueue.getAnimationsToPlay(0)[0];
+      return;
+    }
+
     const [highestTime, animationsToPlay] = game.animationsQueue.getAnimationsToPlay(lastAnimationTime.current);
 
     lastAnimationTime.current = highestTime;
 
-    const now = Date.now();
     animationsToPlay.forEach(({id, animation}) => {
-      // The base timestamp of id (floor) is the target execution time for delayMs.
-      // E.g. Date.now() + 150
-      const targetTime = Math.floor(id);
-      const delay = Math.max(0, targetTime - now);
-      
+      const delay = animation.delayMs ?? 0;
       if (delay > 0) {
         setTimeout(() => {
           playAnimation(id, animation);

@@ -38,6 +38,7 @@ export interface IAnimation {
   card: ICard | null;
   visibleTo: PlayerID[];
   durationMs: number;
+  delayMs?: number;
 }
 
 export interface IGameState {
@@ -49,4 +50,5 @@ export interface IGameState {
   deckType: string;
   animationsQueue: IAnimationQueue;
   nextCardId: number;
+  nextAnimationId: number;
 }

@@ -6,7 +6,7 @@ import type {PlayerID} from "boardgame.io";
 
 export class AnimationQueue {
 
-  constructor(public readonly queue: IAnimationQueue) {
+  constructor(public readonly queue: IAnimationQueue, private readonly nextId: () => number) {
   }
 
   enqueue(card: Card | ICard, from: Player | Pile, to: Player | Pile, options?: { visibleTo?: (Player | PlayerID)[], durationMs?: number }) {
@@ -31,13 +31,15 @@ export class AnimationQueue {
 
   enqueueAnimationWithDelay(animation: IAnimation, options?: { delayMs?: number }) {
     const delayMs = options?.delayMs || 0;
-    const id = Date.now() + delayMs;
+    // A counter in G, not a timestamp: an optimistic client move and the server then agree on the key,
+    // and no clock decides when an animation plays.
+    const id = this.nextId();
     let currentQueue = this.queue[id];
     if (!currentQueue) {
       currentQueue = []
       this.queue[id] = currentQueue
     }
-    currentQueue.push(animation)
+    currentQueue.push(delayMs ? {...animation, delayMs} : animation)
   }
 
   enqueueAnimation(animation: IAnimation) {
