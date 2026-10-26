@@ -14,7 +14,7 @@
   backdrop-filter: blur(8px);
   width: max-content;
   max-width: 90vw;
-  font-family: 'Inter', system-ui, sans-serif;
+  font-family: var(--font-text);
 }
 
 .game-info-header {

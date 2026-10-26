@@ -6,7 +6,6 @@
   background: radial-gradient(ellipse at center, var(--color-primary-glow) 0%, transparent 70%),
   linear-gradient(135deg, var(--color-primary-dark) 0%, var(--color-primary) 50%, var(--color-primary-dark) 100%);
   padding: 1.5rem;
-  font-family: "Bebas Neue", "Comic Sans MS", "Comic Neue", cursive, sans-serif;
   display: flex;
   flex-direction: column;
   overflow-y: auto;
@@ -314,7 +313,6 @@
   align-items: center;
   justify-content: center;
   padding: 1.5rem;
-  font-family: "Bebas Neue", "Comic Sans MS", "Comic Neue", cursive, sans-serif;
 }
 
 .lobby-initial-setup-content {
