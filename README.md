@@ -23,7 +23,7 @@ Access at: http://localhost:5173
 ### Run Server (Game Server)
 
 ```bash
-npm run serve
+npm run server
 ```
 
 Server runs at: http://localhost:51399
@@ -31,7 +31,7 @@ Server runs at: http://localhost:51399
 ### Watch Mode (Auto-restart on changes)
 
 ```bash
-npm run serve:watch
+npm run server:dev
 ```
 
 ### Run Both (Two Terminals)
@@ -41,20 +41,25 @@ npm run serve:watch
 npm run dev
 
 # Terminal 2
-npm run serve:watch
+npm run server:dev
 ```
 
 ## 🏗️ Production Build
 
 ```bash
-# Build client
 npm run build
-
-# Build server
 npm run build:server
+npm start
+```
 
-# Run production server
-node dist/server/server/server.js
+The server also serves the built client from `dist/client`, so one process on port 51399 is the whole game.
+`docker build .` produces the same thing as an image. Every push to `main` runs the tests and publishes
+`ghcr.io/domiirl/exploding-kittens`, which runs at https://boom.svrt.dev.
+
+## 🧪 Tests
+
+```bash
+npm test
 ```
 
 ## 🎮 Current State

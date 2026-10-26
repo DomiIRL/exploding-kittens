@@ -34,7 +34,7 @@ The project requires two concurrent processes:
 - **Server**: `npm run build:server`
 
 ### Testing
-- Currently, there is **no automated test suite**. Verification is manual via playing the game in browsers.
+- `npm test` builds the server and runs Vitest: game logic in `src/common/__tests__/`, a server startup test in `src/server/__tests__/`.
 
 ## 🧩 Patterns & Conventions
 
@@ -69,5 +69,5 @@ export const myMove = (game: TheGame, argument: string) => {
 - **Board**: `src/client/components/board/` handles the visual representation of the table.
 
 ### Docker
-- `docker-compose.yml` orchestrates both client and server containers.
-- Environment variables are managed in `stack.env` and passed to containers.
+- One image: the game server serves the built client (`dist/client`) next to the lobby API and socket.io, so client and API share one origin.
+- Runtime env: `SERVER_PORT` (default 51399), `SERVER_ORIGINS` (comma-separated, required in production for browsers to connect), `NODE_ENV=production`.

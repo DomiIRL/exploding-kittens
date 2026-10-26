@@ -1,4 +1,4 @@
-import {defineConfig} from 'vite';
+import {defineConfig} from 'vitest/config';
 import react from '@vitejs/plugin-react';
 
 const getAllowedHosts = (env: string | undefined): string[] | true => {
@@ -13,6 +13,12 @@ export default defineConfig({
     port: parseInt(process.env.VITE_PORT || '5173'),
     allowedHosts: getAllowedHosts(process.env.VITE_ALLOWED_HOSTS),
     cors: true,
+  },
+  build: {
+    outDir: 'dist/client',
+  },
+  test: {
+    include: ['src/**/*.test.ts'],
   },
   preview: {
     host: '0.0.0.0',

@@ -1,7 +1,12 @@
+import {existsSync} from 'node:fs';
+import {resolve} from 'node:path';
+import serve from 'koa-static';
 import {Origins, Server} from 'boardgame.io/dist/cjs/server.js';
 import {ExplodingKittens} from '../common';
 
 const port = parseInt(process.env.SERVER_PORT || '51399');
+// Compiled to dist/server/server/, next to the client build in dist/client/.
+const clientDir = process.env.CLIENT_DIR || resolve(__dirname, '../../client');
 
 let origins: string | string[] | boolean | RegExp = Origins.LOCALHOST_IN_DEVELOPMENT;
 
@@ -32,6 +37,10 @@ server.router.use('/games/:name', async (ctx, next) => {
     });
   }
 });
+
+if (existsSync(clientDir)) {
+  server.app.use(serve(clientDir));
+}
 
 server.run(port, () => {
   console.log(`🎮 Exploding Kittens server running on port ${port}`);

@@ -1,8 +1,9 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "module": "CommonJS",
-    "moduleResolution": "node",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "rootDir": "..",
     "noEmit": false,
     "outDir": "../../dist/server",
     "skipLibCheck": true,
@@ -12,5 +13,8 @@
     "./**/*",
     "../common/**/*",
     "../boardgame.d.ts"
+  ],
+  "exclude": [
+    "../**/__tests__/**"
   ]
 }
