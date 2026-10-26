@@ -4,7 +4,7 @@
   background: radial-gradient(ellipse at center, var(--color-primary-glow) 0%, transparent 70%),
   linear-gradient(135deg, var(--color-primary-dark) 0%, var(--color-primary) 50%, var(--color-primary-dark) 100%);
   padding: 1.5rem;
-  font-family: "bebas-neue-pro-semiexpanded", "Comic Sans MS", "Comic Neue", cursive, sans-serif;
+  font-family: "Bebas Neue", "Comic Sans MS", "Comic Neue", cursive, sans-serif;
   display: flex;
   flex-direction: column;
   overflow-y: hidden;
@@ -306,13 +306,15 @@
   background: radial-gradient(ellipse at center, var(--color-primary-glow) 0%, transparent 70%),
   linear-gradient(135deg, var(--color-primary-dark) 0%, var(--color-primary) 50%, var(--color-primary-dark) 100%);
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   padding: 1.5rem;
-  font-family: "bebas-neue-pro-semiexpanded", "Comic Sans MS", "Comic Neue", cursive, sans-serif;
+  font-family: "Bebas Neue", "Comic Sans MS", "Comic Neue", cursive, sans-serif;
 }
 
 .lobby-initial-setup-content {
+  margin-top: auto;
   background: linear-gradient(135deg, var(--color-primary-dark), var(--color-primary));
   border: 3px solid var(--color-accent-glow-strong);
   border-radius: 24px;
@@ -407,6 +409,10 @@
 .lobby-disclaimer a:hover {
   color: var(--color-accent-light);
   text-shadow: 0 0 10px var(--color-accent-glow-medium);
+}
+
+.lobby-disclaimer .lobby-legal {
+  margin-top: 0.35rem;
 }
 
 .lobby-github-link {

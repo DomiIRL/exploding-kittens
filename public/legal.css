@@ -1,0 +1,39 @@
+:root {
+  color-scheme: dark;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #8B1538 0%, #C41E3A 50%, #8B1538 100%);
+  color: #ffffff;
+  font: 16px/1.6 system-ui, sans-serif;
+}
+
+main {
+  max-width: 44rem;
+  margin: 0 auto;
+  padding: 2.5rem 1rem 4rem;
+}
+
+h1 {
+  font-size: 2rem;
+  margin: 1.5rem 0 1rem;
+}
+
+h2 {
+  font-size: 1.15rem;
+  margin: 2rem 0 0.5rem;
+}
+
+p, ul {
+  margin: 0 0 0.75rem;
+}
+
+a {
+  color: #FDB927;
+}
+
+a:hover {
+  color: #FFD700;
+}

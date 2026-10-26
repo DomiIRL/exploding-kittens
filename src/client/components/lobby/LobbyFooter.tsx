@@ -8,6 +8,9 @@ export function LobbyFooter() {
           This is a fanmade version of the board game for learning purposes.
           Please consider <a href="https://www.explodingkittens.com/" target="_blank" rel="noopener noreferrer">buying the board game</a>.
         </p>
+        <p className="lobby-legal">
+          <a href="/imprint.html">Imprint</a> · <a href="/privacy.html">Privacy</a>
+        </p>
       </div>
       <a
         href="https://github.com/DomiIRL/exploding-kittens"

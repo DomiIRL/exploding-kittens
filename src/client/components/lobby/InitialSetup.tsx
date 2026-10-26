@@ -1,6 +1,7 @@
 import '../common/Button.css';
 import '../common/Form.css';
 import './LobbyStyles.css';
+import { LobbyFooter } from './LobbyFooter';
 
 interface InitialSetupProps {
   name: string;
@@ -33,6 +34,7 @@ export function InitialSetup({ name, onNameChange, onSave }: InitialSetupProps) 
           Continue
         </button>
       </div>
+      <LobbyFooter />
     </div>
   );
 }
