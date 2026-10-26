@@ -1,4 +1,4 @@
-import {existsSync} from 'node:fs';
+import {createReadStream, existsSync} from 'node:fs';
 import {resolve} from 'node:path';
 import serve from 'koa-static';
 import {Origins, Server} from 'boardgame.io/dist/cjs/server.js';
@@ -39,6 +39,14 @@ server.router.use('/games/:name', async (ctx, next) => {
 });
 
 if (existsSync(clientDir)) {
+  // Match links are /<matchID>; the client reads the ID from the path, so unknown paths get the app.
+  server.app.use(async (ctx, next) => {
+    await next();
+    if (ctx.method === 'GET' && ctx.status === 404 && ctx.body == null && !ctx.path.startsWith('/games') && !ctx.path.includes('.')) {
+      ctx.type = 'html';
+      ctx.body = createReadStream(resolve(clientDir, 'index.html'));
+    }
+  });
   server.app.use(serve(clientDir));
 }
 

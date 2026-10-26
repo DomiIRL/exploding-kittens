@@ -41,6 +41,17 @@ describe('server', () => {
     expect(await res.text()).toContain('<title>boom</title>');
   });
 
+  it('serves the client for a match link', async () => {
+    const res = await fetch(`${base}/zmRvcK9UIvx`);
+    expect(res.status).toBe(200);
+    expect(await res.text()).toContain('<title>boom</title>');
+  });
+
+  it('keeps missing files as 404', async () => {
+    const res = await fetch(`${base}/assets/missing.js`);
+    expect(res.status).toBe(404);
+  });
+
   it('creates a match', async () => {
     const res = await fetch(`${base}/games/Exploding-Kittens/create`, {
       method: 'POST',
