@@ -9,6 +9,7 @@ import { LobbyFooter } from './LobbyFooter';
 import { InitialSetup } from './InitialSetup';
 import './LobbyStyles.css';
 import { RulebookButton } from '../rulebook/Rulebook';
+import { forgetSeat, loadSeat, saveSeat } from '../../utils/seatStorage';
 
 interface LobbyClientProps {
   gameServer: string;
@@ -157,6 +158,18 @@ export default function LobbyClient({ gameServer, gameName, onJoinMatch }: Lobby
   };
 
   const joinMatch = async (matchID: string, asSpectator: boolean = false) => {
+    const seat = loadSeat(matchID);
+    if (seat) {
+      const match = await lobbyClient.getMatch(gameName, matchID).catch(() => null);
+      const stillOurs = match?.players.find((p: any) => String(p.id) === seat.playerID)?.name === playerName;
+      if (stillOurs) {
+        console.log(`Rejoining match ${matchID} as player ${seat.playerID}`);
+        onJoinMatch(matchID, seat.playerID, seat.credentials);
+        return;
+      }
+      forgetSeat(matchID);
+    }
+
     if (asSpectator) {
       console.log(`Spectating match ${matchID}`);
       onJoinMatch(matchID, null, null);
@@ -167,6 +180,7 @@ export default function LobbyClient({ gameServer, gameName, onJoinMatch }: Lobby
     await lobbyClient.joinMatch(gameName, matchID, {
       playerName
     }).then(({ playerID, playerCredentials }) => {
+      saveSeat(matchID, { playerID, credentials: playerCredentials });
       onJoinMatch(matchID, playerID, playerCredentials);
     }).catch((err) => {
       setError('Failed to join match');

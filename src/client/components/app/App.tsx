@@ -9,6 +9,7 @@ import GameView from '../game-view/GameView';
 import {preloadCardImages} from '../../utils/preloadImages';
 import { MatchDetailsProvider } from '../../context/MatchDetailsContext';
 import { SERVER_URL, GAME_NAME } from '../../config';
+import { forgetSeat } from '../../utils/seatStorage';
 import './App.css';
 
 console.log('🔗 API URL:', SERVER_URL);
@@ -77,6 +78,8 @@ export default class App extends Component<{}, AppState> {
 
     if (matchID) {
       console.log('Leaving match...');
+
+      forgetSeat(matchID);
 
       // Clear matchID from URL, return to root
       window.history.pushState({}, '', '/');

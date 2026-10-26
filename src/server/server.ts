@@ -1,8 +1,12 @@
+import {randomUUID} from 'node:crypto';
 import {createReadStream, existsSync} from 'node:fs';
 import {resolve} from 'node:path';
 import serve from 'koa-static';
 import {Origins, Server} from 'boardgame.io/dist/cjs/server.js';
 import {ExplodingKittens} from '../common';
+import {MatchCleanup, type MatchStore} from './cleanup';
+import {createPlayerRemover, type MatchTransport} from './player-removal';
+import {withPlayerRemoval} from '../common/moves/remove-player-move';
 
 const port = parseInt(process.env.SERVER_PORT || '51399');
 // Compiled to dist/server/server/, next to the client build in dist/client/.
@@ -23,8 +27,12 @@ if (process.env.NODE_ENV === 'production') {
   origins = true;
 }
 
+// Only this process knows the secret, so only the cleanup below can take a player out of a game.
+const removalSecret = randomUUID();
+const game = withPlayerRemoval(ExplodingKittens as any, removalSecret);
+
 const server = Server({
-  games: [ExplodingKittens as any],
+  games: [game],
   origins,
 });
 
@@ -49,6 +57,10 @@ if (existsSync(clientDir)) {
   });
   server.app.use(serve(clientDir));
 }
+
+const db = server.db as unknown as MatchStore;
+const removePlayer = createPlayerRemover(game, db, server.transport as unknown as MatchTransport, removalSecret);
+new MatchCleanup(db, removePlayer).start();
 
 server.run(port, () => {
   console.log(`🎮 Exploding Kittens server running on port ${port}`);

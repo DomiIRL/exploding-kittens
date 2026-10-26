@@ -6,3 +6,7 @@ declare module 'boardgame.io/dist/cjs/server.js' {
   export * from 'boardgame.io/server';
 }
 
+
+declare module 'boardgame.io/dist/cjs/master.js' {
+  export {Master} from 'boardgame.io/dist/types/src/master/master';
+}
